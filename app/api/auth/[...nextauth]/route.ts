@@ -27,6 +27,7 @@ export const authOptions = {
         })
 
         //signIn API에서 저장한 데이터를 다시 user 객체로 리턴
+        //nextAuth는 이 객체에 내용이 있으면 로그인 했다고 인식
         const user = await response.json()
 
         if (response.ok && user) {

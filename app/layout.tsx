@@ -2,6 +2,8 @@ import { Providers } from '@/lib/components/Providers'
 import type { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
+import { Header } from '@/lib/components/Header'
+import { Footer } from '@/lib/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,10 +15,16 @@ interface RootLayoutType {
 }
 
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
+  const session = await getServerSession(authOptions)
+
   return (
     <html lang="ko">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header session={session} />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   )

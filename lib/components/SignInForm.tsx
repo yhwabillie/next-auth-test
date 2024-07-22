@@ -8,11 +8,22 @@ export const SignInForm = () => {
   const { register, handleSubmit, reset } = useForm<FieldValues>()
 
   const handleSubmitForm = async (data: FieldValues) => {
-    const result = signIn('credentials', {
-      redirect: false,
-      id: data.id,
-      password: data.password,
-    })
+    try {
+      const result = signIn('credentials', {
+        redirect: false,
+        id: data.id,
+        password: data.password,
+      })
+
+      reset()
+      router.push('/')
+
+      if (!result) {
+        alert('로그인 정보가 맞지 않습니다.')
+      }
+    } catch (error) {
+      console.log(error)
+    }
 
     // try {
     //   const response = await fetch('/api/signIn', {
