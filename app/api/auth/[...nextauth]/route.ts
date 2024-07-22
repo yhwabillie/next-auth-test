@@ -1,11 +1,11 @@
-import NextAuth, { Session } from 'next-auth'
+import NextAuth, { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { headers } from 'next/headers'
+import prisma from '@/lib/prisma'
 require('dotenv').config()
 
 //로그인 API 로직을 NextAuth에 적용
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -41,7 +41,22 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {},
-  callbacks: {},
+  callbacks: {
+    async session({ session }) {
+      const userInfo = await prisma.user.findUnique({
+        where: {
+          email: session.user.email,
+        },
+        select: {
+          idx: true,
+        },
+      })
+
+      session.user.idx = userInfo?.idx!
+
+      return session
+    },
+  },
 }
 
 const handler = NextAuth(authOptions)
