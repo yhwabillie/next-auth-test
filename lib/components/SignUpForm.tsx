@@ -28,10 +28,9 @@ export const SignUpForm = () => {
         }),
       })
 
-      reset()
-
       if (!response.ok) {
-        alert('Failed to sign up')
+        reset()
+        alert('회원가입에 실패했습니다.')
       }
     } catch (error) {
       console.log(error)

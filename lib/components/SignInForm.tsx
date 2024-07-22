@@ -4,10 +4,30 @@ import { useForm, FieldValues } from 'react-hook-form'
 
 export const SignInForm = () => {
   const router = useRouter()
-  const { register, handleSubmit } = useForm<FieldValues>()
+  const { register, handleSubmit, reset } = useForm<FieldValues>()
 
-  const handleSubmitForm = (data: FieldValues) => {
+  const handleSubmitForm = async (data: FieldValues) => {
     console.log(data)
+
+    try {
+      const response = await fetch('/api/signIn', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: data.id,
+          password: data.password,
+        }),
+      })
+
+      if (!response.ok) {
+        reset()
+        alert('로그인 정보가 맞지 않습니다.')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -18,18 +38,6 @@ export const SignInForm = () => {
 
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <legend>로그인 Form</legend>
-
-        <fieldset>
-          <legend>User Type</legend>
-          <div>
-            <label htmlFor="indivisual">일반</label>
-            <input {...register('user_type', { required: true })} id="indivisual" name="user_type" value={'indivisual'} defaultChecked type="radio" />
-          </div>
-          <div>
-            <label htmlFor="admin">어드민</label>
-            <input {...register('user_type', { required: true })} id="admin" name="user_type" value={'admin'} type="radio" />
-          </div>
-        </fieldset>
 
         <fieldset>
           <label htmlFor="id">ID</label>
