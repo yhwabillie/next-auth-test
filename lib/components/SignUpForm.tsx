@@ -1,7 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useForm, FieldValues } from 'react-hook-form'
-import bcrypt from 'bcryptjs'
 
 export const SignUpForm = () => {
   const router = useRouter()
@@ -10,8 +9,6 @@ export const SignUpForm = () => {
 
   const handleSubmitForm = async (data: FieldValues) => {
     console.log(data)
-
-    const hashedPassword = bcrypt.hashSync(data.password, 10)
 
     try {
       const response = await fetch('/api/signUp', {
@@ -24,7 +21,7 @@ export const SignUpForm = () => {
           name: data.name,
           id: data.id,
           email: data.email,
-          password: hashedPassword,
+          password: data.password,
         }),
       })
 

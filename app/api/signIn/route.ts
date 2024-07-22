@@ -3,24 +3,26 @@ import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
-  const { id, password } = await request.json()
-  const existUserInfo = await prisma.user.findUnique({
+  const requestBody = await request.json()
+  const user = await prisma.user.findUnique({
     where: {
-      id: id,
+      id: requestBody.id,
     },
   })
 
-  if (!existUserInfo) {
+  if (!user) {
     return NextResponse.json({ error: 'DB dont have this ID' }, { status: 400 })
   }
 
-  if (!(await bcrypt.compare(password, existUserInfo.password))) {
+  if (!(await bcrypt.compare(requestBody.password, user.password))) {
     return NextResponse.json({ error: 'Wrong PW' }, { status: 400 })
   }
 
-  if (existUserInfo && (await bcrypt.compare(password, existUserInfo.password))) {
-    const { password, ...infoWithoutPW } = existUserInfo
+  if (user && (await bcrypt.compare(requestBody.password, user.password))) {
+    const { password, ...infoWithoutPW } = user
 
     return NextResponse.json(infoWithoutPW)
+  } else {
+    return NextResponse.json(null)
   }
 }
