@@ -1,13 +1,41 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useForm, FieldValues } from 'react-hook-form'
+import bcrypt from 'bcryptjs'
 
 export const SignUpForm = () => {
   const router = useRouter()
-  const { register, handleSubmit } = useForm<FieldValues>()
 
-  const handleSubmitForm = (data: FieldValues) => {
+  const { register, handleSubmit, reset } = useForm<FieldValues>()
+
+  const handleSubmitForm = async (data: FieldValues) => {
     console.log(data)
+
+    const hashedPassword = bcrypt.hashSync(data.password, 10)
+
+    try {
+      const response = await fetch('/api/signUp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_type: data.user_type,
+          name: data.name,
+          id: data.id,
+          email: data.email,
+          password: hashedPassword,
+        }),
+      })
+
+      reset()
+
+      if (!response.ok) {
+        alert('Failed to sign up')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
