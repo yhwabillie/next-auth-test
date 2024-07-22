@@ -1,7 +1,5 @@
 import { Providers } from '@/lib/components/Providers'
 import type { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { authOptions } from './api/auth/[...nextauth]/route'
 import { Header } from '@/lib/components/Header'
 import { Footer } from '@/lib/components/Footer'
 
@@ -15,13 +13,11 @@ interface RootLayoutType {
 }
 
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
-  const session = await getServerSession(authOptions)
-
   return (
     <html lang="ko">
       <body>
         <Providers>
-          <Header session={session} />
+          <Header />
           {children}
           <Footer />
         </Providers>

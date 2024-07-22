@@ -1,10 +1,10 @@
 'use client'
-import { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
-export const Header = ({ session }: { session: Session | null }) => {
+export const Header = () => {
   const router = useRouter()
+  const { data: session } = useSession()
 
   return (
     <header>
