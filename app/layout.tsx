@@ -1,4 +1,4 @@
-import { Providers } from '@/lib/components/Providers'
+import { AuthProvider } from '@/lib/components/AuthProvider'
 import type { Metadata } from 'next'
 import { Header } from '@/lib/components/Header'
 import { Footer } from '@/lib/components/Footer'
@@ -20,11 +20,11 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
   return (
     <html lang="ko">
       <body>
-        <Providers>
-          <Header />
+        <AuthProvider>
+          <Header session={session} />
           {children}
           <Footer />
-        </Providers>
+        </AuthProvider>
       </body>
     </html>
   )

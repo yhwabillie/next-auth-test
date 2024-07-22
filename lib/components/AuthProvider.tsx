@@ -5,6 +5,6 @@ interface ProvidersProps {
   children: React.ReactNode
 }
 
-export const Providers = ({ children }: ProvidersProps) => {
+export const AuthProvider = ({ children }: ProvidersProps) => {
   return <SessionProvider>{children}</SessionProvider>
 }

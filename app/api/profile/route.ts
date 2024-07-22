@@ -13,7 +13,7 @@ export async function GET() {
   try {
     const users = await prisma.user.findUnique({
       where: {
-        email: session.user?.email!,
+        idx: session.user?.idx!,
       },
     })
 

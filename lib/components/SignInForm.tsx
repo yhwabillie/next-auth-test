@@ -10,19 +10,19 @@ export const SignInForm = () => {
   const handleSubmitForm = async (data: FieldValues) => {
     try {
       const result = signIn('credentials', {
-        redirect: false,
+        redirect: true,
+        callbackUrl: '/',
         id: data.id,
         password: data.password,
       })
-
-      reset()
-      router.push('/')
 
       if (!result) {
         alert('로그인 정보가 맞지 않습니다.')
       }
     } catch (error) {
       console.log(error)
+
+      reset()
     }
 
     // try {
