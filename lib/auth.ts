@@ -1,6 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
+import { compare } from 'bcrypt'
 require('dotenv').config()
 
 // auth 옵션 객체
@@ -15,7 +16,7 @@ const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          const response = await fetch(`/api/signIn`, {
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/signIn`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -28,6 +29,16 @@ const authOptions: NextAuthOptions = {
           //signIn Routes POST API에서 리턴한 프론트 데이터를 다시 user 객체로 리턴
           //이 객체에 내용이 있으면 로그인 했다고 인식
           const user = await response.json()
+
+          if (!user) {
+            throw new Error(`User ${credentials?.id} not found`)
+          }
+
+          const passwordMatch = await compare(credentials?.password!, user.password!)
+
+          if (!passwordMatch) {
+            throw new Error(`User ${credentials?.password} not macth`)
+          }
 
           if (user) {
             console.log(user, '/// 로그인했어요')
