@@ -3,8 +3,6 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
 require('dotenv').config()
 
-const apiUrl = `${process.env.NEXTAUTH_URL}/api/signIn`
-
 // auth 옵션 객체
 const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +15,7 @@ const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          const response = await fetch(`${apiUrl}`, {
+          const response = await fetch(`https://next-auth-test-sage.vercel.app/api/signIn`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
