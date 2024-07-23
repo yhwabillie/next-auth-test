@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "pnpify prisma generate",
     "db:gen": "pnpify prisma generate",
     "db:migrate": "pnpify prisma migrate dev --name init",
     "db:pull": "pnpify prisma db pull",
