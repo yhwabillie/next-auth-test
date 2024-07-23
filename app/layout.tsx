@@ -15,13 +15,11 @@ interface RootLayoutType {
 }
 
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
-  const session = await getServerSession(authOptions)
-
   return (
     <html lang="ko">
       <body>
         <AuthProvider>
-          <Header session={session} />
+          <Header />
           {children}
           <Footer />
         </AuthProvider>

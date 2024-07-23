@@ -7,8 +7,9 @@ interface HeaderProps {
   session: Session | null
 }
 
-export const Header = ({ session }: HeaderProps) => {
+export const Header = () => {
   const router = useRouter()
+  const { data: session, status } = useSession()
 
   return (
     <header>

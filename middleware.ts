@@ -1,22 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
+import { getToken } from 'next-auth/jwt'
 
-// export async function middleware(request: NextRequest) {
-//   const accessToken = cookies().get('next-auth.session-token')
+export default async function middleware(req: NextRequest) {
+  const token = await getToken({ req })
+  const isAuthenticated = !!token
 
-//   if (!accessToken) {
-//     if (request.nextUrl.pathname.startsWith('/profile')) {
-//       return NextResponse.redirect(new URL('/signIn', request.url))
-//     }
-//   }
+  if (isAuthenticated) {
+    if (req.nextUrl.pathname.startsWith(`/signIn`) || req.nextUrl.pathname.startsWith(`/signUp`)) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
+  }
 
-//   if (accessToken) {
-//     if (request.nextUrl.pathname.startsWith('/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
-//       return NextResponse.redirect(new URL('/', request.url))
-//     }
-//   }
-// }
-
-export const config = {
-  matcher: ['/profile'],
+  if (!isAuthenticated) {
+    if (req.nextUrl.pathname.startsWith(`/profile`)) {
+      return NextResponse.redirect(new URL('/signIn', req.url))
+    }
+  }
 }
