@@ -15,7 +15,7 @@ const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          const response = await fetch(`https://next-auth-test-sage.vercel.app/api/signIn`, {
+          const response = await fetch(`http://localhost:3000/api/signIn`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

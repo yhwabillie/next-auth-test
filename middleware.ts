@@ -6,14 +6,14 @@ export async function middleware(request: NextRequest) {
   const accessToken = cookies().get('next-auth.session-token')
 
   if (!accessToken) {
-    if (request.nextUrl.pathname.startsWith('/profile')) {
-      return NextResponse.redirect(new URL('/signIn', request.url))
+    if (request.nextUrl.pathname.startsWith('https://next-auth-test-sage.vercel.app/profile')) {
+      return NextResponse.redirect(new URL('https://next-auth-test-sage.vercel.app/signIn', request.url))
     }
   }
 
   if (accessToken) {
-    if (request.nextUrl.pathname.startsWith('/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
-      return NextResponse.redirect(new URL('/', request.url))
+    if (request.nextUrl.pathname.startsWith('https://next-auth-test-sage.vercel.app/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
+      return NextResponse.redirect(new URL('https://next-auth-test-sage.vercel.app', request.url))
     }
   }
 }
