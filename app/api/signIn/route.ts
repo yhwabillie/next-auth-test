@@ -23,6 +23,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(infoWithoutPW)
   } else {
-    return NextResponse.json(null)
+    return NextResponse.json({ msg: '?' })
   }
 }
