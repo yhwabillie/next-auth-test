@@ -14,7 +14,7 @@ const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        const response = await fetch(`/api/signIn`, {
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/signIn`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
