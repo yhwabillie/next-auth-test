@@ -10,7 +10,7 @@ export const SignInForm = () => {
   const handleSubmitForm = async (data: FieldValues) => {
     try {
       const response = signIn('credentials', {
-        redirect: true,
+        redirect: false,
         // callbackUrl: '/',
         id: data.id,
         password: data.password,
