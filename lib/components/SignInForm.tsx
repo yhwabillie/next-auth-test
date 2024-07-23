@@ -9,41 +9,20 @@ export const SignInForm = () => {
 
   const handleSubmitForm = async (data: FieldValues) => {
     try {
-      const result = signIn('credentials', {
+      const response = signIn('credentials', {
         redirect: true,
         callbackUrl: '/',
         id: data.id,
         password: data.password,
       })
 
-      if (!result) {
+      if (!response) {
         alert('로그인 정보가 맞지 않습니다.')
       }
     } catch (error) {
       console.log(error)
-
       reset()
     }
-
-    // try {
-    //   const response = await fetch('/api/signIn', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       id: data.id,
-    //       password: data.password,
-    //     }),
-    //   })
-
-    //   if (!response.ok) {
-    //     reset()
-    //     alert('로그인 정보가 맞지 않습니다.')
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
   }
 
   return (

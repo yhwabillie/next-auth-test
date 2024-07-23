@@ -45,7 +45,9 @@ export const authOptions: AuthOptions = {
   session: {},
   callbacks: {
     jwt: async ({ token, user }) => {
-      // authorize callback
+      // authorize callback으로 리턴받은 user 객체
+      // 기본 제공 키값중 email을 이용하여 필요한 로그인 사용사 DB 정보 추출
+      // user 객체에 다시 재정제 및 정제 데이터를 token으로 다시 리턴
       if (user) {
         const info = await prisma.user.findUnique({
           where: {
@@ -65,9 +67,9 @@ export const authOptions: AuthOptions = {
       return token
     },
 
-    //기존 세션 데이터 email을 가지고 DB를 검색하여
-    //필요한 데이터를 세션에 추가
     session: async ({ session, token }) => {
+      //리턴된 token 정보를 session 내부에 추가
+      // session 리턴
       session.user = token.user
 
       return session

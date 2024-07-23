@@ -16,7 +16,7 @@ export const Header = ({ session }: HeaderProps) => {
         {session && session.user ? (
           <>
             <span>{`${session.user.name}님 안녕하세요!`}</span>
-            <button onClick={() => signOut()}>로그아웃</button>
+            <button onClick={() => signOut({ callbackUrl: '/' })}>로그아웃</button>
             <button onClick={() => router.push('/profile')}>프로필</button>
           </>
         ) : (
