@@ -15,6 +15,10 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
       return NextResponse.redirect(new URL('/', request.url))
     }
+
+    if (request.nextUrl.pathname.startsWith('/profile')) {
+      return NextResponse.redirect(new URL('/profile', request.url))
+    }
   }
 }
 
