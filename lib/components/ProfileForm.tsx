@@ -1,8 +1,31 @@
 'use client'
+import { updateUserName } from '@/app/actions/profile/updateProfile'
 import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
+import { FieldValues, useForm } from 'react-hook-form'
 
 export const ProfileForm = (props: any) => {
   const router = useRouter()
+  const { register, handleSubmit, watch, getValues, reset } = useForm<FieldValues>()
+  const nameRef = useRef<HTMLInputElement>(null)
+  const watchName = watch('name')
+
+  const handleUpdateUserName = async () => {
+    if (!nameRef.current) return
+
+    const newName = nameRef.current.value
+    const response = await updateUserName({ idx: props.data.users.idx, new_name: newName })
+
+    if (response.success) {
+      alert('Username updated successfully')
+
+      if (!nameRef.current) return
+      nameRef.current.disabled = true
+    } else {
+      alert('Failed to update username')
+    }
+  }
+
   return (
     <>
       <h1>프로필 페이지</h1>
@@ -20,7 +43,28 @@ export const ProfileForm = (props: any) => {
         </fieldset>
         <fieldset>
           <label>이름: </label>
-          <input type="text" value={props.data.users.name} disabled={true} />
+          <input {...register('name')} ref={nameRef} id="name" type="text" defaultValue={props.data.users.name} disabled={true} />
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+
+              if (!nameRef.current) return
+              nameRef.current.disabled = false
+              nameRef.current.selectionStart = props.data.users.name.length
+              nameRef.current.focus()
+            }}
+          >
+            수정
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+
+              handleUpdateUserName()
+            }}
+          >
+            저장
+          </button>
         </fieldset>
         <fieldset>
           <label>이메일: </label>
