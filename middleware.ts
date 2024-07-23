@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-export { default } from 'next-auth/middleware'
 
 // export async function middleware(request: NextRequest) {
 //   const accessToken = cookies().get('next-auth.session-token')
@@ -19,5 +18,5 @@ export { default } from 'next-auth/middleware'
 // }
 
 export const config = {
-  matcher: ['/profile/:path*'],
+  matcher: ['/profile'],
 }

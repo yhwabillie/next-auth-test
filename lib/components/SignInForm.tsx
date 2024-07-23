@@ -11,7 +11,7 @@ export const SignInForm = () => {
     try {
       const response = signIn('credentials', {
         redirect: true,
-        callbackUrl: '/',
+        // callbackUrl: '/',
         id: data.id,
         password: data.password,
       })

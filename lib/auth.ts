@@ -15,7 +15,7 @@ const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/signIn`, {
+          const response = await fetch('/api/signIn', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const authOptions: NextAuthOptions = {
 
           if (user) {
             console.log(user, '/// 로그인했어요')
-            console.log(process.env.NEXTAUTH_URL, '//////')
+
             return user
           } else {
             return null
