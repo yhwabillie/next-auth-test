@@ -257,6 +257,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/nextjs-monorepo-workaround-plugin@npm:^5.17.0":
+  version: 5.17.0
+  resolution: "@prisma/nextjs-monorepo-workaround-plugin@npm:5.17.0"
+  checksum: 10/fae665947afc296b8725409fc781462cda6982e0b01ea38de0fc85efca4755f9f52764a34ea53ab8bd2b5e8dfb5f0783f227a175447045fd276ddb0f8d56b4d7
+  languageName: node
+  linkType: hard
+
 "@sindresorhus/is@npm:^4.0.0":
   version: 4.6.0
   resolution: "@sindresorhus/is@npm:4.6.0"
@@ -1620,6 +1627,7 @@ __metadata:
   dependencies:
     "@next-auth/prisma-adapter": "npm:^1.0.7"
     "@prisma/client": "npm:^5.17.0"
+    "@prisma/nextjs-monorepo-workaround-plugin": "npm:^5.17.0"
     "@types/bcrypt": "npm:^5"
     "@types/bcryptjs": "npm:^2"
     "@types/node": "npm:^20"

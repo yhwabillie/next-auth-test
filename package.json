@@ -29,6 +29,7 @@
     "react-hook-form": "^7.52.1"
   },
   "devDependencies": {
+    "@prisma/nextjs-monorepo-workaround-plugin": "^5.17.0",
     "@types/bcrypt": "^5",
     "@types/bcryptjs": "^2",
     "@types/node": "^20",
