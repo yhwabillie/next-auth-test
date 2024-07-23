@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 require('dotenv').config()
 
 const fetchData = async () => {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
+  const response = await fetch(`/api/profile`, {
     method: 'GET',
     headers: headers(),
   })
