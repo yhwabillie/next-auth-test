@@ -19,5 +19,5 @@ export { default } from 'next-auth/middleware'
 // }
 
 export const config = {
-  matcher: ['/signIn/:path*', '/signUp/:path*', '/profile/:path*'],
+  matcher: ['/profile/:path*'],
 }
