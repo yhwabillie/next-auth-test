@@ -34,12 +34,6 @@ const authOptions: NextAuthOptions = {
             throw new Error(`User ${credentials?.id} not found`)
           }
 
-          const passwordMatch = await compare(credentials?.password!, user.password!)
-
-          if (!passwordMatch) {
-            throw new Error(`User ${credentials?.password} not macth`)
-          }
-
           if (user) {
             console.log(user, '/// 로그인했어요')
             return user
