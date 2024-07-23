@@ -6,7 +6,7 @@ require('dotenv').config()
 const fetchData = async () => {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
     method: 'GET',
-    headers: headers(),
+    headers: new Headers(headers()),
   })
 
   if (!response.ok) return
