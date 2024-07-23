@@ -11,7 +11,8 @@
     "db:migrate": "pnpify prisma migrate dev --name init",
     "db:pull": "pnpify prisma db pull",
     "db:deploy": "pnpify prisma migrate deploy",
-    "db:studio": "pnpify prisma studio"
+    "db:studio": "pnpify prisma studio",
+    "vercel-deploy": "pnpify prisma generate && next build"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
