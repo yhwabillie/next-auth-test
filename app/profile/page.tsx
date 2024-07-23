@@ -1,21 +1,18 @@
 'use server'
 import { ProfileForm } from '@/lib/components/ProfileForm'
 import { headers } from 'next/headers'
+// export const dynamic = 'force-dynamic'
 
 const fetchData = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/api/profile', {
-      method: 'GET',
-      headers: headers(),
-    })
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
+    method: 'GET',
+    headers: headers(),
+  })
 
-    if (!response.ok) return
-    const data = await response.json()
+  if (!response.ok) return
+  const data = await response.json()
 
-    return data
-  } catch (error) {
-    console.log(error)
-  }
+  return data
 }
 
 export default async function Page() {
