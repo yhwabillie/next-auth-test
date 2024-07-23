@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useForm, FieldValues } from 'react-hook-form'
+require('dotenv').config()
 
 export const SignUpForm = () => {
   const router = useRouter()

@@ -2,7 +2,6 @@
 import { ProfileForm } from '@/lib/components/ProfileForm'
 import { headers } from 'next/headers'
 require('dotenv').config()
-// export const dynamic = 'force-dynamic'
 
 const fetchData = async () => {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
