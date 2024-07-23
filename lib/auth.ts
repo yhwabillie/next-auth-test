@@ -1,7 +1,6 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
-import { compare } from 'bcrypt'
 require('dotenv').config()
 
 // auth 옵션 객체
@@ -16,7 +15,7 @@ const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          const response = await fetch(`https://next-auth-test-sage.vercel.app/api/signIn`, {
+          const response = await fetch(`${process.env.NEXTAUTH_URL}.app/api/signIn`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
