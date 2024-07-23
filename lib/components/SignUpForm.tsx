@@ -12,7 +12,7 @@ export const SignUpForm = () => {
     console.log(data)
 
     try {
-      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/signUp`, {
+      const response = await fetch(`/api/signUp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
