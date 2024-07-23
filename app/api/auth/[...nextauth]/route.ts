@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions } from 'next-auth'
+import NextAuth, { AuthOptions, Session, Awaitable } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
 require('dotenv').config()
@@ -39,21 +39,37 @@ export const authOptions: AuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: '/signIn',
+  },
   session: {},
   callbacks: {
+    jwt: async ({ token, user }) => {
+      // authorize callback
+      if (user) {
+        const info = await prisma.user.findUnique({
+          where: {
+            email: token.email!,
+          },
+          select: {
+            idx: true,
+            name: true,
+          },
+        })
+
+        token.user = {}
+        token.user.idx = info?.idx
+        token.user.name = info?.name
+      }
+
+      return token
+    },
+
     //기존 세션 데이터 email을 가지고 DB를 검색하여
     //필요한 데이터를 세션에 추가
-    async session({ session }) {
-      const userInfo = await prisma.user.findUnique({
-        where: {
-          email: session.user.email,
-        },
-        select: {
-          idx: true,
-        },
-      })
+    session: async ({ session, token }) => {
+      session.user = token.user
 
-      session.user.idx = userInfo?.idx!
       return session
     },
   },

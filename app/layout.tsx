@@ -16,7 +16,7 @@ interface RootLayoutType {
 
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
   const session = await getServerSession(authOptions)
-  console.log(session, '///////')
+
   return (
     <html lang="ko">
       <body>
