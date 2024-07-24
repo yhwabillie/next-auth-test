@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const NameSchema = () => {
+export const UserNameSchema = () => {
   return z.string().regex(/^[ㄱ-ㅎ가-힣]{2,8}$/g, '2자-8자 사이의 한글로 작성하세요 (공백, 특수문자 X)')
 }
 
@@ -13,10 +13,10 @@ export const PasswordSchema = () => {
     )
 }
 
-export const signUpSchema = z
+export const SignUpSchema = z
   .object({
     user_type: z.enum(['indivisual', 'admin']),
-    name: NameSchema(),
+    name: UserNameSchema(),
     id: z.string().regex(/^[a-zA-Z]+[a-zA-Z0-9]{6,10}$/g, '6자-10자 사이 영문자로 시작하는 영문과 숫자의 조합으로 작성하세요 (공백, 특수문자 X)'),
     email: z
       .string()
@@ -29,4 +29,4 @@ export const signUpSchema = z
     path: ['password_confirm'],
   })
 
-export type SignUpFormSchema = z.infer<typeof signUpSchema>
+export type SignUpFormSchemaType = z.infer<typeof SignUpSchema>

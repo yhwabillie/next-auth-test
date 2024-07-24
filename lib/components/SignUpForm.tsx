@@ -1,10 +1,11 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useForm, FieldValues } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { SignUpFormSchema, signUpSchema } from '../zodSchema'
+import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
+import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 require('dotenv').config()
 
 export const SignUpForm = () => {
@@ -15,9 +16,9 @@ export const SignUpForm = () => {
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpFormSchema>({
+  } = useForm<SignUpFormSchemaType>({
     mode: 'onChange',
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
       user_type: 'indivisual',
       name: '',
@@ -28,7 +29,7 @@ export const SignUpForm = () => {
     },
   })
 
-  const handleSubmitForm = async (data: FieldValues) => {
+  const handleSubmitForm = async (data: any) => {
     console.log(data)
 
     // try {
@@ -57,6 +58,20 @@ export const SignUpForm = () => {
 
   useEffect(() => {}, [watch])
 
+  const radioDataList: RadioItemType[] = [
+    {
+      id: 'indivisual',
+      label: '일반',
+      value: 'indivisual',
+      defaultChecked: true,
+    },
+    {
+      id: 'admin',
+      value: 'admin',
+      label: '어드민',
+    },
+  ]
+
   return (
     <>
       <h1>회원가입 페이지</h1>
@@ -66,65 +81,37 @@ export const SignUpForm = () => {
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <legend>회원가입 Form</legend>
 
-        <fieldset>
-          <legend>User Type</legend>
-          <div>
-            <label htmlFor="indivisual">일반</label>
-            <input {...register('user_type', { required: true })} id="indivisual" name="user_type" value={'indivisual'} defaultChecked type="radio" />
-          </div>
-          <div>
-            <label htmlFor="admin">어드민</label>
-            <input {...register('user_type', { required: true })} id="admin" name="user_type" value={'admin'} type="radio" />
-          </div>
-        </fieldset>
+        <HookFormRadioList register={register('user_type')} itemList={radioDataList} label={'user_type'} name={'user_type'} type={'radio'} />
 
         <div>
-          <fieldset>
-            <legend>Name</legend>
-            <label htmlFor="name">Name</label>
-            <input {...register('name')} id="name" name="name" type="text" placeholder="name" autoFocus={true} />
-          </fieldset>
+          <HookFormInput register={register('name')} id={'name'} label={'name'} type={'text'} placeholder={'name'} autoFocus={true} />
           <p>{errors.name && !!watch('name') && `${errors.name.message}`}</p>
         </div>
 
         <div>
-          <fieldset>
-            <legend>ID</legend>
-            <label htmlFor="id">ID</label>
-            <input {...register('id', { required: true })} id="id" name="id" type="text" placeholder="ID" />
-          </fieldset>
+          <HookFormInput register={register('id')} id={'id'} label={'id'} type={'text'} placeholder={'id'} />
           <p>{errors.id && !!watch('id') && `${errors.id.message}`}</p>
         </div>
 
         <div>
-          <fieldset>
-            <legend>Email</legend>
-            <label htmlFor="email">Email</label>
-            <input {...register('email', { required: true })} id="email" name="email" type="email" placeholder="Email" />
-          </fieldset>
+          <HookFormInput register={register('email')} id={'email'} label={'email'} type={'email'} placeholder={'email'} />
           <p>{errors.email && !!watch('email') && `${errors.email.message}`}</p>
         </div>
 
         <div>
-          <HookFormInput
-            register={register('password', { required: true })}
-            id={'password'}
-            label={'password'}
-            type={'password'}
-            placeholder={'password'}
-          />
+          <HookFormInput register={register('password')} id={'password'} label={'password'} type={'password'} placeholder={'password'} />
           <p>{errors.password && !!watch('password') && `${errors.password.message}`}</p>
         </div>
 
         <div>
           <HookFormInput
-            register={register('password_confirm', { required: true })}
+            register={register('password_confirm')}
             id={'password_confirm'}
-            label={'password confirm'}
+            label={'password_confirm'}
             type={'password'}
-            placeholder={'password confirm'}
+            placeholder={'password_confirm'}
           />
-          <p>{errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm.message}`}</p>
+          <p>{errors.password_confirm && `${errors.password_confirm.message}`}</p>
         </div>
 
         <button>submit</button>
