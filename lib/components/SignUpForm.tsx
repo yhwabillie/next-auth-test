@@ -29,31 +29,34 @@ export const SignUpForm = () => {
     },
   })
 
-  const handleSubmitForm = async (data: any) => {
+  const handleSubmitForm = async (data: SignUpFormSchemaType) => {
     console.log(data)
 
-    // try {
-    //   const response = await fetch(`/api/signUp`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       user_type: data.user_type,
-    //       name: data.name,
-    //       id: data.id,
-    //       email: data.email,
-    //       password: data.password,
-    //     }),
-    //   })
+    try {
+      const response = await fetch(`/api/signUp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_type: data.user_type,
+          name: data.name,
+          id: data.id,
+          email: data.email,
+          password: data.password,
+        }),
+      })
 
-    //   if (!response.ok) {
-    //     reset()
-    //     alert('회원가입에 실패했습니다.')
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
+      reset()
+      window.location.href = '/'
+
+      if (!response.ok) {
+        reset()
+        alert('회원가입에 실패했습니다.')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {}, [watch])

@@ -30,3 +30,10 @@ export const SignUpSchema = z
   })
 
 export type SignUpFormSchemaType = z.infer<typeof SignUpSchema>
+
+export const SignInSchema = z.object({
+  id: z.string().min(1, 'ID를 입력하세요'),
+  password: z.string().min(1, '비밀번호를 입력하세요'),
+})
+
+export type SignInFormSchemaType = z.infer<typeof SignInSchema>
