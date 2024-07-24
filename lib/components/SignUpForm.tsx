@@ -4,7 +4,7 @@ import { useForm, FieldValues } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { signUpSchema } from '../zodSchema'
+import { SignUpFormSchema, signUpSchema } from '../zodSchema'
 require('dotenv').config()
 
 export const SignUpForm = () => {
@@ -12,9 +12,10 @@ export const SignUpForm = () => {
   const {
     register,
     watch,
+    reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>({
+  } = useForm<SignUpFormSchema>({
     mode: 'onChange',
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -123,7 +124,7 @@ export const SignUpForm = () => {
             type={'password'}
             placeholder={'password confirm'}
           />
-          <p>{errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm}`}</p>
+          <p>{errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm.message}`}</p>
         </div>
 
         <button>submit</button>
