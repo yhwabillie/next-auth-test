@@ -8,7 +8,6 @@
 - vercel이 아직 yarn berry를 지원하지 않아 package manager PNPM v9 으로 변경
 - 프론트 배포 Vercel, 백엔드 Supabase 사용
 
-
 ### API Routes
 - [POST] Auth(인증/인가)
     - /api/signIn
@@ -26,5 +25,6 @@
         - profile 화면 > 사용자 이름 변경
 
 ### Form Validation
-- react-hook-form
-- zodResolver
+- Form 유효성 검사 라이브러리 사용
+    - react-hook-form
+    - zodResolver
