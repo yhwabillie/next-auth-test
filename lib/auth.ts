@@ -25,7 +25,8 @@ const authOptions: NextAuthOptions = {
               password: credentials?.password,
             }),
           })
-          //signIn Routes POST API에서 리턴한 프론트 데이터를 다시 user 객체로 리턴
+
+          //signIn API Routes POST에서 리턴한 프론트 데이터를 다시 user 객체로 리턴
           //이 객체에 내용이 있으면 로그인 했다고 인식
           const user = await response.json()
 
@@ -33,8 +34,8 @@ const authOptions: NextAuthOptions = {
             throw new Error(`User ${credentials?.id} not found`)
           }
 
-          if (user) {
-            console.log(user, '/// 로그인했어요')
+          if (user && response.ok) {
+            console.log('로그인 사용자 정보: ', user)
 
             return user
           } else {
@@ -64,12 +65,14 @@ const authOptions: NextAuthOptions = {
           select: {
             idx: true,
             name: true,
+            user_type: true,
           },
         })
 
         token.user = {}
         token.user.idx = info?.idx
         token.user.name = info?.name
+        token.user.user_type = info?.user_type
       }
 
       return token
@@ -77,7 +80,7 @@ const authOptions: NextAuthOptions = {
 
     session: async ({ session, token }) => {
       //리턴된 token 정보를 session 내부에 추가
-      // session 리턴
+      //session 리턴
       session.user = token.user
 
       return session
