@@ -12,6 +12,7 @@ prisma/*
 !prisma/schema.prisma
 
 # dependencies
+node_modules
 .pnp.*
 .yarn/*
 !.yarn/patches
