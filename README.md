@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Title: next-auth-test
 
-## Getting Started
+### NextAuth.js 을 이용한 로그인 구현
+- 자체 ID, PW를 이용한 credential provider 사용
+- NextAuth.js에서 제공하는 JWT 사용
 
-First, run the development server:
+### Vercel 배포, PNPM 빌드, Supabase 백엔드
+- vercel이 아직 yarn berry를 지원하지 않아 package manager PNPM v9 으로 변경
+- 프론트 배포 Vercel, 백엔드 Supabase 사용
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### API Routes
+- [POST] Auth(인증/인가)
+    - /api/signIn
+    - /api/auth/[...nextauth]
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [POST] 회원가입
+    - /api/signUp
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [GET] 사용자 프로필 data fetch
+    - /api/profile
 
-## Learn More
+### Server Actions
+- DB Mutation에 사용 
+    - [Update DB] updateUserName
+        - profile 화면 > 사용자 이름 변경
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Form Validation
+- react-hook-form
+- zodResolver
