@@ -1,7 +1,8 @@
 'use client'
+import { UseFormRegisterReturn } from 'react-hook-form'
 
 interface HookFormInputProps {
-  register: any
+  register: UseFormRegisterReturn
   id: string
   label: string
   type: 'email' | 'password' | 'text'

@@ -1,4 +1,4 @@
-import { NextAuthOptions } from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
 require('dotenv').config()
@@ -13,7 +13,7 @@ const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
 
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         try {
           const response = await fetch(`${process.env.NEXTAUTH_URL}/api/signIn`, {
             method: 'POST',
@@ -25,24 +25,14 @@ const authOptions: NextAuthOptions = {
               password: credentials?.password,
             }),
           })
-
-          //signIn API Routes POST에서 리턴한 프론트 데이터를 다시 user 객체로 리턴
-          //이 객체에 내용이 있으면 로그인 했다고 인식
           const user = await response.json()
-
-          if (!user) {
-            throw new Error(`User ${credentials?.id} not found`)
-          }
-
-          if (user && response.ok) {
-            console.log('로그인 사용자 정보: ', user)
-
-            return user
-          } else {
-            return null
-          }
-        } catch (error) {
-          console.log(error)
+          console.log('signin api에서 받은거======================>', user)
+          return user
+        } catch (error: any) {
+          //signin api에서 인풋데이터 검증 중 일으킨 에러를 반환
+          console.log('==========================>', error)
+          //signin api에서 받은 error 프론트로 전달
+          throw new Error('ID 혹은 비밀번호가 맞지 않습니다.')
         }
       },
     }),
@@ -53,6 +43,9 @@ const authOptions: NextAuthOptions = {
   },
   session: {},
   callbacks: {
+    signIn: async ({ user, account, profile, email, credentials }) => {
+      return true
+    },
     jwt: async ({ token, user }) => {
       // authorize callback으로 리턴받은 user 객체
       // 기본 제공 키값중 email을 이용하여 필요한 로그인 사용사 DB 정보 추출

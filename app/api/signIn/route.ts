@@ -10,19 +10,17 @@ export async function POST(request: NextRequest) {
     },
   })
 
+  // 사용자 ID 검증
   if (!user) {
-    return NextResponse.json({ error: 'DB dont have this ID' }, { status: 400 })
+    throw new Error('==========================> i dont have this id')
   }
 
-  if (!(await bcrypt.compare(requestBody.password, user.password))) {
-    return NextResponse.json({ error: 'Wrong PW' }, { status: 400 })
+  // 비밀번호 검증
+  const isPasswordCorrect = await bcrypt.compare(requestBody.password, user.password)
+  if (!isPasswordCorrect) {
+    throw new Error('==========================> wrong pw')
   }
 
-  if (user && (await bcrypt.compare(requestBody.password, user.password))) {
-    const { password, ...infoWithoutPW } = user
-
-    return NextResponse.json(infoWithoutPW)
-  } else {
-    return NextResponse.json(null)
-  }
+  // 사용자 인증 성공
+  return NextResponse.json(user)
 }
