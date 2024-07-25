@@ -61,12 +61,16 @@
 
 #### 4) 백엔드 API Routes (/api/auth/[...nextauth])
 
-- 일치하는 DB 정보가 있는 경우, 사용자 DB 데이터를 받아 Return (user 객체) -> authOptions의 `callback에서 user로 세션 데이터를 만드는데 사용`
+- 일치하는 DB 정보가 있는 경우, 사용자 DB 데이터를 받아 Return (user 객체) -> authOptions의 `callback에서 user로 token 데이터를 만드는데 사용`
+- user 객체로 JWT token 데이터를 만든 후 return
+- session 데이터에 user 정보가 담긴 token을 추가
+- 사용자 정보를 token으로 가지고 있는 session return, 로그인 완료
 
 <br/>
 
 - 일치하는 정보가 없는 경우, signIn API에서 일으킨 에러를 try~catch문의 error로 잡음
 - error 메시지에 `ID 혹은 비밀번호가 맞지 않습니다.` 를 작성하여 프론트로 다시 전달
+- 빈 객체로 session이 return, 로그인 실패
 
 #### 5) 프론트 Form
 
