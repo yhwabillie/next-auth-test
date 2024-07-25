@@ -22,7 +22,9 @@ export const SignUpSchema = z
       .string()
       .regex(/^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, '이메일 형식에 맞게 공백을 제외하고 작성해주세요. (EX. test@test.com)'),
     password: PasswordSchema(),
-    password_confirm: z.string().min(1, '비밀번호 확인을 입력해주세요.'),
+    password_confirm: z.string(),
+    confirm_email: z.boolean().optional(),
+    confirm_id: z.boolean().optional(),
   })
   .refine((data) => data.password === data.password_confirm, {
     message: '비밀번호가 일치하지 않습니다.',

@@ -1,4 +1,5 @@
 'use client'
+import { RefObject } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 interface HookFormInputProps {
