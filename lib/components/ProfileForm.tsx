@@ -71,7 +71,6 @@ export const ProfileForm = (props: any) => {
           <input type="email" value={props.data.users.email} disabled={true} />
         </fieldset>
       </form>
-      <button onClick={() => router.push('/')}>메인으로</button>
     </>
   )
 }

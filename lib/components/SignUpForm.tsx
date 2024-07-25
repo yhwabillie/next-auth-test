@@ -8,6 +8,7 @@ import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
 import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 import { toast, Toaster } from 'sonner'
 import { confirmDuplicateData } from '@/app/actions/signUp/confirmData'
+import { useAgreementStore } from '../zustandStore'
 require('dotenv').config()
 
 export const SignUpForm = () => {
@@ -38,7 +39,17 @@ export const SignUpForm = () => {
     },
   })
 
+  const agreements = useAgreementStore((state: any) => state.agreements)
+
+  console.log(agreements, '//////form page')
+
   const handleSubmitForm = async (data: SignUpFormSchemaType) => {
+    //제3자동의 여부 체크
+    if (!agreements) {
+      toast('제 3자 동의 데이터가 누락되었습니다. 동의서를 작성해주세요.')
+      return
+    }
+
     //중복검사 체크 (ID, Email)
     if (!getValues('confirm_id')) {
       toast('ID 중복검사를 해주세요')
@@ -142,7 +153,6 @@ export const SignUpForm = () => {
       <Toaster position="top-center" />
       <h1>회원가입 페이지</h1>
       <p>누구나 접근 가능한 화면</p>
-      <button onClick={() => router.push('/')}>메인으로</button>
 
       {isFormLoading ? (
         <h1>Loading...</h1>
@@ -239,6 +249,8 @@ export const SignUpForm = () => {
           <button>submit</button>
         </form>
       )}
+
+      <button onClick={() => router.back()}>뒤로</button>
     </>
   )
 }

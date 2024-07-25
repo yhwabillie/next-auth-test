@@ -69,7 +69,6 @@ export const SignInForm = () => {
       <Toaster position="top-center" />
       <h1>로그인 페이지</h1>
       <p>누구나 접근 가능한 화면</p>
-      <button onClick={() => router.push('/')}>메인으로</button>
 
       {isFormLoading ? (
         <h1>Loading...</h1>

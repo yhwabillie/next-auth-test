@@ -14,6 +14,7 @@ export const Header = () => {
   return (
     <header>
       <div>
+        <button onClick={() => router.push('/')}>홈</button>
         {session && session.user ? (
           <>
             <span>{`${session.user.name}님 안녕하세요!`}</span>
@@ -22,7 +23,7 @@ export const Header = () => {
           </>
         ) : (
           <>
-            <button onClick={() => router.push('/signUp')}>회원가입</button>
+            <button onClick={() => router.push('/signUp/agreement')}>회원가입</button>
             <button onClick={() => router.push('/signIn')}>로그인</button>
           </>
         )}

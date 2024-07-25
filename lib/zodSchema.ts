@@ -39,3 +39,11 @@ export const SignInSchema = z.object({
 })
 
 export type SignInFormSchemaType = z.infer<typeof SignInSchema>
+
+export const AgreementSchema = z.object({
+  service_agreement: z.boolean(),
+  privacy_agreement: z.boolean(),
+  selectable_agreement: z.boolean().optional(),
+})
+
+export type AgreementSchemaType = z.infer<typeof AgreementSchema>
