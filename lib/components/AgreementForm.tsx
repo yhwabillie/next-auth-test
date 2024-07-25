@@ -16,6 +16,11 @@ export const AgreementForm = () => {
   } = useForm<AgreementSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AgreementSchema),
+    defaultValues: {
+      service_agreement: false,
+      privacy_agreement: false,
+      selectable_agreement: false,
+    },
   })
 
   const router = useRouter()
