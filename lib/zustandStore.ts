@@ -8,5 +8,5 @@ type AgreementState = {
 
 export const useAgreementStore = create<AgreementState>((set) => ({
   agreements: null,
-  setAgreement: (data: any) => set((state: any) => ({ agreements: data })),
+  setAgreement: (data: any) => set({ agreements: data }),
 }))

@@ -10,13 +10,16 @@ datasource db {
 }
 
 model User {
-  idx       String   @id @default(uuid())
-  provider  String
-  user_type String
-  id        String   @unique
-  email     String   @unique
-  name      String
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  idx                  String   @id @default(uuid())
+  provider             String
+  user_type            String
+  id                   String   @unique
+  email                String   @unique
+  name                 String
+  password             String
+  service_agreement    Boolean
+  privacy_agreement    Boolean
+  selectable_agreement Boolean
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }

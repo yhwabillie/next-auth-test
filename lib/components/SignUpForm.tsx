@@ -42,6 +42,7 @@ export const SignUpForm = () => {
   const agreements = useAgreementStore((state: any) => state.agreements)
 
   console.log(agreements, '//////form page')
+  console.log(getValues())
 
   const handleSubmitForm = async (data: SignUpFormSchemaType) => {
     //제3자동의 여부 체크
@@ -76,6 +77,9 @@ export const SignUpForm = () => {
             id: data.id,
             email: data.email,
             password: data.password,
+            service_agreement: agreements.service_agreement,
+            privacy_agreement: agreements.privacy_agreement,
+            selectable_agreement: agreements?.selectable_agreement,
           }),
         }),
       {
