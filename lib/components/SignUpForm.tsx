@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
 import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 import { toast, Toaster } from 'sonner'
@@ -14,10 +14,10 @@ import axios from 'axios'
 require('dotenv').config()
 
 export const SignUpForm = () => {
-  const [profileImage, setProfileImage] = useState('/images/default_profile.jpeg')
+  const [profileImage, setProfileImage] = useState('')
   const [isConfirmID, setIsConfirmID] = useState(false)
   const [isConfirmEmail, setIsConfirmEmail] = useState(false)
-  const [isFormLoading, setIsFormLoading] = useState<boolean>(false)
+  const [isFormLoading, setIsFormLoading] = useState(false)
   const router = useRouter()
   const {
     register,
@@ -42,12 +42,12 @@ export const SignUpForm = () => {
     },
   })
 
-  const agreements = useAgreementStore((state: any) => state.agreements)
+  const agreements = useAgreementStore((state) => state.agreements)
 
   const handleSubmitForm = async (data: SignUpFormSchemaType) => {
     //제3자동의 여부 체크
     if (!agreements) {
-      toast('제 3자 동의 데이터가 누락되었습니다. 동의서를 작성해주세요.')
+      toast('동의 데이터가 누락되었습니다. 동의서를 작성해주세요.')
       return
     }
 
@@ -82,17 +82,6 @@ export const SignUpForm = () => {
     formData.append('input_data', blob)
     formData.append('profile_image', data.profile_image[0])
 
-    // axios({
-    //   method: 'post',
-    //   url: 'http://localhost:3000/api/signUp',
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //   },
-    //   data: formData,
-    // }).then((res) => {
-    //   console.log(res.status)
-    // })
-
     setIsFormLoading(true)
 
     toast.promise(
@@ -123,21 +112,7 @@ export const SignUpForm = () => {
     )
   }
 
-  const confirmDuplicate = async (field_name: string, new_value: string) => {
-    try {
-      const response = await confirmDuplicateData({ field_name, new_value })
-
-      console.log(response)
-
-      if (!response) return
-
-      handleDuplicateResponse(response)
-    } catch (error) {
-      console.error('Error confirming duplicate:', error)
-    }
-  }
-
-  const handleDuplicateResponse = (response: any) => {
+  const handleDuplicateResponse = (response: { field_name: string; success: boolean }) => {
     const { field_name, success } = response
 
     switch (field_name) {
@@ -158,19 +133,38 @@ export const SignUpForm = () => {
     }
   }
 
-  const handleChangeProfileImage = async (event: any) => {
-    const file = event.target.files[0]
-    const reader = new FileReader()
+  const confirmDuplicate = async (field_name: string, new_value: string) => {
+    try {
+      const response = await confirmDuplicateData({ field_name, new_value })
 
-    reader.readAsDataURL(file)
+      if (!response) return
+      handleDuplicateResponse(response)
+    } catch (error) {
+      console.error('Error confirming duplicate:', error)
+    }
+  }
 
-    reader.onload = (event: any) => {
-      //Base64 Data URL onload status 2완료 1진행중 0실패
-      if (reader.readyState === 2) {
-        const imgUrl = event.target.result
+  const handleChangeProfileImage = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return
 
-        setProfileImage(imgUrl)
+    if (event.target.files.length > 0) {
+      const currentImage = event.target.files[0]
+
+      const reader = new FileReader()
+      reader.readAsDataURL(currentImage)
+
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        //Base64 Data URL onload status 2완료 1진행중 0실패
+        if (!event.target) return
+
+        if (reader.readyState === FileReader.DONE) {
+          const imgUrl = event.target?.result as string
+
+          setProfileImage(imgUrl)
+        }
       }
+    } else {
+      setProfileImage('')
     }
   }
 
@@ -204,19 +198,26 @@ export const SignUpForm = () => {
 
           <fieldset>
             <legend>프로필 이미지</legend>
-            <Image src={profileImage} width={200} height={200} alt="profile image" priority />
-            <input {...register('profile_image')} id="profile_image" name="profile_image" type="file" onChange={handleChangeProfileImage} />
+            <Image src={profileImage === '' ? '/images/default_profile.jpeg' : profileImage} width={200} height={200} alt="profile image" priority />
+            <input
+              {...register('profile_image')}
+              id="profile_image"
+              name="profile_image"
+              type="file"
+              accept="image/png, image/jpeg, image/webp, image/jpg"
+              onChange={handleChangeProfileImage}
+            />
           </fieldset>
 
-          <HookFormRadioList register={register('user_type')} itemList={radioDataList} label={'user_type'} name={'user_type'} type={'radio'} />
+          <HookFormRadioList register={register('user_type')} itemList={radioDataList} label="user_type" name="user_type" type="radio" />
 
           <div>
-            <HookFormInput register={register('name')} id={'name'} label={'name'} type={'text'} placeholder={'name'} />
+            <HookFormInput register={register('name')} id="name" label="name" type="text" placeholder="name" />
             <p>{errors.name && !!watch('name') && `${errors.name.message}`}</p>
           </div>
 
           <div>
-            <HookFormInput register={register('id')} id={'id'} label={'id'} type={'text'} placeholder={'id'} disabled={isConfirmID} />
+            <HookFormInput register={register('id')} id="id" label="id" type="text" placeholder="id" disabled={isConfirmID} />
 
             <input
               {...register('confirm_id')}
@@ -247,11 +248,11 @@ export const SignUpForm = () => {
           </div>
 
           <div>
-            <HookFormInput register={register('email')} id={'email'} label={'email'} type={'email'} placeholder={'email'} />
+            <HookFormInput register={register('email')} id="email" label="email" type="email" placeholder="email" />
 
             <input
               {...register('confirm_email')}
-              id={'confirm_email'}
+              id="confirm_email"
               type="checkbox"
               name="confirm_email"
               checked={isConfirmEmail}
@@ -279,17 +280,17 @@ export const SignUpForm = () => {
           </div>
 
           <div>
-            <HookFormInput register={register('password')} id={'password'} label={'password'} type={'password'} placeholder={'password'} />
+            <HookFormInput register={register('password')} id="password" label="password" type="password" placeholder="password" />
             <p>{errors.password && !!watch('password') && `${errors.password.message}`}</p>
           </div>
 
           <div>
             <HookFormInput
               register={register('password_confirm')}
-              id={'password_confirm'}
-              label={'password_confirm'}
-              type={'password'}
-              placeholder={'password_confirm'}
+              id="password_confirm"
+              label="password_confirm"
+              type="password"
+              placeholder="password_confirm"
             />
             <p>{errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm.message}`}</p>
           </div>

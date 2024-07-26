@@ -14,14 +14,11 @@ export const config = {
 }
 
 export async function POST(request: NextRequest) {
-  // 프론트에서 받은 formdata
+  // 프론트에서 받은 formData
   const formData = await request.formData()
 
-  // FormData에서 'input_data' 키의 값을 가져옵니다.
+  // formData - input_data
   const inputDataEntry = formData.get('input_data')
-
-  // profile_image
-  const profileImageFile = formData.get('profile_image')
 
   if (!inputDataEntry) {
     return NextResponse.json({ error: 'input_data is required' }, { status: 400 })
@@ -30,9 +27,12 @@ export async function POST(request: NextRequest) {
   // inputDataEntry가 파일인 경우 Blob으로 처리
   const inputDataText = typeof inputDataEntry === 'string' ? inputDataEntry : await (inputDataEntry as Blob).text()
 
-  // JSON 데이터 파싱
+  // input_data JSON 데이터 파싱
   const inputData = JSON.parse(inputDataText)
   console.log('파싱 결과 =========>', inputData)
+
+  // formData - profile_image
+  const profileImageFile = formData.get('profile_image')
 
   // 비밀번호 해시 암호화
   const hashedPassword = bcrypt.hashSync(inputData.password, 10)
