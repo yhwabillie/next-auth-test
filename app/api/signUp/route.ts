@@ -56,6 +56,9 @@ export async function POST(request: NextRequest) {
   const filePath = data.path
   console.log('========>', filePath)
 
+  const profileImg = supabase.storage.from(process.env.NEXT_PUBLIC_PROJECT_DIR!).getPublicUrl(`${filePath}`)
+  console.log('========>', profileImg.data.publicUrl)
+
   try {
     const new_user = await prisma.user.create({
       data: {
@@ -65,7 +68,7 @@ export async function POST(request: NextRequest) {
         id: inputData.id,
         email: inputData.email,
         password: hashedPassword,
-        profile_img: filePath,
+        profile_img: profileImg.data.publicUrl,
         service_agreement: inputData.service_agreement,
         privacy_agreement: inputData.privacy_agreement,
         selectable_agreement: inputData.selectable_agreement,

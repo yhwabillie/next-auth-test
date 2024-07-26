@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'sonner'
+import { supabase } from '@/lib/supabaseClient'
 
 export const ProfileForm = (props: any) => {
   const router = useRouter()
@@ -66,7 +67,13 @@ export const ProfileForm = (props: any) => {
           <legend>프로필 이미지</legend>
           <label>프로필 이미지: </label>
           <input type="file" />
-          <Image src="/images/default_profile.jpeg" width={200} height={200} alt="profile image" priority />
+          <Image
+            src={props.data.users.profile_img ? props.data.users.profile_img : '/images/default_profile.jpeg'}
+            width={200}
+            height={200}
+            alt="profile image"
+            priority
+          />
         </fieldset>
         <fieldset>
           <legend>사용자 타입</legend>
