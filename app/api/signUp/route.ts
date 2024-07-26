@@ -7,11 +7,11 @@ import prisma from '@/lib/prisma'
 require('dotenv').config()
 
 // Next.js API 라우트에서 Multer를 사용하려면 미들웨어 형태로 처리해야 합니다.
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// }
 
 export async function POST(request: NextRequest) {
   // 프론트에서 받은 formData
