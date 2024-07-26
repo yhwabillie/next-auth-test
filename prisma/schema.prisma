@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -17,6 +17,7 @@ model User {
   email                String   @unique
   name                 String
   password             String
+  profile_img          String
   service_agreement    Boolean
   privacy_agreement    Boolean
   selectable_agreement Boolean
