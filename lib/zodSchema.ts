@@ -13,8 +13,17 @@ export const PasswordSchema = () => {
     )
 }
 
+const MAX_FILE_SIZE = 1024 * 1024 * 5
+const ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+const ACCEPTED_IMAGE_TYPES = ['jpeg', 'jpg', 'png', 'webp']
+
 export const SignUpSchema = z
   .object({
+    profile_image: z.any(),
+    // .refine((files) => {
+    //   return files?.[0]?.size <= MAX_FILE_SIZE
+    // }, `Max image size is 5MB.`)
+    // .refine((files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type), 'Only .jpg, .jpeg, .png and .webp formats are supported.'),
     user_type: z.enum(['indivisual', 'admin']),
     name: UserNameSchema(),
     id: z.string().regex(/^[a-zA-Z]+[a-zA-Z0-9]{6,10}$/g, '6자-10자 사이 영문자로 시작하는 영문과 숫자의 조합으로 작성하세요 (공백, 특수문자 X)'),

@@ -1,5 +1,6 @@
 'use client'
 import { updateUserAgreement, updateUserName } from '@/app/actions/profile/updateProfile'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
@@ -62,14 +63,23 @@ export const ProfileForm = (props: any) => {
       <form>
         <legend>프로필 정보</legend>
         <fieldset>
+          <legend>프로필 이미지</legend>
+          <label>프로필 이미지: </label>
+          <input type="file" />
+          <Image src="/images/default_profile.jpeg" width={200} height={200} alt="profile image" priority />
+        </fieldset>
+        <fieldset>
+          <legend>사용자 타입</legend>
           <label>사용자 타입: </label>
           <input type="text" value={props.data.users.user_type} disabled={true} />
         </fieldset>
         <fieldset>
+          <legend>사용자 아이디</legend>
           <label>ID: </label>
           <input type="text" value={props.data.users.id} disabled={true} />
         </fieldset>
         <fieldset>
+          <legend>사용자 이름</legend>
           <label>이름: </label>
           <input {...register('name')} ref={nameRef} id="name" type="text" defaultValue={props.data.users.name} disabled={true} />
           <button
@@ -95,6 +105,7 @@ export const ProfileForm = (props: any) => {
           </button>
         </fieldset>
         <fieldset>
+          <legend>사용자 이메일</legend>
           <label>이메일: </label>
           <input type="email" value={props.data.users.email} disabled={true} />
         </fieldset>

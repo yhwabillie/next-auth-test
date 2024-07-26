@@ -9,9 +9,12 @@ import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 import { toast, Toaster } from 'sonner'
 import { confirmDuplicateData } from '@/app/actions/signUp/confirmData'
 import { useAgreementStore } from '../zustandStore'
+import Image from 'next/image'
+import axios from 'axios'
 require('dotenv').config()
 
 export const SignUpForm = () => {
+  const [profileImage, setProfileImage] = useState('/images/default_profile.jpeg')
   const [isConfirmID, setIsConfirmID] = useState(false)
   const [isConfirmEmail, setIsConfirmEmail] = useState(false)
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false)
@@ -41,9 +44,6 @@ export const SignUpForm = () => {
 
   const agreements = useAgreementStore((state: any) => state.agreements)
 
-  console.log(agreements, '//////form page')
-  console.log(getValues())
-
   const handleSubmitForm = async (data: SignUpFormSchemaType) => {
     //제3자동의 여부 체크
     if (!agreements) {
@@ -62,26 +62,48 @@ export const SignUpForm = () => {
       return
     }
 
+    const formData = new FormData()
+
+    const inputData = {
+      user_type: data.user_type,
+      name: data.name,
+      id: data.id,
+      email: data.email,
+      password: data.password,
+      service_agreement: agreements.service_agreement,
+      privacy_agreement: agreements.privacy_agreement,
+      selectable_agreement: agreements?.selectable_agreement,
+    }
+
+    const blob = new Blob([JSON.stringify(inputData)], {
+      type: 'application/json',
+    })
+
+    formData.append('input_data', blob)
+    formData.append('profile_image', data.profile_image[0])
+
+    // axios({
+    //   method: 'post',
+    //   url: 'http://localhost:3000/api/signUp',
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    //   data: formData,
+    // }).then((res) => {
+    //   console.log(res.status)
+    // })
+
     setIsFormLoading(true)
 
     toast.promise(
-      async () =>
-        await await fetch(`/api/signUp`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_type: data.user_type,
-            name: data.name,
-            id: data.id,
-            email: data.email,
-            password: data.password,
-            service_agreement: agreements.service_agreement,
-            privacy_agreement: agreements.privacy_agreement,
-            selectable_agreement: agreements?.selectable_agreement,
-          }),
-        }),
+      axios({
+        method: 'post',
+        url: 'http://localhost:3000/api/signUp',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data: formData,
+      }),
       {
         loading: '데이터 전송 중입니다.',
         success: () => {
@@ -136,6 +158,22 @@ export const SignUpForm = () => {
     }
   }
 
+  const handleChangeProfileImage = async (event: any) => {
+    const file = event.target.files[0]
+    const reader = new FileReader()
+
+    reader.readAsDataURL(file)
+
+    reader.onload = (event: any) => {
+      //Base64 Data URL onload status 2완료 1진행중 0실패
+      if (reader.readyState === 2) {
+        const imgUrl = event.target.result
+
+        setProfileImage(imgUrl)
+      }
+    }
+  }
+
   useEffect(() => {}, [watch, setFocus])
 
   const radioDataList: RadioItemType[] = [
@@ -161,8 +199,14 @@ export const SignUpForm = () => {
       {isFormLoading ? (
         <h1>Loading...</h1>
       ) : (
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
+        <form onSubmit={handleSubmit(handleSubmitForm)} encType="multipart/form-data">
           <legend>회원가입 Form</legend>
+
+          <fieldset>
+            <legend>프로필 이미지</legend>
+            <Image src={profileImage} width={200} height={200} alt="profile image" priority />
+            <input {...register('profile_image')} id="profile_image" name="profile_image" type="file" onChange={handleChangeProfileImage} />
+          </fieldset>
 
           <HookFormRadioList register={register('user_type')} itemList={radioDataList} label={'user_type'} name={'user_type'} type={'radio'} />
 
