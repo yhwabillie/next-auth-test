@@ -26,8 +26,9 @@ const authOptions: NextAuthOptions = {
             }),
           })
           const user = await response.json()
-          console.log('signin api에서 받은거======================>', user)
-          return user
+          const { password, ...withoutPW } = user
+          console.log('signin api에서 받은거======================>', withoutPW)
+          return withoutPW
         } catch (error: any) {
           //signin api에서 인풋데이터 검증 중 일으킨 에러를 반환
           console.log('==========================>', error)
