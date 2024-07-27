@@ -33,17 +33,15 @@ export const updateUserAgreement = async ({ idx, selectable_agreement }: UpdateU
   try {
     const user = await prisma.user.update({
       where: {
-        idx: idx,
+        idx,
       },
       data: {
-        selectable_agreement: selectable_agreement,
-      },
-      select: {
-        selectable_agreement: true,
+        selectable_agreement,
       },
     })
 
-    console.log(user, '////')
+    // 필요하지 않은 사용자 데이터 로그 생략
+    console.log('User agreement updated for user with idx:', idx)
 
     return { success: true, user }
   } catch (error) {
