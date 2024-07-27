@@ -38,7 +38,12 @@ export const updateUserAgreement = async ({ idx, selectable_agreement }: UpdateU
       data: {
         selectable_agreement: selectable_agreement,
       },
+      select: {
+        selectable_agreement: true,
+      },
     })
+
+    console.log(user, '////')
 
     return { success: true, user }
   } catch (error) {
