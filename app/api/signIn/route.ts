@@ -3,24 +3,25 @@ import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
-  const requestBody = await request.json()
-  const user = await prisma.user.findUnique({
-    where: {
-      id: requestBody.id,
-    },
-  })
+  const body = await request.json()
 
-  // 사용자 ID 검증
-  if (!user) {
-    throw new Error('==========================> i dont have this id')
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: body.id,
+      },
+    })
+
+    // 사용자 ID 검증
+    if (!user) throw new Error('==========================> 없는 아이디 입니다.')
+
+    // 비밀번호 검증
+    const isPasswordCorrect = await bcrypt.compare(body.password, user.password)
+    if (!isPasswordCorrect) throw new Error('==========================> 잘못된 비밀번호 입니다.')
+
+    // 사용자 인증 성공
+    return NextResponse.json(user)
+  } catch (error) {
+    throw new Error(`SignIn Error: ${error}`)
   }
-
-  // 비밀번호 검증
-  const isPasswordCorrect = await bcrypt.compare(requestBody.password, user.password)
-  if (!isPasswordCorrect) {
-    throw new Error('==========================> wrong pw')
-  }
-
-  // 사용자 인증 성공
-  return NextResponse.json(user)
 }

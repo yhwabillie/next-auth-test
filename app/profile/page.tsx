@@ -1,22 +1,29 @@
 'use server'
 import { ProfileForm } from '@/lib/components/ProfileForm'
 import { headers } from 'next/headers'
-require('dotenv').config()
+import dotenv from 'dotenv'
+dotenv.config()
 
-const fetchData = async () => {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
-    method: 'GET',
-    headers: new Headers(headers()),
-  })
+const fetchProfileData = async () => {
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/profile`, {
+      method: 'GET',
+      headers: new Headers(headers()),
+    })
 
-  if (!response.ok) return
-  const data = await response.json()
+    if (!response.ok) {
+      throw Error('사용자 프로필 정보 Fetch Error')
+    }
 
-  return data
+    return await response.json()
+  } catch (error) {
+    console.error('사용자 프로필 정보 Fetch Error :', error)
+    return null
+  }
 }
 
 export default async function Page() {
-  const data = await fetchData()
+  const data = await fetchProfileData()
 
   return <ProfileForm data={data} />
 }

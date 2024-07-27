@@ -8,15 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "db:gen": "prisma generate",
     "db:migrate": "prisma migrate dev --name init",
     "db:pull": "prisma db pull",
-    "db:deploy": "prisma migrate deploy",
-    "db:studio": "dotenv -e .env.local -- npx prisma studio",
     "vercel-deploy": "prisma generate &&  next build",
     "local:migrate": "dotenv -e .env.local -- npx prisma migrate dev",
-    "local:gen": "dotenv -e .env.local -- npx prisma studio",
-    "local:db-push": "dotenv -e .env.local -- npx prisma db push"
+    "local:gen": "dotenv -e .env.local -- npx prisma generate",
+    "local:studio": "dotenv -e .env.local -- npx prisma studio",
+    "local:push": "dotenv -e .env.local -- npx prisma db push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

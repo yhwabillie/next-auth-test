@@ -1,11 +1,6 @@
 'use client'
-import { Session } from 'next-auth'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-
-interface HeaderProps {
-  session: Session | null
-}
 
 export const Header = () => {
   const router = useRouter()
@@ -18,7 +13,7 @@ export const Header = () => {
         {session && session.user ? (
           <>
             <span>{`${session.user.name}님 안녕하세요!`}</span>
-            <button onClick={() => signOut({ callbackUrl: '/' })}>로그아웃</button>
+            <button onClick={() => signOut({ callbackUrl: '/signIn' })}>로그아웃</button>
             <button onClick={() => router.push('/profile')}>프로필</button>
           </>
         ) : (

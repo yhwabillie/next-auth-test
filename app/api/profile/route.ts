@@ -1,14 +1,12 @@
 import { getServerSession } from 'next-auth'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import authOptions from '@/lib/auth'
 
 export async function GET() {
   const session = await getServerSession(authOptions)
 
-  if (!session) {
-    return NextResponse.json({ error: 'No Session' }, { status: 400 })
-  }
+  if (!session) throw new Error('세션이 존재하지 않습니다.')
 
   try {
     const users = await prisma.user.findUnique({
@@ -17,8 +15,10 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json({ users })
+    if (!users) throw new Error('사용자 프로필 정보 조회에 실패했습니다.')
+
+    return NextResponse.json(users)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
+    throw new Error(`Profile Error: ${error}`)
   }
 }

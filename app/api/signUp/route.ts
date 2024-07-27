@@ -3,7 +3,8 @@ import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
 import prisma from '@/lib/prisma'
-require('dotenv').config()
+import dotenv from 'dotenv'
+dotenv.config()
 
 export async function POST(request: NextRequest) {
   // 프론트에서 보낸 formData 엔트리(File)
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
   const inputDataEntry = formData.get('input_data')
   const profileImageEntry = formData.get('profile_image')
 
-  if (!formData) throw Error('회원가입 데이터를 받지 못했습니다.')
+  if (!formData) throw Error('프론트에서 회원가입 데이터를 받지 못했습니다.')
   console.log('formData ========>', formData)
 
   if (!inputDataEntry) throw Error('사용자 인풋 데이터 File을 받지 못했습니다.')
@@ -72,6 +73,6 @@ export async function POST(request: NextRequest) {
     const { password, ...infoWithOutPW } = new_user
     return NextResponse.json(infoWithOutPW)
   } catch (error) {
-    throw new Error(`==========================> ${error}`)
+    throw new Error(`SignUp Error: ${error}`)
   }
 }

@@ -18,6 +18,7 @@ declare module 'next-auth/jwt' {
       idx?: string | undefined | null
       name?: string | undefined | null
       user_type?: string | undefined | null
+      profile_img?: string | undefined | null
     }
   }
 }

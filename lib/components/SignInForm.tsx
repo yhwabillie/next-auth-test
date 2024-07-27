@@ -48,7 +48,7 @@ export const SignInForm = () => {
           if (data) {
             reset()
             router.refresh()
-            return `어서오세요 🎉`
+            return '어서오세요 🎉'
           }
         },
         error: (err) => {
@@ -66,7 +66,6 @@ export const SignInForm = () => {
 
   return (
     <>
-      <Toaster position="top-center" />
       <h1>로그인 페이지</h1>
       <p>누구나 접근 가능한 화면</p>
 
