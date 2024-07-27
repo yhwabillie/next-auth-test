@@ -248,7 +248,7 @@ export const SignUpForm = () => {
           </div>
 
           <div>
-            <HookFormInput register={register('email')} id="email" label="email" type="email" placeholder="email" />
+            <HookFormInput register={register('email')} id="email" label="email" type="email" placeholder="email" disabled={isConfirmEmail} />
 
             <input
               {...register('confirm_email')}

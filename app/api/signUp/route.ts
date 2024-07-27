@@ -1,64 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import multer from 'multer'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
 import prisma from '@/lib/prisma'
 require('dotenv').config()
 
-// Next.js API 라우트에서 Multer를 사용하려면 미들웨어 형태로 처리해야 합니다.
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// }
-
 export async function POST(request: NextRequest) {
-  // 프론트에서 받은 formData
+  // 프론트에서 보낸 formData 엔트리(File)
   const formData = await request.formData()
-
-  // formData - input_data
   const inputDataEntry = formData.get('input_data')
+  const profileImageEntry = formData.get('profile_image')
 
-  if (!inputDataEntry) {
-    return NextResponse.json({ error: 'input_data is required' }, { status: 400 })
-  }
+  if (!formData) throw Error('회원가입 데이터를 받지 못했습니다.')
+  console.log('formData ========>', formData)
 
-  // inputDataEntry가 파일인 경우 Blob으로 처리
+  if (!inputDataEntry) throw Error('사용자 인풋 데이터 File을 받지 못했습니다.')
+  console.log('inputDataEntry ========>', inputDataEntry)
+
+  // File 데이터 Blob으로 처리 및 JSON 데이터로 파싱
   const inputDataText = typeof inputDataEntry === 'string' ? inputDataEntry : await (inputDataEntry as Blob).text()
-
-  // input_data JSON 데이터 파싱
   const inputData = JSON.parse(inputDataText)
-  console.log('파싱 결과 =========>', inputData)
+  console.log('File 사용자 인풋 데이터 파싱 결과 =========>', inputData)
 
   // 비밀번호 해시 암호화
   const hashedPassword = bcrypt.hashSync(inputData.password, 10)
 
-  // formData - profile_image
-  const profileImageFile = formData.get('profile_image')
-  console.log('========>', profileImageFile)
+  // 최종 저장 프로필 이미지 변수
+  let profile_img_result
 
-  if (!profileImageFile) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+  // 기본 제공 프로필 이미지를 사용하는 경우 undefined
+  if (profileImageEntry === 'undefined') {
+    profile_img_result = profileImageEntry
+    console.log('기본 프로필 사용 ========>', profile_img_result)
+  } else if (profileImageEntry) {
+    // 별도 프로필 이미지 사용하는 경우, supabase publicUrl 생성
+    const fileName = `${uuidv4()}-${inputData.id}`
+    const { data, error } = await supabase.storage.from(process.env.NEXT_PUBLIC_PROJECT_DIR!).upload(fileName, profileImageEntry, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+    if (error) throw Error('Supabase Storage 업로드 에러입니다.')
+
+    const filePath = data.path
+    console.log('========>', filePath)
+
+    const profileImg = supabase.storage.from(process.env.NEXT_PUBLIC_PROJECT_DIR!).getPublicUrl(`${filePath}`)
+    console.log('========>', profileImg.data.publicUrl)
+
+    profile_img_result = profileImg.data.publicUrl
+    console.log('별도 프로필 사용 ========>', profile_img_result)
   }
 
-  const fileName = `${uuidv4()}-${inputData.id}`
-  const { data, error } = await supabase.storage.from(process.env.NEXT_PUBLIC_PROJECT_DIR!).upload(fileName, profileImageFile, {
-    cacheControl: '3600',
-    upsert: false,
-  })
-
-  if (error) {
-    return NextResponse.json({ error: 'Supabase Storage Upload Error' }, { status: 500 })
-  }
-
-  if (!data) return
-  const filePath = data.path
-  console.log('========>', filePath)
-
-  const profileImg = supabase.storage.from(process.env.NEXT_PUBLIC_PROJECT_DIR!).getPublicUrl(`${filePath}`)
-  console.log('========>', profileImg.data.publicUrl)
-
+  // DB 생성
   try {
     const new_user = await prisma.user.create({
       data: {
@@ -68,7 +62,7 @@ export async function POST(request: NextRequest) {
         id: inputData.id,
         email: inputData.email,
         password: hashedPassword,
-        profile_img: profileImg.data.publicUrl,
+        profile_img: profile_img_result!,
         service_agreement: inputData.service_agreement,
         privacy_agreement: inputData.privacy_agreement,
         selectable_agreement: inputData.selectable_agreement,

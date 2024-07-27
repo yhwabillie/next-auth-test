@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // engineType = "binary"
 }
 
 datasource db {
@@ -17,7 +16,7 @@ model User {
   email                String   @unique
   name                 String
   password             String
-  profile_img          String
+  profile_img          String?
   service_agreement    Boolean
   privacy_agreement    Boolean
   selectable_agreement Boolean

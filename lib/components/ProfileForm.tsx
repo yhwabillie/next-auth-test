@@ -2,10 +2,9 @@
 import { updateUserAgreement, updateUserName } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'sonner'
-import { supabase } from '@/lib/supabaseClient'
 
 export const ProfileForm = (props: any) => {
   const router = useRouter()
@@ -68,7 +67,7 @@ export const ProfileForm = (props: any) => {
           <label>프로필 이미지: </label>
           <input type="file" />
           <Image
-            src={props.data.users.profile_img ? props.data.users.profile_img : '/images/default_profile.jpeg'}
+            src={props.data.users.profile_img === 'undefined' ? '/images/default_profile.jpeg' : props.data.users.profile_img}
             width={200}
             height={200}
             alt="profile image"
