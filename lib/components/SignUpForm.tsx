@@ -87,7 +87,7 @@ export const SignUpForm = () => {
     toast.promise(
       axios({
         method: 'post',
-        url: `${process.env.NEXTAUTH_URL}/api/signUp`,
+        url: `/api/signUp`,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
