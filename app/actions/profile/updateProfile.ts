@@ -4,9 +4,40 @@ import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
 import bcrypt from 'bcryptjs'
 
-export const confirmCurrentPw = async (idx: string, input_pw: string) => {
-  console.log(idx, '/////', input_pw)
+//사용자 신규 비밀번호 업데이트
+export const updateUserPw = async (idx: string, new_pw: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      idx: idx,
+    },
+  })
 
+  // 사용자 idx 검증
+  if (!user) throw new Error('==========================> 권한이 없는 계정입니다.')
+
+  // 기존 비밀번호와 신규 비밀번호가 같은지 검증
+  const isPasswordSame = await bcrypt.compare(new_pw, user.password)
+
+  if (!isPasswordSame) {
+    // 신규 비밀번호 해시 암호화
+    const hashedPassword = bcrypt.hashSync(new_pw, 10)
+
+    // DB 업데이트
+    const user = await prisma.user.update({
+      where: {
+        idx: idx,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    })
+  }
+
+  return isPasswordSame
+}
+
+//사용자 현재 비밀번호 확인
+export const confirmCurrentPw = async (idx: string, input_pw: string) => {
   const user = await prisma.user.findUnique({
     where: {
       idx: idx,
@@ -18,7 +49,6 @@ export const confirmCurrentPw = async (idx: string, input_pw: string) => {
 
   // 비밀번호 검증
   const isPasswordCorrect = await bcrypt.compare(input_pw, user.password)
-  console.log(isPasswordCorrect, '/////////')
 
   // 사용자 인증 성공
   return isPasswordCorrect

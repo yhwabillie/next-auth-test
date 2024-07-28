@@ -1,5 +1,5 @@
 'use client'
-import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile } from '@/app/actions/profile/updateProfile'
+import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile, updateUserPw } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -188,6 +188,22 @@ export const ProfileForm = (props: IProfileFormProps) => {
     }
   }
 
+  const handleUpdatePw = async () => {
+    console.log(getValues('password'))
+    try {
+      const response = await updateUserPw(props.data.idx, getValues('password'))
+
+      if (response) {
+        toast.warning('기존 비밀번호와 동일합니다, 다른 비밀번호로 입력해주세요.')
+      } else {
+        toast.success('비밀번호가 업데이트 되었습니다.')
+        setConfirmedPW(false)
+      }
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
+
   return (
     <>
       <form>
@@ -271,7 +287,9 @@ export const ProfileForm = (props: IProfileFormProps) => {
                 </fieldset>
                 {errors.password_confirm && !!watch('password_confirm') && <p>{errors.password_confirm.message}</p>}
               </div>
-              <button type="button">비밀번호 업데이트</button>
+              <button type="button" onClick={handleUpdatePw}>
+                비밀번호 업데이트
+              </button>
             </div>
           )}
         </div>
