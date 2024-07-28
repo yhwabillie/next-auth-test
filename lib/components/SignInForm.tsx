@@ -87,7 +87,7 @@ export const SignInForm = () => {
 
             <button>submit</button>
           </form>
-          <button>비밀번호 찾기</button>
+          <button onClick={() => router.push('/request-reset')}>비밀번호 찾기</button>
         </>
       )}
     </>

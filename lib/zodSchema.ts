@@ -13,6 +13,16 @@ export const PasswordSchema = () => {
     )
 }
 
+export const ForgotPwSchema = z.object({
+  email: z
+    .string()
+    .regex(/^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, '이메일 형식에 맞게 공백을 제외하고 작성해주세요. (EX. test@test.com)'),
+  password: PasswordSchema(),
+  password_confirm: z.string(),
+})
+
+export type ForgotPwSchemaType = z.infer<typeof ForgotPwSchema>
+
 export const AgreementSchema = z.object({
   service_agreement: z.boolean(),
   privacy_agreement: z.boolean(),
