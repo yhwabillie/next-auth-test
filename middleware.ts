@@ -26,14 +26,16 @@ export default async function middleware(req: NextRequest) {
 
   // reset-password url이 토큰이 없거나 유효하지 않으면 리다이렉트
   if (req.nextUrl.pathname.startsWith(`/reset-password`)) {
-    const url = new URL(req.url)
-    const pwToken = url.searchParams.get('token') // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
-
-    if (!pwToken) {
-      return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
-    }
-
     try {
+      const url = new URL(req.url)
+      const pwToken = url.searchParams.get('token') // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
+
+      console.log('============>', url)
+      console.log('============>', pwToken)
+
+      if (!pwToken) {
+        return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
+      }
       const decoded = jwt.verify(pwToken, SECRET_KEY)
       console.log('decode========>', decoded) // 유효한 경우, 디코딩된 페이로드 객체 출력
 
@@ -46,6 +48,6 @@ export default async function middleware(req: NextRequest) {
   }
 }
 
-// export const config = {
-//   matcher: '/reset-password',
-// }
+export const config = {
+  matcher: '/reset-password',
+}
