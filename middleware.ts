@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import jwt from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 
 const SECRET_KEY = process.env.EMAIL_JMT
 
@@ -35,7 +35,7 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
       }
 
-      const decoded = jwt.verify(pwToken, SECRET_KEY)
+      const decoded = await jwtVerify(pwToken, new TextEncoder().encode(SECRET_KEY))
       console.log('decode========>', decoded) // 유효한 경우, 디코딩된 페이로드 객체 출력
 
       return NextResponse.next()

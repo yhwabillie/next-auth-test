@@ -1,19 +1,11 @@
-'use server'
-
-// app/api/reset-password/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
 
-const SECRET_KEY = process.env.EMAIL_JMT
+const SECRET_KEY = process.env.JWT_SECRET
 
 if (!SECRET_KEY) {
   throw new Error('Missing JWT_SECRET environment variable')
-}
-
-// 사용자 정의 페이로드 타입 정의
-interface CustomJwtPayload extends JwtPayload {
-  email: string
 }
 
 export async function POST(req: NextRequest) {
@@ -24,17 +16,15 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 'unknown'으로 캐스팅한 후, 기대하는 타입으로 다시 캐스팅
-    const decoded = jwt.verify(token, SECRET_KEY!) as unknown as CustomJwtPayload
+    // 토큰 검증
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(SECRET_KEY))
+    const email = payload.email as string
 
-    if (!decoded.email) {
-      throw new Error('Token does not contain email')
-    }
-
+    // 비밀번호 해싱
     const hashedPassword = await bcrypt.hash(newPassword, 10)
 
     // 여기에 사용자 비밀번호 업데이트 로직을 추가하세요.
-    // 예: await updateUserPassword(decoded.email, hashedPassword);
+    // 예: await updateUserPassword(email, hashedPassword);
 
     return NextResponse.json({ message: 'Password has been reset' })
   } catch (error) {

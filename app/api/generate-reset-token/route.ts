@@ -1,8 +1,5 @@
-'use server'
-
-// app/api/generate-reset-token/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
+import { SignJWT } from 'jose'
 import nodemailer from 'nodemailer'
 
 const SECRET_KEY = process.env.EMAIL_JMT
@@ -19,7 +16,7 @@ export async function POST(req: NextRequest) {
   }
 
   // JWT 토큰 생성
-  const token = jwt.sign({ email }, SECRET_KEY!, { expiresIn: '15m' })
+  const token = await new SignJWT({ email }).setProtectedHeader({ alg: 'HS256' }).setExpirationTime('15m').sign(new TextEncoder().encode(SECRET_KEY))
 
   // 비밀번호 재설정 링크
   const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`
