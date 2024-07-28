@@ -29,20 +29,18 @@ export default async function middleware(req: NextRequest) {
     try {
       const url = new URL(req.url)
       const pwToken = url.searchParams.get('token') // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
-
-      console.log('============>', url)
-      console.log('============>', pwToken)
+      console.log('쿼리 파라미터pwToken============>', pwToken)
 
       if (!pwToken) {
         return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
       }
+
       const decoded = jwt.verify(pwToken, SECRET_KEY)
       console.log('decode========>', decoded) // 유효한 경우, 디코딩된 페이로드 객체 출력
 
       return NextResponse.next()
     } catch (err) {
-      // 검증 실패 시 리다이렉트
-      console.log('===============>', err)
+      console.log('err===============>', err)
       return NextResponse.redirect(new URL('/error?message=Invalid%20or%20expired%20token', req.url))
     }
   }
