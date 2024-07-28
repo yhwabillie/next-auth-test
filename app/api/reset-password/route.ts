@@ -1,3 +1,5 @@
+'user server'
+
 // app/api/reset-password/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import jwt, { JwtPayload } from 'jsonwebtoken'

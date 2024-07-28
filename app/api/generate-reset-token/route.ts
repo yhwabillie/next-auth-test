@@ -1,3 +1,5 @@
+'user server'
+
 // app/api/generate-reset-token/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
