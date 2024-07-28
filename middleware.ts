@@ -24,27 +24,27 @@ export default async function middleware(req: NextRequest) {
     throw new Error('Missing JWT_SECRET environment variable')
   }
 
-  // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
-  const url = new URL(req.url)
-  const pwToken = url.searchParams.get('token')
+  // // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
+  // const url = new URL(req.url)
+  // const pwToken = url.searchParams.get('token')
 
-  // 토큰이 없거나 유효하지 않으면 리다이렉트
-  if (!pwToken) {
-    return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
-  }
+  // // 토큰이 없거나 유효하지 않으면 리다이렉트
+  // if (!pwToken) {
+  //   return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))
+  // }
 
-  try {
-    const decoded = jwt.verify(pwToken, SECRET_KEY)
-    console.log('decode========>', decoded) // 유효한 경우, 디코딩된 페이로드 객체 출력
+  // try {
+  //   const decoded = jwt.verify(pwToken, SECRET_KEY)
+  //   console.log('decode========>', decoded) // 유효한 경우, 디코딩된 페이로드 객체 출력
 
-    return NextResponse.next()
-  } catch (err) {
-    // 검증 실패 시 리다이렉트
-    console.log('===============>', err)
-    return NextResponse.redirect(new URL('/error?message=Invalid%20or%20expired%20token', req.url))
-  }
+  //   return NextResponse.next()
+  // } catch (err) {
+  //   // 검증 실패 시 리다이렉트
+  //   console.log('===============>', err)
+  //   return NextResponse.redirect(new URL('/error?message=Invalid%20or%20expired%20token', req.url))
+  // }
 }
 
-export const config = {
-  matcher: '/reset-password',
-}
+// export const config = {
+//   matcher: '/reset-password',
+// }
