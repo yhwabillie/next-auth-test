@@ -1,4 +1,4 @@
-'user server'
+'use server'
 
 // app/api/reset-password/route.ts
 import { NextRequest, NextResponse } from 'next/server'
