@@ -1,5 +1,5 @@
 'use client'
-import { updateUserAgreement, updateUserName, updateUserProfile } from '@/app/actions/profile/updateProfile'
+import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -13,6 +13,7 @@ import axios from 'axios'
 interface IFetchProfileData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
   profile_img: string
+  input_password: string
 }
 
 interface IProfileFormProps {
@@ -29,6 +30,7 @@ enum ModalTypes {
 export const ProfileForm = (props: IProfileFormProps) => {
   const { data: session, status, update } = useSession()
   const [profileImage, setProfileImage] = useState('')
+  const [confirmedPW, setConfirmedPW] = useState(false)
   const {
     register,
     resetField,
@@ -170,6 +172,22 @@ export const ProfileForm = (props: IProfileFormProps) => {
     resetField('profile_img')
   }
 
+  const handleConfirmCurrentPw = async () => {
+    try {
+      const input_pw = getValues('input_password')
+      const response = await confirmCurrentPw(props.data.idx, input_pw)
+
+      if (response) {
+        setConfirmedPW(response)
+        toast.success('비밀번호가 확인되었습니다.')
+      } else {
+        toast.error('비밀번호가 일치하지 않습니다, 다시 입력하세요.')
+      }
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
+
   return (
     <>
       <form>
@@ -219,7 +237,6 @@ export const ProfileForm = (props: IProfileFormProps) => {
               저장
             </button>
           </div>
-
           <p>{errors.name && !!watch('name') && `${errors.name.message}`}</p>
         </fieldset>
         <fieldset>
@@ -227,6 +244,37 @@ export const ProfileForm = (props: IProfileFormProps) => {
           <label>이메일: </label>
           <input {...register('email')} id="email" type="email" disabled={true} />
         </fieldset>
+
+        <div>
+          <legend>비밀번호 변경</legend>
+          <fieldset>
+            <label htmlFor="input_password">현재 비밀번호 확인</label>
+            <input {...register('input_password')} id="input_password" type="password" />
+            <button type="button" onClick={handleConfirmCurrentPw}>
+              확인
+            </button>
+          </fieldset>
+
+          {confirmedPW && (
+            <div>
+              <div>
+                <fieldset>
+                  <label htmlFor="password">신규 비밀번호</label>
+                  <input {...register('password')} id="password" type="password" autoFocus />
+                </fieldset>
+                {errors.password && !!watch('password') && <p>{errors.password.message}</p>}
+              </div>
+              <div>
+                <fieldset>
+                  <label htmlFor="password">신규 비밀번호 확인</label>
+                  <input {...register('password_confirm')} id="password_confirm" type="password" />
+                </fieldset>
+                {errors.password_confirm && !!watch('password_confirm') && <p>{errors.password_confirm.message}</p>}
+              </div>
+              <button type="button">비밀번호 업데이트</button>
+            </div>
+          )}
+        </div>
 
         <fieldset>
           <legend>이용동의 상태 (필수)</legend>

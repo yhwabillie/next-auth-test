@@ -2,6 +2,27 @@
 import prisma from '@/lib/prisma'
 import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
+import bcrypt from 'bcryptjs'
+
+export const confirmCurrentPw = async (idx: string, input_pw: string) => {
+  console.log(idx, '/////', input_pw)
+
+  const user = await prisma.user.findUnique({
+    where: {
+      idx: idx,
+    },
+  })
+
+  // 사용자 idx 검증
+  if (!user) throw new Error('==========================> 권한이 없는 계정입니다.')
+
+  // 비밀번호 검증
+  const isPasswordCorrect = await bcrypt.compare(input_pw, user.password)
+  console.log(isPasswordCorrect, '/////////')
+
+  // 사용자 인증 성공
+  return isPasswordCorrect
+}
 
 //사용자 프로필 이미지 업데이트
 export const updateUserProfile = async (id: string, new_profile?: FormData) => {
