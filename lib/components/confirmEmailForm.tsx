@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { ForgotPwSchemaType, ForgotPwSchema } from '../zodSchema'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { sendPasswordResetEmail } from '@/app/actions/request-reset/actions'
 
 export const ConfirmEmailForm = () => {
   const {
