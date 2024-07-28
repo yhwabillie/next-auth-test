@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import axios from 'axios'
 
 interface IFetchProfileData extends SignUpFormSchemaType, AgreementSchemaType {
@@ -50,6 +50,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
       service_agreement: props.data.service_agreement,
       privacy_agreement: props.data.privacy_agreement,
       selectable_agreement: props.data.selectable_agreement,
+      password_confirm: '',
     },
   })
 
@@ -196,8 +197,10 @@ export const ProfileForm = (props: IProfileFormProps) => {
       if (response) {
         toast.warning('기존 비밀번호와 동일합니다, 다른 비밀번호로 입력해주세요.')
       } else {
-        toast.success('비밀번호가 업데이트 되었습니다.')
         setConfirmedPW(false)
+        resetField('input_password')
+        signOut({ callbackUrl: '/signIn' })
+        toast.success('비밀번호가 업데이트 되었습니다. 재로그인 하세요')
       }
     } catch (error: any) {
       toast.error(error)
