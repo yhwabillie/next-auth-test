@@ -52,7 +52,7 @@ const authOptions: NextAuthOptions = {
     // signIn: async ({ user, account, profile, email, credentials }) => {
     //   return true
     // },
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, trigger, session }) => {
       // authorize callback으로 리턴받은 user 객체
       // 기본 제공 키값중 email을 이용하여 필요한 로그인 사용자 DB 정보 조회
       // user 객체에 다시 재정제 및 정제 데이터를 token으로 다시 리턴
@@ -75,6 +75,30 @@ const authOptions: NextAuthOptions = {
           token.user.name = userInfo?.name
           token.user.user_type = userInfo?.user_type
           token.user.profile_img = userInfo?.profile_img
+        }
+
+        //세션 update 메소드 트리거 (이름, 프로필 이미지)
+        if (trigger === 'update' && session && token.user) {
+          console.log('Session Data====>', session)
+          console.log('Token Data====>', token)
+
+          if (session.name !== undefined) {
+            token = { ...token, name: session.name, user: { ...token.user, name: session.name } }
+            console.log('Update Name Token Data====>', token)
+            return token
+          }
+
+          if (session.profile_img === 'undefined') {
+            token = { ...token, user: { ...token.user, profile_img: 'undefined' } }
+            console.log('Update Profile Token Data====>', token)
+            return token
+          } else if (session.profile_img !== 'undefined') {
+            token = { ...token, user: { ...token.user, profile_img: session.profile_img } }
+            console.log('Update Profile Token Data====>', token)
+            return token
+          }
+
+          return token
         }
 
         return token

@@ -8,6 +8,7 @@ declare module 'next-auth' {
       id?: string | undefined | null
       name?: string | undefined | null
       email?: string | undefined | null
+      profile_img?: string | undefined | null
     }
   }
 }

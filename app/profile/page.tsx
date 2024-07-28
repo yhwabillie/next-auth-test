@@ -25,5 +25,11 @@ const fetchProfileData = async () => {
 export default async function Page() {
   const data = await fetchProfileData()
 
-  return <ProfileForm data={data} />
+  return (
+    <>
+      <h1>프로필 페이지</h1>
+      <p>권한있는 사용자만 접근할 수 있습니다.</p>
+      <ProfileForm data={data} />
+    </>
+  )
 }

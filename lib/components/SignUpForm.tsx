@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
 import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 import { toast, Toaster } from 'sonner'
@@ -80,7 +80,7 @@ export const SignUpForm = () => {
     })
 
     formData.append('input_data', blob)
-    formData.append('profile_image', data.profile_image[0])
+    formData.append('profile_img', data.profile_img[0])
 
     setIsFormLoading(true)
 
@@ -200,9 +200,9 @@ export const SignUpForm = () => {
             <legend>프로필 이미지</legend>
             <Image src={profileImage === '' ? '/images/default_profile.jpeg' : profileImage} width={200} height={200} alt="profile image" priority />
             <input
-              {...register('profile_image')}
-              id="profile_image"
-              name="profile_image"
+              {...register('profile_img')}
+              id="profile_img"
+              name="profile_img"
               type="file"
               accept="image/png, image/jpeg, image/webp, image/jpg"
               onChange={handleChangeProfileImage}

@@ -1,11 +1,14 @@
 'use client'
-import { updateUserAgreement, updateUserName } from '@/app/actions/profile/updateProfile'
+import { updateUserAgreement, updateUserName, updateUserProfile } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
-import { useRef, useState } from 'react'
-import { FieldValues, useForm } from 'react-hook-form'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { AgreementSchemaType, SignUpFormSchemaType } from '@/lib/zodSchema'
+import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
 import { useRouter } from 'next/navigation'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
+import axios from 'axios'
 
 interface IFetchProfileData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -24,10 +27,24 @@ enum ModalTypes {
 }
 
 export const ProfileForm = (props: IProfileFormProps) => {
-  const router = useRouter()
-  const { register, handleSubmit, setValue, watch, getValues, reset } = useForm<FieldValues>({
+  const { data: session, status, update } = useSession()
+  const [profileImage, setProfileImage] = useState('')
+  const {
+    register,
+    resetField,
+    setValue,
+    watch,
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm<IFetchProfileData>({
     mode: 'onChange',
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
+      user_type: props.data.user_type,
+      name: props.data.name,
+      id: props.data.id,
+      email: props.data.email,
       service_agreement: props.data.service_agreement,
       privacy_agreement: props.data.privacy_agreement,
       selectable_agreement: props.data.selectable_agreement,
@@ -39,33 +56,36 @@ export const ProfileForm = (props: IProfileFormProps) => {
   const closeModal = () => setActiveModal(ModalTypes.NONE)
 
   const nameRef = useRef<HTMLInputElement>(null)
+  const saveNameBtnRef = useRef<HTMLButtonElement>(null)
 
   const handleUpdateUserName = async () => {
-    if (!nameRef.current) return
-    const newName = nameRef.current.value
+    if (!session?.user?.name) return
+
+    if (watch('name') === session.user.name) {
+      toast.warning('변경하려는 이름과 기존이름이 동일합니다.')
+      return
+    }
 
     try {
-      const response = await updateUserName({ idx: props.data.idx, new_name: newName })
-      if (response.error) {
+      const response = await updateUserName(props.data.idx, getValues('name'))
+      if (!response) {
         toast.error('사용자 이름 업데이트에 실패했습니다. 다시 시도해주세요.')
+        return
       }
 
-      if (response.success) {
-        nameRef.current.disabled = true
-        router.refresh()
-
+      if (status === 'authenticated') {
+        update({ name: getValues('name') })
         toast.success('사용자 이름을 업데이트하였습니다.')
       }
-    } catch (error) {
-      console.log(error)
-      toast.error('사용자 이름 업데이트에 실패했습니다. 다시 시도해주세요.')
+    } catch (error: any) {
+      toast.error(error)
     }
   }
 
   const handleUpdateUserAgreement = async () => {
     const response = await updateUserAgreement({
       idx: props.data.idx,
-      selectable_agreement: getValues('selectable_agreement'),
+      selectable_agreement: getValues('selectable_agreement')!,
     })
 
     if (response.success) {
@@ -78,65 +98,134 @@ export const ProfileForm = (props: IProfileFormProps) => {
     }
   }
 
+  const handleChangeProfileImage = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return
+
+    if (event.target.files.length > 0) {
+      const currentImage = event.target.files[0]
+
+      const reader = new FileReader()
+      reader.readAsDataURL(currentImage)
+
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        //Base64 Data URL onload status 2완료 1진행중 0실패
+        if (!event.target) return
+
+        if (reader.readyState === FileReader.DONE) {
+          const imgUrl = event.target?.result as string
+
+          setProfileImage(imgUrl)
+        }
+      }
+    } else {
+      setProfileImage('')
+    }
+  }
+
+  const setPreviewImage = () => {
+    // 이미지 변경시 프리뷰
+    if (profileImage !== '') {
+      return profileImage
+    }
+
+    // 기존 이미지 (커스텀 이미지 사용 케이스)
+    else if (props.data.profile_img !== 'undefined') {
+      return props.data.profile_img
+    }
+
+    return '/images/default_profile.jpeg'
+  }
+
+  const handleUpdateProfile = async () => {
+    const currentProfileImage = getValues('profile_img')
+
+    const formData = new FormData()
+
+    if (!currentProfileImage) {
+      formData.append('profile_img', currentProfileImage)
+    } else {
+      formData.append('profile_img', currentProfileImage[0])
+    }
+
+    try {
+      const response = await updateUserProfile(props.data.id, formData)
+      if (!response) {
+        toast.error('사용자 프로필 업데이트에 실패했습니다. 다시 시도해주세요.')
+        return
+      }
+
+      if (status === 'authenticated') {
+        update({ profile_img: response })
+        toast.success('프로필 이미지가 업데이트되었습니다.')
+        resetField('profile_img')
+      }
+    } catch (error: any) {
+      toast.error(error)
+    }
+  }
+
+  const handleResetProfile = () => {
+    // 기본 프로필로 세팅
+    setProfileImage('/images/default_profile.jpeg')
+    resetField('profile_img')
+  }
+
   return (
     <>
-      <h1>프로필 페이지</h1>
-      <p>권한있는 사용자만 접근할 수 있습니다.</p>
-
       <form>
         <legend>프로필 정보</legend>
         <fieldset>
           <legend>프로필 이미지</legend>
           <label>프로필 이미지: </label>
-          <input type="file" />
-          <Image
-            src={props.data.profile_img === 'undefined' ? '/images/default_profile.jpeg' : props.data.profile_img}
-            width={200}
-            height={200}
-            alt="profile image"
-            priority
+
+          <Image src={setPreviewImage()} width={200} height={200} alt="profile image" priority />
+
+          <input
+            {...register('profile_img')}
+            id="profile_img"
+            name="profile_img"
+            type="file"
+            accept="image/png, image/jpeg, image/webp, image/jpg"
+            onChange={handleChangeProfileImage}
           />
+          <button type="button" onClick={handleResetProfile}>
+            기본 프로필
+          </button>
+          <button type="button" onClick={handleUpdateProfile} disabled={profileImage === ''}>
+            프로필 이미지 업데이트
+          </button>
         </fieldset>
         <fieldset>
           <legend>사용자 타입</legend>
           <label>사용자 타입: </label>
-          <input type="text" value={props.data.user_type} disabled={true} />
+          <input {...register('user_type')} type="text" disabled={true} />
         </fieldset>
         <fieldset>
           <legend>사용자 아이디</legend>
           <label>ID: </label>
-          <input type="text" value={props.data.id} disabled={true} />
+          <input {...register('id')} type="text" disabled={true} />
         </fieldset>
         <fieldset>
           <legend>사용자 이름</legend>
           <label>이름: </label>
-          <input {...register('name')} ref={nameRef} id="name" type="text" defaultValue={props.data.name} disabled={true} />
-          <button
-            onClick={(e) => {
-              e.preventDefault()
+          <div>
+            <input {...register('name')} id="name" type="text" />
+            <button
+              type="button"
+              ref={saveNameBtnRef}
+              onClick={handleUpdateUserName}
+              disabled={(errors.name && !!watch('name')) || watch('name') === ''}
+            >
+              저장
+            </button>
+          </div>
 
-              if (!nameRef.current) return
-              nameRef.current.disabled = false
-              nameRef.current.selectionStart = props.data.name.length
-              nameRef.current.focus()
-            }}
-          >
-            수정
-          </button>
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-
-              handleUpdateUserName()
-            }}
-          >
-            저장
-          </button>
+          <p>{errors.name && !!watch('name') && `${errors.name.message}`}</p>
         </fieldset>
         <fieldset>
           <legend>사용자 이메일</legend>
           <label>이메일: </label>
-          <input type="email" value={props.data.email} disabled={true} />
+          <input {...register('email')} id="email" type="email" disabled={true} />
         </fieldset>
 
         <fieldset>

@@ -13,13 +13,21 @@ export const PasswordSchema = () => {
     )
 }
 
+export const AgreementSchema = z.object({
+  service_agreement: z.boolean(),
+  privacy_agreement: z.boolean(),
+  selectable_agreement: z.boolean().optional(),
+})
+
+export type AgreementSchemaType = z.infer<typeof AgreementSchema>
+
 const MAX_FILE_SIZE = 1024 * 1024 * 5
 const ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 const ACCEPTED_IMAGE_TYPES = ['jpeg', 'jpg', 'png', 'webp']
 
 export const SignUpSchema = z
   .object({
-    profile_image: z.any(),
+    profile_img: z.any(),
     // .refine((files) => {
     //   return files?.[0]?.size <= MAX_FILE_SIZE
     // }, `Max image size is 5MB.`)
@@ -48,11 +56,3 @@ export const SignInSchema = z.object({
 })
 
 export type SignInFormSchemaType = z.infer<typeof SignInSchema>
-
-export const AgreementSchema = z.object({
-  service_agreement: z.boolean(),
-  privacy_agreement: z.boolean(),
-  selectable_agreement: z.boolean().optional(),
-})
-
-export type AgreementSchemaType = z.infer<typeof AgreementSchema>

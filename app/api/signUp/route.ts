@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   // 프론트에서 보낸 formData 엔트리(File)
   const formData = await request.formData()
   const inputDataEntry = formData.get('input_data')
-  const profileImageEntry = formData.get('profile_image')
+  const profileImageEntry = formData.get('profile_img')
 
   if (!formData) throw Error('프론트에서 회원가입 데이터를 받지 못했습니다.')
   console.log('formData ========>', formData)

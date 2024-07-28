@@ -72,20 +72,23 @@ export const SignInForm = () => {
       {isFormLoading ? (
         <h1>Loading...</h1>
       ) : (
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <legend>로그인 Form</legend>
+        <>
+          <form onSubmit={handleSubmit(handleSubmitForm)}>
+            <legend>로그인 Form</legend>
 
-          <div>
-            <HookFormInput register={register('id')} label={'id'} id={'id'} type={'text'} placeholder={'id'} autoFocus={true} />
-            {errors.id && <p>{errors.id.message}</p>}
-          </div>
-          <div>
-            <HookFormInput register={register('password')} label={'password'} id={'password'} type={'password'} placeholder={'password'} />
-            {errors.password && <p>{errors.password.message}</p>}
-          </div>
+            <div>
+              <HookFormInput register={register('id')} label={'id'} id={'id'} type={'text'} placeholder={'id'} autoFocus={true} />
+              {errors.id && <p>{errors.id.message}</p>}
+            </div>
+            <div>
+              <HookFormInput register={register('password')} label={'password'} id={'password'} type={'password'} placeholder={'password'} />
+              {errors.password && <p>{errors.password.message}</p>}
+            </div>
 
-          <button>submit</button>
-        </form>
+            <button>submit</button>
+          </form>
+          <button>비밀번호 찾기</button>
+        </>
       )}
     </>
   )
