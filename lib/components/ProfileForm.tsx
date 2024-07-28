@@ -5,19 +5,26 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signOut, useSession } from 'next-auth/react'
-import axios from 'axios'
 
-interface IFetchProfileData extends SignUpFormSchemaType, AgreementSchemaType {
+interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
   profile_img: string
   input_password: string
 }
 
-interface IProfileFormProps {
-  data: IFetchProfileData
+export interface IProfileFetchData {
+  profile_img: string
+  user_type: 'indivisual' | 'admin'
+  name: string
+  id: string
+  email: string
+  password: string
+  service_agreement: boolean
+  privacy_agreement: boolean
+  selectable_agreement: boolean
+  idx: string
 }
 
 enum ModalTypes {
@@ -27,7 +34,7 @@ enum ModalTypes {
   SELECTABLE = 'SELECTABLE',
 }
 
-export const ProfileForm = (props: IProfileFormProps) => {
+export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
   const { data: session, status, update } = useSession()
   const [profileImage, setProfileImage] = useState('')
   const [confirmedPW, setConfirmedPW] = useState(false)
@@ -39,17 +46,17 @@ export const ProfileForm = (props: IProfileFormProps) => {
     getValues,
     reset,
     formState: { errors },
-  } = useForm<IFetchProfileData>({
+  } = useForm<IProfileFormData>({
     mode: 'onChange',
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      user_type: props.data.user_type,
-      name: props.data.name,
-      id: props.data.id,
-      email: props.data.email,
-      service_agreement: props.data.service_agreement,
-      privacy_agreement: props.data.privacy_agreement,
-      selectable_agreement: props.data.selectable_agreement,
+      user_type: data.user_type,
+      name: data.name,
+      id: data.id,
+      email: data.email,
+      service_agreement: data.service_agreement,
+      privacy_agreement: data.privacy_agreement,
+      selectable_agreement: data.selectable_agreement,
       password_confirm: '',
     },
   })
@@ -70,7 +77,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
     }
 
     try {
-      const response = await updateUserName(props.data.idx, getValues('name'))
+      const response = await updateUserName(data.idx, getValues('name'))
       if (!response) {
         toast.error('사용자 이름 업데이트에 실패했습니다. 다시 시도해주세요.')
         return
@@ -87,7 +94,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
 
   const handleUpdateUserAgreement = async () => {
     const response = await updateUserAgreement({
-      idx: props.data.idx,
+      idx: data.idx,
       selectable_agreement: getValues('selectable_agreement')!,
     })
 
@@ -132,8 +139,8 @@ export const ProfileForm = (props: IProfileFormProps) => {
     }
 
     // 기존 이미지 (커스텀 이미지 사용 케이스)
-    else if (props.data.profile_img !== 'undefined') {
-      return props.data.profile_img
+    else if (data.profile_img !== 'undefined') {
+      return data.profile_img
     }
 
     return '/images/default_profile.jpeg'
@@ -151,7 +158,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
     }
 
     try {
-      const response = await updateUserProfile(props.data.id, formData)
+      const response = await updateUserProfile(data.id, formData)
       if (!response) {
         toast.error('사용자 프로필 업데이트에 실패했습니다. 다시 시도해주세요.')
         return
@@ -176,7 +183,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
   const handleConfirmCurrentPw = async () => {
     try {
       const input_pw = getValues('input_password')
-      const response = await confirmCurrentPw(props.data.idx, input_pw)
+      const response = await confirmCurrentPw(data.idx, input_pw)
 
       if (response) {
         setConfirmedPW(response)
@@ -192,7 +199,7 @@ export const ProfileForm = (props: IProfileFormProps) => {
   const handleUpdatePw = async () => {
     console.log(getValues('password'))
     try {
-      const response = await updateUserPw(props.data.idx, getValues('password'))
+      const response = await updateUserPw(data.idx, getValues('password'))
 
       if (response) {
         toast.warning('기존 비밀번호와 동일합니다, 다른 비밀번호로 입력해주세요.')
