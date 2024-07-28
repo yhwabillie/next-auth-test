@@ -1,4 +1,4 @@
-'user server'
+'use server'
 
 // app/api/generate-reset-token/route.ts
 import { NextRequest, NextResponse } from 'next/server'
