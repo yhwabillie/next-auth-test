@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { jwtVerify } from 'jose'
 
-const SECRET_KEY = process.env.EMAIL_JMT
+const SECRET_KEY = process.env.RESET_PW_JWT
 
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req })
@@ -24,12 +24,11 @@ export default async function middleware(req: NextRequest) {
     throw new Error('Missing JWT_SECRET environment variable')
   }
 
-  // reset-password url이 토큰이 없거나 유효하지 않으면 리다이렉트
+  // reset-password url이 토큰이 없거나 유효하지 않으면 리디렉트
   if (req.nextUrl.pathname.startsWith(`/reset-password`)) {
     try {
       const url = new URL(req.url)
-      const pwToken = url.searchParams.get('token') // 현재 URL을 파싱하고 쿼리 파라미터를 가져옴
-      console.log('쿼리 파라미터pwToken============>', pwToken)
+      const pwToken = url.searchParams.get('token') // 현재 URL을 파싱하여 token 쿼리 파라미터를 가져옴
 
       if (!pwToken) {
         return NextResponse.redirect(new URL('/error?message=Token%20is%20required', req.url))

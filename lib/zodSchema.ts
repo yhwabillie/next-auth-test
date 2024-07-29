@@ -13,15 +13,25 @@ export const PasswordSchema = () => {
     )
 }
 
-export const ForgotPwSchema = z.object({
+export const ResetPwSchema = z
+  .object({
+    password: PasswordSchema(),
+    password_confirm: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirm, {
+    message: '비밀번호가 일치하지 않습니다.',
+    path: ['password_confirm'],
+  })
+
+export type ResetPwSchemaType = z.infer<typeof ResetPwSchema>
+
+export const ConFirmEmailSchema = z.object({
   email: z
     .string()
     .regex(/^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, '이메일 형식에 맞게 공백을 제외하고 작성해주세요. (EX. test@test.com)'),
-  password: PasswordSchema(),
-  password_confirm: z.string(),
 })
 
-export type ForgotPwSchemaType = z.infer<typeof ForgotPwSchema>
+export type ConFirmEmailSchemaType = z.infer<typeof ConFirmEmailSchema>
 
 export const AgreementSchema = z.object({
   service_agreement: z.boolean(),
