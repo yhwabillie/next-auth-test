@@ -5,12 +5,10 @@ import { useForm } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { SignInFormSchemaType, SignInSchema } from '../zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from './Button'
 
 export const SignInForm = () => {
-  const [isFormLoading, setIsFormLoading] = useState<boolean>(false)
   const router = useRouter()
   const {
     register,
@@ -28,8 +26,6 @@ export const SignInForm = () => {
   })
 
   const handleSubmitForm = async (data: SignInFormSchemaType) => {
-    setIsFormLoading(true)
-
     toast.promise(
       async () =>
         await signIn('credentials', {
@@ -48,16 +44,13 @@ export const SignInForm = () => {
         success: (data) => {
           if (data) {
             reset()
-            router.refresh()
+            router.push('/')
             return '어서오세요 🎉'
           }
         },
-        error: (err) => {
-          //auth.ts에서 받은 error message
-          return `${err}`
-        },
-        finally: () => {
-          setIsFormLoading(false)
+        error: (error) => {
+          reset()
+          return `${error}`
         },
       },
     )
@@ -67,23 +60,22 @@ export const SignInForm = () => {
   const isSubmitDisabled = watch('id') === '' || watch('password') === '' || !!errors.id || !!errors.password
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitForm)}>
-      <legend>로그인 Form</legend>
-
-      <div className="mb-5">
-        <HookFormInput register={register('id')} error={errors.id} label="아이디" id="id" type="text" placeholder="id" autoFocus={true} />
-        {errors.id && <p className="mt-2 text-sm text-red-500">{errors.id.message}</p>}
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit">
+      <legend className="sr-only">로그인 폼</legend>
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
+        <HookFormInput register={register('id')} error={errors.id} watch={watch('id')} label="아이디" id="id" type="text" />
+        {errors.id && <p className="mt-2 pl-2 text-sm text-red-500">{errors.id.message}</p>}
       </div>
-      <div className="mb-5">
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
         <HookFormInput
           register={register('password')}
           error={errors.password}
+          watch={watch('password')}
           label="비밀번호"
           id="password"
           type="password"
-          placeholder="password"
         />
-        {errors.password && <p className="mt-2 text-sm text-red-500">{errors.password.message}</p>}
+        {errors.password && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password.message}</p>}
       </div>
 
       <Button label="로그인" disalbe={isSubmitDisabled} />

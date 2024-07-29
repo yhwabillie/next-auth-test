@@ -12,19 +12,20 @@ interface HookFormInputProps {
   placeholder?: string
   disabled?: boolean
   readonly?: boolean
-  autoFocus?: boolean
   error?: FieldError
+  watch?: any
 }
 
-export const HookFormInput = ({ register, id, label, type, value, placeholder, disabled, readonly, autoFocus, error }: HookFormInputProps) => {
+export const HookFormInput = ({ register, id, label, type, value, placeholder, disabled, readonly, error, watch }: HookFormInputProps) => {
   const [isFocus, setIsFocus] = useState(false)
 
   return (
-    <label htmlFor={id} className="block">
+    <label htmlFor={id} className="relative block w-[400px]">
       <span
-        className={clsx('text-md mb-1 block font-medium', {
+        className={clsx(' absolute left-4 top-2 block text-sm font-medium transition-all duration-150 ease-in-out', {
           '!text-red-400': error,
           'text-blue-500': !error && isFocus,
+          '!top-[18px] text-lg': !error && watch === '' && !isFocus,
           'text-blue-400/50': !error,
           'text-gray-400/50': disabled,
         })}
@@ -40,9 +41,8 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
         placeholder={placeholder}
         disabled={disabled}
         readOnly={readonly}
-        autoFocus={autoFocus}
         className={clsx(
-          'text-md leading-1 block h-[50px] w-full rounded-md border  px-4 py-3 font-normal text-blue-400 shadow-md outline-0 placeholder:font-normal ',
+          'text-md leading-1 block w-full rounded-md border px-[15px] pb-[10px] pt-[27px] font-normal text-blue-400 shadow-md outline-0 placeholder:font-normal ',
           {
             '!border-red-400 placeholder:!text-red-400/50 focus:!border-red-400 focus:text-red-400': error,
             'border-blue-400/50 text-blue-400/50 placeholder:text-blue-400/50 focus:border-blue-500 focus:text-blue-400': !error,
