@@ -87,3 +87,12 @@
 - 비밀번호 재설정 화면에서 searchParams 훅으로 token을 가져와서 token 발급할때 넣었던 input email 정보를 이용해서 이것으로 해당 사용자 조회, 사용자 비밀번호 해싱 암호화 후 신규 비밀번호 업데이트
 - jose, bcrypt
 - nodemailer
+- middleware 처리
+
+#### 구현기능
+
+- [인증/인가] 회원가입 (제3자동의(전체선택, 일부선택), 프로필 이미지(기본 이미지, 커스텀 이미지, supabase), user type, 이메일&id 중복검사), 리디렉션
+- [인증/인가] auth.js Credential 로그인, 로그아웃
+- [인증/인가] 비밀번호 갱신 (비밀번호 찾기)
+- [프로필] 사용자 정보 업데이트, useSession
+- [미들웨어]
