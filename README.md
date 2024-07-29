@@ -78,3 +78,12 @@
 - signIn 메소드의 response 상태가 Ok면, 로그인 성공 메시지 전달
 - signIn 메소드의 response 상태가 Ok가 아니면, auth.ts에서 전송한 error 메시지를 반환하여 사용자에게 보여줌
 - 모든 과정이 종료되면 loading state를 false 변환하여 form 컴포넌트 로딩화면 종료 및 메인페이지 이동
+
+#### 6) JWT를 사용한 비밀번호 재설정
+
+- 가입시 입력한 이메일을 검증하여 해당 이메일로 비밀번호 재설정 링크 이메일 전송
+- JWT 토큰을 쿼리 파라미터로 넣어 비밀번호 재설정 링크 발급, 10분 제한 시간 후 토큰 expired
+- 토큰 발급시 input email 정보를 넣어서 토큰을 발급
+- 비밀번호 재설정 화면에서 searchParams 훅으로 token을 가져와서 token 발급할때 넣었던 input email 정보를 이용해서 이것으로 해당 사용자 조회, 사용자 비밀번호 해싱 암호화 후 신규 비밀번호 업데이트
+- jose, bcrypt
+- nodemailer
