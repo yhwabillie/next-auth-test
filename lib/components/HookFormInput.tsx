@@ -25,7 +25,7 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
         className={clsx(' absolute left-4 top-2 block text-sm font-medium transition-all duration-150 ease-in-out', {
           '!text-red-400': error,
           'text-blue-500': !error && isFocus,
-          '!top-[18px] text-lg': !error && watch === '' && !isFocus,
+          'top-[18px] !text-lg': !error && watch === '' && !isFocus,
           'text-blue-400/50': !error,
           'text-gray-400/50': disabled,
         })}

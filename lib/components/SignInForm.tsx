@@ -60,13 +60,13 @@ export const SignInForm = () => {
   const isSubmitDisabled = watch('id') === '' || watch('password') === '' || !!errors.id || !!errors.password
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit">
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
       <legend className="sr-only">로그인 폼</legend>
       <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
         <HookFormInput register={register('id')} error={errors.id} watch={watch('id')} label="아이디" id="id" type="text" />
         {errors.id && <p className="mt-2 pl-2 text-sm text-red-500">{errors.id.message}</p>}
       </div>
-      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center text-left">
         <HookFormInput
           register={register('password')}
           error={errors.password}
@@ -75,7 +75,7 @@ export const SignInForm = () => {
           id="password"
           type="password"
         />
-        {errors.password && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password.message}</p>}
+        {errors.password && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password.message}</p>}
       </div>
 
       <Button label="로그인" disalbe={isSubmitDisabled} />
