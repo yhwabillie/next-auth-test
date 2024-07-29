@@ -71,7 +71,7 @@ export const SignInForm = () => {
       <legend>로그인 Form</legend>
 
       <div className="mb-5">
-        <HookFormInput register={register('id')} label="아이디" id="id" type="text" placeholder="id" autoFocus={true} />
+        <HookFormInput register={register('id')} error={errors.id} label="아이디" id="id" type="text" placeholder="id" autoFocus={true} />
         {errors.id && <p className="mt-2 text-sm text-red-500">{errors.id.message}</p>}
       </div>
       <div className="mb-5">
