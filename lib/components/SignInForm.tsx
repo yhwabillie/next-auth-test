@@ -7,6 +7,7 @@ import { SignInFormSchemaType, SignInSchema } from '../zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Button } from './Button'
 
 export const SignInForm = () => {
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false)
@@ -70,17 +71,22 @@ export const SignInForm = () => {
       <legend>로그인 Form</legend>
 
       <div className="mb-5">
-        <HookFormInput register={register('id')} label="아이디" id="id" type={'text'} placeholder={'id'} autoFocus={true} />
-        {errors.id && <p className="mt-1 text-sm text-red-500">{errors.id.message}</p>}
+        <HookFormInput register={register('id')} label="아이디" id="id" type="text" placeholder="id" autoFocus={true} />
+        {errors.id && <p className="mt-2 text-sm text-red-500">{errors.id.message}</p>}
       </div>
       <div className="mb-5">
-        <HookFormInput register={register('password')} label="비밀번호" id={'password'} type={'password'} placeholder={'password'} />
-        {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
+        <HookFormInput
+          register={register('password')}
+          error={errors.password}
+          label="비밀번호"
+          id="password"
+          type="password"
+          placeholder="password"
+        />
+        {errors.password && <p className="mt-2 text-sm text-red-500">{errors.password.message}</p>}
       </div>
 
-      <button className="w-full rounded-md bg-blue-400 py-3" disabled={isSubmitDisabled}>
-        로그인
-      </button>
+      <Button label="로그인" disalbe={isSubmitDisabled} />
     </form>
   )
 }
