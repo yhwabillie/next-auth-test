@@ -21,8 +21,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
         <AuthProvider>
           <Toaster position="top-center" theme="light" richColors closeButton />
           <Header />
-          <main>{children}</main>
-          <Footer />
+          <main className="mx-auto w-[768px] border border-red-600">{children}</main>
         </AuthProvider>
       </body>
     </html>

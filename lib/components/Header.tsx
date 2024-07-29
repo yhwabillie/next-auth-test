@@ -1,35 +1,114 @@
 'use client'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { FaShoppingCart } from 'react-icons/fa'
+
+enum TooltipTypes {
+  NONE = 'NONE',
+  PROFILE = 'PROFILE',
+  CART = 'CART',
+  DROP_DWN = 'DROP_DWN',
+}
 
 export const Header = () => {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const [activeModal, setActiveModal] = useState(TooltipTypes.NONE)
+  const showTooltip = (type: TooltipTypes) => setActiveModal(type)
+  const closeTooltip = () => setActiveModal(TooltipTypes.NONE)
+  const { data: session } = useSession()
 
   return (
-    <header>
-      <div>
-        <button onClick={() => router.push('/')}>홈</button>
+    <header className="sticky top-0 h-[80px] bg-blue-400/50 backdrop-blur-md">
+      <div className="mx-auto flex h-full w-[768px] items-center justify-between px-5">
+        <h1>
+          <Link href="/">Next Auth</Link>
+        </h1>
+
         {session && session.user ? (
-          <>
-            <span>{`${session.user.name}님 안녕하세요!`}</span>
-            {/* <Image src={session.user.profile_img ? session.user.profile_img : '/images/default_profile.jpeg'} alt="" width={50} height={50} /> */}
+          <nav className="flex items-center">
+            {/* <button
+              onClick={() => signOut({ callbackUrl: '/signIn' })}
+              className="box-border rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
+            >
+              Logout
+            </button> */}
+            <div className="flex items-center gap-5">
+              <div className="relative">
+                <button
+                  onMouseEnter={() => showTooltip(TooltipTypes.CART)}
+                  onMouseLeave={() => closeTooltip()}
+                  className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                >
+                  <span className="sr-only">장바구니</span>
+                  <FaShoppingCart className="text-lg text-white" />
+                </button>
+                {activeModal === TooltipTypes.CART && (
+                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                    장바구니
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <Link
+                  href="/profile"
+                  onMouseEnter={() => showTooltip(TooltipTypes.PROFILE)}
+                  onClick={() => showTooltip(TooltipTypes.DROP_DWN)}
+                  className="block h-10 w-10 overflow-hidden rounded-[50%] bg-white shadow-lg"
+                >
+                  <span className="sr-only">사용자 프로필 이미지</span>
+                  {session.user.profile_img === 'undefined' ? (
+                    <Image src="/images/default_profile.jpeg" className="object-cover" alt="user profile" width={40} height={40} />
+                  ) : (
+                    <Image src={session.user.profile_img!} className="object-cover" alt="user profile" width={40} height={40} />
+                  )}
+                </Link>
+                {activeModal === TooltipTypes.PROFILE && (
+                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[60px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                    프로필
+                  </span>
+                )}
 
-            {session.user.profile_img === 'undefined' ? (
-              <Image src={'/images/default_profile.jpeg'} alt="user profile" width={50} height={50} />
-            ) : (
-              <Image src={session.user.profile_img!} alt="user profile" width={50} height={50} />
-            )}
-
-            <button onClick={() => signOut({ callbackUrl: '/signIn' })}>로그아웃</button>
-            <button onClick={() => router.push('/profile')}>프로필</button>
-          </>
+                {activeModal === TooltipTypes.DROP_DWN && (
+                  <div
+                    onMouseLeave={() => closeTooltip()}
+                    className="absolute right-0 top-[50px] w-[200px] rounded-lg bg-gray-600/95 p-5 shadow-lg backdrop-blur-lg"
+                  >
+                    <h3 className="sr-only">사용자 메뉴 드롭다운</h3>
+                    <h4 className="block border-b-[1px] border-white/50 pb-2 text-center font-medium text-white">
+                      <strong className="block text-xs font-medium">일반회원</strong>
+                      <span>{session.user.name}</span> 님
+                    </h4>
+                    <div className="mt-4">
+                      <button
+                        onClick={() => signOut({ callbackUrl: '/signIn' })}
+                        className="box-border w-full rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </nav>
         ) : (
-          <>
-            <button onClick={() => router.push('/signUp/agreement')}>회원가입</button>
-            <button onClick={() => router.push('/signIn')}>로그인</button>
-          </>
+          <nav className="flex gap-3">
+            <Link
+              href="/signIn"
+              className="box-border rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
+            >
+              Login
+            </Link>
+            <Link
+              href="/signUp/agreement"
+              className="leading-1 box-border rounded-md bg-pink-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-pink-500"
+            >
+              회원가입
+            </Link>
+          </nav>
         )}
       </div>
     </header>

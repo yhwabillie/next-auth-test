@@ -7,6 +7,7 @@ import { SignInFormSchemaType, SignInSchema } from '../zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { Button } from './Button'
+import { useEffect } from 'react'
 
 export const SignInForm = () => {
   const router = useRouter()
@@ -15,6 +16,7 @@ export const SignInForm = () => {
     watch,
     reset,
     handleSubmit,
+    setFocus,
     formState: { errors },
   } = useForm<SignInFormSchemaType>({
     mode: 'onChange',
@@ -36,11 +38,12 @@ export const SignInForm = () => {
           if (res?.ok) {
             return true
           } else if (res?.error) {
+            setFocus('id')
             throw new Error(res.error)
           }
         }),
       {
-        loading: '로그인 중입니다.',
+        loading: '로그인 중입니다...',
         success: (data) => {
           if (data) {
             reset()
@@ -50,6 +53,7 @@ export const SignInForm = () => {
         },
         error: (error) => {
           reset()
+          setFocus('id')
           return `${error}`
         },
       },
@@ -58,6 +62,10 @@ export const SignInForm = () => {
 
   //submit 버튼 비활성화 조건
   const isSubmitDisabled = watch('id') === '' || watch('password') === '' || !!errors.id || !!errors.password
+
+  useEffect(() => {
+    setFocus('id')
+  }, [])
 
   return (
     <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
