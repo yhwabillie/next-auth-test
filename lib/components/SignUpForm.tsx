@@ -186,7 +186,6 @@ export const SignUpForm = () => {
 
   return (
     <>
-      <Toaster position="top-center" />
       <h1>회원가입 페이지</h1>
       <p>누구나 접근 가능한 화면</p>
 

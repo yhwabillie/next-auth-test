@@ -1,5 +1,4 @@
 'use client'
-import { RefObject } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 interface HookFormInputProps {
@@ -16,9 +15,8 @@ interface HookFormInputProps {
 
 export const HookFormInput = ({ register, id, label, type, value, placeholder, disabled, readonly, autoFocus }: HookFormInputProps) => {
   return (
-    <fieldset>
-      <legend>{label}</legend>
-      <label htmlFor={id}>{label}</label>
+    <label htmlFor={id} className="block">
+      <span className="text-md mb-1 block font-medium text-blue-400/50">{label}</span>
       <input
         {...register}
         id={id}
@@ -29,7 +27,8 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
         disabled={disabled}
         readOnly={readonly}
         autoFocus={autoFocus}
+        className="block w-full rounded-md border border-blue-400/50 px-4 py-3 text-lg font-normal leading-6 text-blue-400 shadow-md outline-0 placeholder:font-normal placeholder:text-blue-400/50 focus:border-blue-400"
       />
-    </fieldset>
+    </label>
   )
 }

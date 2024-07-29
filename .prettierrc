@@ -3,5 +3,9 @@
   "useTabs": false,
   "singleQuote": true,
   "semi": false,
-  "printWidth": 150
+  "printWidth": 150,
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindFunctions": ["clsx", "tw"],
+  "tailwindPreserveWhitespace": true,
+  "tailwindPreserveDuplicates": true
 }

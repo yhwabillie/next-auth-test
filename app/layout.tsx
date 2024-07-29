@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Header } from '@/lib/components/Header'
 import { Footer } from '@/lib/components/Footer'
 import { Toaster } from 'sonner'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',

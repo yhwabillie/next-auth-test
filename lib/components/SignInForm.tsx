@@ -1,12 +1,12 @@
 'use client'
 import { signIn } from 'next-auth/react'
-import { redirect, useRouter } from 'next/navigation'
-import { useForm, FieldValues } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { HookFormInput } from './HookFormInput'
 import { SignInFormSchemaType, SignInSchema } from '../zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
-import { toast, Toaster } from 'sonner'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const SignInForm = () => {
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false)
@@ -62,34 +62,25 @@ export const SignInForm = () => {
     )
   }
 
-  useEffect(() => {}, [watch])
+  //submit 버튼 비활성화 조건
+  const isSubmitDisabled = watch('id') === '' || watch('password') === '' || !!errors.id || !!errors.password
 
   return (
-    <>
-      <h1>로그인 페이지</h1>
-      <p>누구나 접근 가능한 화면</p>
+    <form onSubmit={handleSubmit(handleSubmitForm)}>
+      <legend>로그인 Form</legend>
 
-      {isFormLoading ? (
-        <h1>Loading...</h1>
-      ) : (
-        <>
-          <form onSubmit={handleSubmit(handleSubmitForm)}>
-            <legend>로그인 Form</legend>
+      <div className="mb-5">
+        <HookFormInput register={register('id')} label="아이디" id="id" type={'text'} placeholder={'id'} autoFocus={true} />
+        {errors.id && <p className="mt-1 text-sm text-red-500">{errors.id.message}</p>}
+      </div>
+      <div className="mb-5">
+        <HookFormInput register={register('password')} label="비밀번호" id={'password'} type={'password'} placeholder={'password'} />
+        {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
+      </div>
 
-            <div>
-              <HookFormInput register={register('id')} label={'id'} id={'id'} type={'text'} placeholder={'id'} autoFocus={true} />
-              {errors.id && <p>{errors.id.message}</p>}
-            </div>
-            <div>
-              <HookFormInput register={register('password')} label={'password'} id={'password'} type={'password'} placeholder={'password'} />
-              {errors.password && <p>{errors.password.message}</p>}
-            </div>
-
-            <button>submit</button>
-          </form>
-          <button onClick={() => router.push('/request-reset')}>비밀번호 찾기</button>
-        </>
-      )}
-    </>
+      <button className="w-full rounded-md bg-blue-400 py-3" disabled={isSubmitDisabled}>
+        로그인
+      </button>
+    </form>
   )
 }
