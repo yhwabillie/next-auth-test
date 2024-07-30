@@ -6,6 +6,8 @@ import { Suspense, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { ResetPwSchema, ResetPwSchemaType } from '../zodSchema'
 import { toast } from 'sonner'
+import { Button } from './Button'
+import { HookFormInput } from './HookFormInput'
 
 export const ResetPasswordForm = () => {
   const searchParams = useSearchParams()
@@ -18,6 +20,7 @@ export const ResetPasswordForm = () => {
     watch,
     getValues,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm<ResetPwSchemaType>({
     mode: 'onChange',
@@ -46,6 +49,7 @@ export const ResetPasswordForm = () => {
 
       switch (status) {
         case 'success':
+          router.push('/signIn')
           toast.success(message)
           break
         case 'fail':
@@ -61,30 +65,44 @@ export const ResetPasswordForm = () => {
     }
   }
 
+  //submit 버튼 비활성화 조건
+  const isSubmitDisabled = watch('password') === '' || watch('password_confirm') === '' || !!errors.password || !!errors.password_confirm
+
   useEffect(() => {
     if (!reset_token) {
       toast.error('비밀번호 갱신 토큰이 발급되지 않았습니다.')
     }
+
+    setFocus('password')
   }, [reset_token])
 
   return (
-    <div>
-      <h1>Reset PW</h1>
-      <form>
-        <fieldset>
-          <legend>신규 비밀번호</legend>
-          <input {...register('password')} id="password" type="password" autoFocus />
-          {errors.password && watch('password') && <p>{errors.password.message}</p>}
-        </fieldset>
-        <fieldset>
-          <legend>신규 비밀번호 확인</legend>
-          <input {...register('password_confirm')} id="password_confirm" type="password" />
-          {errors.password_confirm && watch('password_confirm') && <p>{errors.password_confirm.message}</p>}
-        </fieldset>
-        <button type="button" onClick={handleUpdateNewPw}>
-          비밀번호 업데이트
-        </button>
-      </form>
+    <div className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
+      <legend className="sr-only">비밀번호 재설정 폼</legend>
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
+        <HookFormInput
+          register={register('password')}
+          error={errors.password}
+          watch={watch('password')}
+          label="신규 비밀번호"
+          id="password"
+          type="password"
+        />
+        {errors.password && !!watch('password') && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password.message}</p>}
+      </div>
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center text-left">
+        <HookFormInput
+          register={register('password_confirm')}
+          error={errors.password_confirm}
+          watch={watch('password_confirm')}
+          label="신규 비밀번호 확인"
+          id="password_confirm"
+          type="password"
+        />
+        {errors.password_confirm && !!watch('password') && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password_confirm.message}</p>}
+      </div>
+
+      <Button type="button" label="비밀번호 업데이트" clickEvent={handleUpdateNewPw} disalbe={isSubmitDisabled} />
     </div>
   )
 }

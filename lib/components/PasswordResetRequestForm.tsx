@@ -3,7 +3,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { ConFirmEmailSchemaType, ConFirmEmailSchema } from '../zodSchema'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { HookFormInput } from './HookFormInput'
+import { Button } from './Button'
 
 export const PasswordResetRequestForm = () => {
   const {
@@ -53,16 +55,19 @@ export const PasswordResetRequestForm = () => {
     }
   }
 
+  useEffect(() => {
+    setFocus('email')
+  }, [])
+
   return (
-    <div>
-      <fieldset>
-        <label>이메일: </label>
-        <input {...register('email')} type="email" autoFocus />
-        {errors.email && !!watch('email') && <p>{errors.email.message}</p>}
-      </fieldset>
-      <button type="button" onClick={handlePasswordResetRequest} disabled={!!errors.email || watch('email') === undefined}>
-        이메일 발송
-      </button>
+    <div className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
+      <legend className="sr-only">비밀번호 재설정 폼</legend>
+      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
+        <HookFormInput register={register('email')} error={errors.email} watch={watch('email')} label="이메일" id="email" type="email" />
+        {errors.email && !!watch('email') && <p className="mt-2 pl-2 text-sm text-red-500">{errors.email.message}</p>}
+      </div>
+
+      <Button type="button" label="이메일 발송" clickEvent={handlePasswordResetRequest} disalbe={!!errors.email || watch('email') === undefined} />
     </div>
   )
 }
