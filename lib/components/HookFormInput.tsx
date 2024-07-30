@@ -22,12 +22,12 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
   return (
     <label htmlFor={id} className="relative block w-[400px]">
       <span
-        className={clsx(' absolute left-4 top-2 block text-sm font-medium transition-all duration-150 ease-in-out', {
-          '!text-red-400': error,
-          'text-blue-500': !error && isFocus,
-          'top-[18px] !text-lg': !error && watch === '' && !isFocus,
-          'text-blue-400/50': !error,
-          'text-gray-400/50': disabled,
+        className={clsx('absolute left-4 top-2 block font-medium transition-all duration-150 ease-in-out', {
+          '!text-sm !text-red-400': error,
+          '!text-sm text-blue-500': !error && isFocus,
+          'top-[18px] !text-lg text-blue-500/50': !error && watch === '' && !isFocus,
+          '!text-sm text-blue-400/50': !error && watch !== '',
+          '!text-sm text-gray-400/50': disabled,
         })}
       >
         {label}

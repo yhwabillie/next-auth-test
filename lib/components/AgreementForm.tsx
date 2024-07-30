@@ -5,6 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAgreementStore } from '../zustandStore'
+import { Button } from './Button'
+import { HookFormCheckBox } from './HookFormCheckBox'
+import clsx from 'clsx'
 
 export const AgreementForm = () => {
   const {
@@ -31,57 +34,122 @@ export const AgreementForm = () => {
     setAgreement(data)
   }
 
-  useEffect(() => {}, [watch])
-
   return (
     <form onSubmit={handleSubmit(handleOnClickNext)}>
-      <section>
-        <h2>전체 동의하기</h2>
-        <input
+      <fieldset className="mb-10">
+        <HookFormCheckBox
           id="check_all"
-          type="checkbox"
-          name="check_all"
+          label="전체 동의하기"
           checked={watch('service_agreement') && watch('privacy_agreement') && watch('selectable_agreement')}
-          onChange={(event) => {
+          onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
             const agreements = ['service_agreement', 'privacy_agreement', 'selectable_agreement']
             const isChecked = event.target.checked
 
             agreements.forEach((agreement: any) => setValue(agreement, isChecked))
           }}
         />
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspern</p>
+        <p className="pl-8 text-lg font-normal tracking-tighter text-gray-600/70">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
+          Itaque nihil aspern
+        </p>
+      </fieldset>
 
-        <div>
-          <section>
-            <h3>이용약관</h3>
-            <input {...register('service_agreement')} id="service_agreement" type="checkbox" name="service_agreement" />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernatur necessitatibus. Cum dolore saepe veniam minus quia
-              illo culpa dolores facilis mollitia. Modi possimus, praesentium ullam recusandae cupiditate odit!
+      <fieldset>
+        <div className="mb-5">
+          <HookFormCheckBox
+            id="service_agreement"
+            label="[필수] 서비스 이용 약관"
+            register={register('service_agreement')}
+            checked={watch('service_agreement')}
+            onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const isChecked = event.target.checked
+              setValue('service_agreement', isChecked)
+            }}
+          />
+          <div className="mt-2 pl-8">
+            <p
+              className={clsx(
+                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                {
+                  'border-gray-600/70': !!!watch('service_agreement'),
+                  'border-blue-600/70': !!watch('service_agreement'),
+                },
+              )}
+            >
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
+              Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur,
+              adipisicing elit. Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit
+              amet consectetur, adipisicing elit. Itaque nihil aspern
             </p>
-          </section>
-          <section>
-            <h3>개인정보 수집 및 이용</h3>
-            <input {...register('privacy_agreement')} id="privacy_agreement" type="checkbox" name="privacy_agreement" />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernatur necessitatibus. Cum dolore saepe veniam minus quia
-              illo culpa dolores facilis mollitia. Modi possimus, praesentium ullam recusandae cupiditate odit!
-            </p>
-          </section>
-          <section>
-            <h3>(선택) 선택 수집사항</h3>
-            <input {...register('selectable_agreement')} id="selectable_agreement" type="checkbox" name="selectable_agreement" />
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernatur necessitatibus. Cum dolore saepe veniam minus quia
-              illo culpa dolores facilis mollitia. Modi possimus, praesentium ullam recusandae cupiditate odit!
-            </p>
-          </section>
+          </div>
         </div>
-      </section>
+        <div className="mb-5">
+          <HookFormCheckBox
+            id="privacy_agreement"
+            label="[필수] 개인 정보 이용 약관"
+            register={register('privacy_agreement')}
+            checked={watch('privacy_agreement')}
+            onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const isChecked = event.target.checked
+              setValue('privacy_agreement', isChecked)
+            }}
+          />
+          <div className="mt-2 pl-8">
+            <p
+              className={clsx(
+                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                {
+                  'border-gray-600/70': !!!watch('service_agreement'),
+                  'border-blue-600/70': !!watch('service_agreement'),
+                },
+              )}
+            >
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
+              Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur,
+              adipisicing elit. Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit
+              amet consectetur, adipisicing elit. Itaque nihil aspern
+            </p>
+          </div>
+        </div>
+        <div>
+          <HookFormCheckBox
+            id="selectable_agreement"
+            label="[선택] 마케팅 동의 선택적 약관"
+            register={register('selectable_agreement')}
+            checked={watch('selectable_agreement')}
+            onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const isChecked = event.target.checked
+              setValue('selectable_agreement', isChecked)
+            }}
+          />
+          <div className="mt-2 pl-8">
+            <p
+              className={clsx(
+                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                {
+                  'border-gray-600/70': !!!watch('service_agreement'),
+                  'border-blue-600/70': !!watch('service_agreement'),
+                },
+              )}
+            >
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
+              Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur,
+              adipisicing elit. Itaque nihil aspern Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit
+              amet consectetur, adipisicing elit. Itaque nihil aspern
+            </p>
+          </div>
+        </div>
+      </fieldset>
 
-      <button disabled={!(watch('service_agreement') && watch('privacy_agreement'))} onClick={() => router.push('/signUp/begin')}>
-        다음
-      </button>
+      <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-white pb-10 pt-5">
+        <div className="mx-auto w-[500px]">
+          <Button
+            label="다음"
+            disalbe={!(watch('service_agreement') && watch('privacy_agreement'))}
+            clickEvent={() => router.push('/signUp/begin')}
+          />
+        </div>
+      </div>
     </form>
   )
 }
