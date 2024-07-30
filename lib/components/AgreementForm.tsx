@@ -27,7 +27,7 @@ export const AgreementForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(handleOnClickNext)}>
+    <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto w-[400px]">
       <fieldset className="mb-10">
         <HookFormCheckBox
           id="check_all"
@@ -61,7 +61,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -89,7 +89,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -117,7 +117,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),

@@ -220,7 +220,6 @@ export const SignUpForm = () => {
               value="indivisual"
               name="user_type"
               checked={watch('user_type') === 'indivisual'}
-              defaultChecked={true}
             />
             <HookFormRadioItem register={register('user_type')} id="admin" value="admin" name="user_type" checked={watch('user_type') === 'admin'} />
           </div>

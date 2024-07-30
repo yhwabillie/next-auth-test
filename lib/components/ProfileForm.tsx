@@ -1,12 +1,17 @@
 'use client'
 import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile, updateUserPw } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signOut, useSession } from 'next-auth/react'
+import { HiOutlinePencilSquare } from 'react-icons/hi2'
+import { Button } from './Button'
+import { HookFormRadioItem } from './HookFormRadioItem'
+import { HookFormInput } from './HookFormInput'
+import { HookFormCheckBox } from './HookFormCheckBox'
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -216,125 +221,158 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
   return (
     <>
-      <form>
-        <legend>프로필 정보</legend>
-        <fieldset>
-          <legend>프로필 이미지</legend>
-          <label>프로필 이미지: </label>
-
-          <Image src={setPreviewImage()} width={200} height={200} alt="profile image" priority />
-
-          <input
-            {...register('profile_img')}
-            id="profile_img"
-            name="profile_img"
-            type="file"
-            accept="image/png, image/jpeg, image/webp, image/jpg"
-            onChange={handleChangeProfileImage}
-          />
-          <button type="button" onClick={handleResetProfile}>
-            기본 프로필
-          </button>
-          <button type="button" onClick={handleUpdateProfile} disabled={profileImage === ''}>
-            프로필 이미지 업데이트
-          </button>
-        </fieldset>
-        <fieldset>
-          <legend>사용자 타입</legend>
-          <label>사용자 타입: </label>
-          <input {...register('user_type')} type="text" disabled={true} />
-        </fieldset>
-        <fieldset>
-          <legend>사용자 아이디</legend>
-          <label>ID: </label>
-          <input {...register('id')} type="text" disabled={true} />
-        </fieldset>
-        <fieldset>
-          <legend>사용자 이름</legend>
-          <label>이름: </label>
-          <div>
-            <input {...register('name')} id="name" type="text" />
-            <button
-              type="button"
-              ref={saveNameBtnRef}
-              onClick={handleUpdateUserName}
-              disabled={(errors.name && !!watch('name')) || watch('name') === ''}
-            >
-              저장
-            </button>
-          </div>
-          <p>{errors.name && !!watch('name') && `${errors.name.message}`}</p>
-        </fieldset>
-        <fieldset>
-          <legend>사용자 이메일</legend>
-          <label>이메일: </label>
-          <input {...register('email')} id="email" type="email" disabled={true} />
-        </fieldset>
-
-        <div>
-          <legend>비밀번호 변경</legend>
-          <fieldset>
-            <label htmlFor="input_password">현재 비밀번호 확인</label>
-            <input {...register('input_password')} id="input_password" type="password" />
-            <button type="button" onClick={handleConfirmCurrentPw}>
-              확인
-            </button>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="mb-4 flex items-center justify-center gap-2 text-center">
+          <h3 className="text-xl font-medium text-blue-400">{`${data.name}님은`}</h3>
+          <p>{`${data.user_type === 'indivisual' ? '일반' : '관리자'} 사용자 입니다`}</p>
+        </div>
+        <form className="flex flex-col items-center justify-center gap-16">
+          <legend className="sr-only">프로필 폼</legend>
+          <fieldset className="flex flex-col items-center justify-center gap-14">
+            <div className="relative mx-auto w-fit">
+              <div className="relative h-[200px] w-[200px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg">
+                <Image src={setPreviewImage()} alt="profile image" priority fill className="object-cover" sizes="200" />
+              </div>
+              <label
+                htmlFor="profile_img"
+                className="absolute bottom-0 right-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500"
+              >
+                <span className="sr-only">프로필 이미지 변경</span>
+                <HiOutlinePencilSquare className="text-2xl text-gray-700" />
+              </label>
+              <input
+                {...register('profile_img')}
+                id="profile_img"
+                name="profile_img"
+                type="file"
+                accept="image/png, image/jpeg, image/webp, image/jpg"
+                onChange={handleChangeProfileImage}
+              />
+            </div>
+            <div className="flex w-full flex-col gap-2">
+              <Button type="button" label="기본 프로필 사용" clickEvent={handleResetProfile} />
+              <Button type="button" label="프로필 이미지 업데이트" clickEvent={handleUpdateProfile} disalbe={profileImage === ''} />
+            </div>
           </fieldset>
 
-          {confirmedPW && (
-            <div>
-              <div>
-                <fieldset>
-                  <label htmlFor="password">신규 비밀번호</label>
-                  <input {...register('password')} id="password" type="password" autoFocus />
-                </fieldset>
-                {errors.password && !!watch('password') && <p>{errors.password.message}</p>}
-              </div>
-              <div>
-                <fieldset>
-                  <label htmlFor="password">신규 비밀번호 확인</label>
-                  <input {...register('password_confirm')} id="password_confirm" type="password" />
-                </fieldset>
-                {errors.password_confirm && !!watch('password_confirm') && <p>{errors.password_confirm.message}</p>}
-              </div>
-              <button type="button" onClick={handleUpdatePw}>
-                비밀번호 업데이트
-              </button>
+          <fieldset>
+            <legend className="sr-only">사용자 상세 정보</legend>
+            <div className="mb-4">
+              <legend className="sr-only">사용자 아이디</legend>
+              <HookFormInput register={register('id')} id="id" label="아이디" type="text" disabled={true} />
             </div>
-          )}
-        </div>
+            <div className="mb-10">
+              <legend className="sr-only">사용자 이메일</legend>
+              <HookFormInput register={register('email')} id="email" error={errors.email} label="이메일" type="email" disabled={true} />
+            </div>
+            <div className="mb-10">
+              <legend className="sr-only">사용자 이름</legend>
+              <div className="mb-2">
+                <HookFormInput register={register('name')} id="name" error={errors.name} label="이름" type="text" />
+              </div>
+              <button
+                type="button"
+                ref={saveNameBtnRef}
+                onClick={handleUpdateUserName}
+                disabled={(errors.name && !!watch('name')) || watch('name') === ''}
+                className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-400 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-400"
+              >
+                업데이트
+              </button>
+              {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
+            </div>
+            <div>
+              <legend className="sr-only">비밀번호 변경</legend>
+              <div className="mb-2">
+                <HookFormInput
+                  register={register('input_password')}
+                  id="input_password"
+                  error={errors.input_password}
+                  label="비밀번호"
+                  type="password"
+                />
+              </div>
+              <Button type="button" clickEvent={handleConfirmCurrentPw} label="현재 비밀번호 확인" />
+            </div>
 
-        <fieldset>
-          <legend>이용동의 상태 (필수)</legend>
-          <div>
-            <label>service_agreement</label>
-            <input {...register('service_agreement')} id="service_agreement" type="checkbox" disabled={true} />
-            <button type="button" onClick={() => openModal(ModalTypes.SERVICE)}>
-              전문보기
-            </button>
-          </div>
-          <div>
-            <label>privacy_agreement</label>
-            <input {...register('privacy_agreement')} id="privacy_agreement" type="checkbox" disabled={true} />
-            <button type="button" onClick={() => openModal(ModalTypes.PRIVACY)}>
-              전문보기
-            </button>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>이용동의 상태 (선택)</legend>
-          <div>
-            <label>selectable_agreement</label>
-            <input {...register('selectable_agreement')} id="selectable_agreement" type="checkbox" />
-            <button type="button" onClick={() => openModal(ModalTypes.SELECTABLE)}>
-              전문보기
-            </button>
-          </div>
-          <button type="button" onClick={handleUpdateUserAgreement}>
-            이용동의 정보 업데이트
-          </button>
-        </fieldset>
-      </form>
+            {confirmedPW && (
+              <>
+                <div className="mb-2 mt-6">
+                  <HookFormInput
+                    register={register('password')}
+                    id="password"
+                    error={errors.password}
+                    label="신규 비밀번호"
+                    type="password"
+                    autoFocus={true}
+                  />
+                  {errors.password && !!watch('password') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password.message}</p>}
+                </div>
+                <div className="mb-10">
+                  <div className="mb-2">
+                    <HookFormInput
+                      register={register('password_confirm')}
+                      id="password_confirm"
+                      error={errors.password_confirm}
+                      label="신규 비밀번호 확인"
+                      type="password"
+                      autoFocus={true}
+                    />
+                    {errors.password_confirm && !!watch('password_confirm') && (
+                      <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password_confirm.message}</p>
+                    )}
+                  </div>
+
+                  <Button type="button" clickEvent={handleUpdatePw} label="비밀번호 업데이트" />
+                </div>
+              </>
+            )}
+
+            <div className="mb-4 mt-10">
+              <div className="mb-2">
+                <HookFormCheckBox
+                  register={register('service_agreement')}
+                  id="service_agreement"
+                  label="서비스 이용 동의 (필수)"
+                  checked={getValues('service_agreement')}
+                  disabled={true}
+                  readOnly={true}
+                />
+              </div>
+              <Button type="button" clickEvent={() => openModal(ModalTypes.SERVICE)} label="전문보기" />
+            </div>
+            <div className="mb-10">
+              <div className="mb-2">
+                <HookFormCheckBox
+                  register={register('privacy_agreement')}
+                  id="privacy_agreement"
+                  label="개인 정보 이용 동의 (필수)"
+                  checked={getValues('privacy_agreement')}
+                  disabled={true}
+                  readOnly={true}
+                />
+              </div>
+              <Button type="button" clickEvent={() => openModal(ModalTypes.PRIVACY)} label="전문보기" />
+            </div>
+            <div className="mb-4">
+              <div className="mb-2">
+                <HookFormCheckBox
+                  register={register('selectable_agreement')}
+                  checked={watch('selectable_agreement')}
+                  onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    const isChecked = event.target.checked
+                    setValue('selectable_agreement', isChecked)
+                  }}
+                  id="selectable_agreement"
+                  label="마케팅 이용 동의 (선택)"
+                />
+              </div>
+              <Button type="button" clickEvent={() => openModal(ModalTypes.SELECTABLE)} label="전문보기" />
+            </div>
+            <Button type="button" clickEvent={handleUpdateUserAgreement} label="정보 동의 업데이트" />
+          </fieldset>
+        </form>
+      </Suspense>
 
       {/* Modal */}
       {activeModal === ModalTypes.SERVICE && (

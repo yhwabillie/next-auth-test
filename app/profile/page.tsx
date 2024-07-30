@@ -24,15 +24,10 @@ export default async function Page() {
     return <div>Error: Unable to fetch user data</div>
   }
 
-  console.log(userData, '///')
-
-  userData
-
   return (
-    <>
-      <h1>프로필 페이지</h1>
-      <p>권한있는 사용자만 접근할 수 있습니다.</p>
+    <section className="min-h-full px-5 py-10">
+      <h2 className="mb-4 block text-center text-2xl font-semibold text-gray-700">📌 마이페이지</h2>
       <ProfileForm data={userData as IProfileFetchData} />
-    </>
+    </section>
   )
 }

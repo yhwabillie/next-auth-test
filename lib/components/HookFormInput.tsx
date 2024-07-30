@@ -14,9 +14,10 @@ interface HookFormInputProps {
   readonly?: boolean
   error?: FieldError
   watch?: any
+  autoFocus?: boolean
 }
 
-export const HookFormInput = ({ register, id, label, type, value, placeholder, disabled, readonly, error, watch }: HookFormInputProps) => {
+export const HookFormInput = ({ register, id, label, type, value, placeholder, disabled, readonly, error, watch, autoFocus }: HookFormInputProps) => {
   const [isFocus, setIsFocus] = useState(false)
 
   return (
@@ -52,6 +53,7 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
         )}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
+        autoFocus={autoFocus}
       />
     </label>
   )

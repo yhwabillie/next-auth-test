@@ -10,13 +10,23 @@ interface IHookFormCheckBoxProps {
   onChangeEvent?: (event: React.ChangeEvent<HTMLInputElement>) => void
   register?: UseFormRegisterReturn
   disabled?: boolean
+  readOnly?: boolean
 }
 
-export const HookFormCheckBox = ({ register, id, label, checked, onChangeEvent }: IHookFormCheckBoxProps) => {
+export const HookFormCheckBox = ({ register, id, label, checked, onChangeEvent, readOnly }: IHookFormCheckBoxProps) => {
   return (
     <label htmlFor={id} className="flex cursor-pointer items-center gap-3">
       <div className="relative h-[30px]">
-        <input {...register} id={id} className="relative h-auto w-[30px]" type="checkbox" name={id} checked={checked} onChange={onChangeEvent} />
+        <input
+          {...register}
+          id={id}
+          className="relative h-auto w-[30px]"
+          type="checkbox"
+          name={id}
+          checked={checked}
+          onChange={onChangeEvent}
+          readOnly={readOnly}
+        />
         <LuCheckCircle
           className={clsx('absolute left-0 top-0 text-3xl', {
             'text-blue-400': checked,
