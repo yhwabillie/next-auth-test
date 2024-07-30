@@ -2,7 +2,6 @@
 import { useForm } from 'react-hook-form'
 import { AgreementSchema, AgreementSchemaType } from '../zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAgreementStore } from '../zustandStore'
 import { Button } from './Button'
@@ -10,13 +9,7 @@ import { HookFormCheckBox } from './HookFormCheckBox'
 import clsx from 'clsx'
 
 export const AgreementForm = () => {
-  const {
-    register,
-    watch,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<AgreementSchemaType>({
+  const { register, watch, setValue, handleSubmit } = useForm<AgreementSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AgreementSchema),
     defaultValues: {
@@ -27,7 +20,6 @@ export const AgreementForm = () => {
   })
 
   const router = useRouter()
-  const agreements = useAgreementStore((state: any) => state.agreements)
   const { setAgreement } = useAgreementStore((state) => state)
 
   const handleOnClickNext = (data: AgreementSchemaType) => {
@@ -69,7 +61,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -97,7 +89,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -125,7 +117,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[100px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll rounded-lg border p-3 text-lg font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -141,7 +133,7 @@ export const AgreementForm = () => {
         </div>
       </fieldset>
 
-      <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-white pb-10 pt-5">
+      <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-white py-5">
         <div className="mx-auto w-[500px]">
           <Button
             label="다음"

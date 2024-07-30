@@ -7,8 +7,9 @@ interface IHookFormCheckBoxProps {
   id: string
   label: string
   checked?: boolean
-  onChangeEvent?: (event: any) => void
+  onChangeEvent?: (event: React.ChangeEvent<HTMLInputElement>) => void
   register?: UseFormRegisterReturn
+  disabled?: boolean
 }
 
 export const HookFormCheckBox = ({ register, id, label, checked, onChangeEvent }: IHookFormCheckBoxProps) => {

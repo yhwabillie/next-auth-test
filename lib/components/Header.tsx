@@ -23,7 +23,7 @@ export const Header = () => {
   const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 h-[80px] bg-blue-400/50 backdrop-blur-md">
+    <header className="sticky top-0 z-10 h-[80px] bg-blue-400/50 backdrop-blur-md">
       <div className="mx-auto flex h-full w-[768px] items-center justify-between px-5">
         <h1>
           <Link href="/">Next Auth</Link>
@@ -31,12 +31,6 @@ export const Header = () => {
 
         {session && session.user ? (
           <nav className="flex items-center">
-            {/* <button
-              onClick={() => signOut({ callbackUrl: '/signIn' })}
-              className="box-border rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
-            >
-              Logout
-            </button> */}
             <div className="flex items-center gap-3">
               <div className="relative">
                 <button
