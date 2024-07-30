@@ -291,8 +291,11 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                   label="비밀번호"
                   type="password"
                 />
+                {errors.input_password && !!watch('input_password') && (
+                  <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.input_password.message}</p>
+                )}
               </div>
-              <Button type="button" clickEvent={handleConfirmCurrentPw} label="현재 비밀번호 확인" />
+              <Button type="button" disalbe={watch('input_password') === ''} clickEvent={handleConfirmCurrentPw} label="현재 비밀번호 확인" />
             </div>
 
             {confirmedPW && (
@@ -316,14 +319,18 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                       error={errors.password_confirm}
                       label="신규 비밀번호 확인"
                       type="password"
-                      autoFocus={true}
                     />
                     {errors.password_confirm && !!watch('password_confirm') && (
                       <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password_confirm.message}</p>
                     )}
                   </div>
 
-                  <Button type="button" clickEvent={handleUpdatePw} label="비밀번호 업데이트" />
+                  <Button
+                    type="button"
+                    disalbe={Object.keys(errors).length > 0 || watch('password') === '' || watch('password_confirm') === ''}
+                    clickEvent={handleUpdatePw}
+                    label="비밀번호 업데이트"
+                  />
                 </div>
               </>
             )}
