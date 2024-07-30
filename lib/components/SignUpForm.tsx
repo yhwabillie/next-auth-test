@@ -5,7 +5,6 @@ import { HookFormInput } from './HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChangeEvent, Suspense, useEffect, useState } from 'react'
 import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
-import { HookFormRadioList, RadioItemType } from './HookFormRadio'
 import { toast, Toaster } from 'sonner'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
 import { confirmDuplicateData } from '@/app/actions/signUp/confirmData'
@@ -14,6 +13,7 @@ import Image from 'next/image'
 import axios from 'axios'
 import { HookFormCheckBox } from './HookFormCheckBox'
 import { Button } from './Button'
+import { HookFormRadioItem } from './HookFormRadioItem'
 require('dotenv').config()
 
 export const SignUpForm = () => {
@@ -175,24 +175,12 @@ export const SignUpForm = () => {
     }
   }
 
-  useEffect(() => {}, [watch, setFocus])
-
-  const radioDataList: RadioItemType[] = [
-    {
-      id: 'indivisual',
-      label: '일반',
-      value: 'indivisual',
-      defaultChecked: true,
-    },
-    {
-      id: 'admin',
-      value: 'admin',
-      label: '어드민',
-    },
-  ]
+  useEffect(() => {
+    setFocus('name')
+  }, [])
 
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <form onSubmit={handleSubmit(handleSubmitForm)} encType="multipart/form-data" className="flex flex-col items-center justify-center gap-10">
         <legend className="sr-only">회원가입 폼</legend>
         <div className="relative mx-auto w-fit">
@@ -208,7 +196,7 @@ export const SignUpForm = () => {
           </div>
           <label
             htmlFor="profile_img"
-            className="absolute bottom-0 right-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg"
+            className="absolute bottom-0 right-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500"
           >
             <span className="sr-only">프로필 이미지 업로드 버튼</span>
             <HiOutlinePencilSquare className="text-2xl text-gray-700" />
@@ -224,10 +212,19 @@ export const SignUpForm = () => {
         </div>
 
         <fieldset className="w-[400px]">
-          <div className="mb-4">
-            <HookFormRadioList register={register('user_type')} itemList={radioDataList} label="사용자 타입" name="user_type" type="radio" />
+          <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 타입을 선택해주세요</legend>
+          <div className="mb-20 flex flex-row justify-center gap-3">
+            <HookFormRadioItem
+              register={register('user_type')}
+              id="indivisual"
+              value="indivisual"
+              name="user_type"
+              checked={watch('user_type') === 'indivisual'}
+            />
+            <HookFormRadioItem register={register('user_type')} id="admin" value="admin" name="user_type" checked={watch('user_type') === 'admin'} />
           </div>
           <div className="mb-6">
+            <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 정보를 입력해주세요</legend>
             <HookFormInput register={register('name')} error={errors.name} id="name" label="사용자 이름" type="text" />
             {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
           </div>
@@ -235,7 +232,24 @@ export const SignUpForm = () => {
             <div className="flex h-fit w-fit flex-col">
               <HookFormInput register={register('id')} error={errors.id} id="id" label="아이디" type="text" disabled={isConfirmID} />
 
-              <div>
+              {isConfirmID ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setValue('confirm_id', undefined)
+                      setIsConfirmID(false)
+                      resetField('id')
+
+                      //Focus Error 대처
+                      window.setTimeout(() => document.getElementById('id')?.focus(), 0)
+                    }}
+                    className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
+                  >
+                    수정
+                  </button>
+                  <label className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 아이디입니다.</label>
+                </>
+              ) : (
                 <input
                   {...register('confirm_id')}
                   id={'confirm_id'}
@@ -246,25 +260,7 @@ export const SignUpForm = () => {
                   onClick={() => confirmDuplicate('id', getValues('id'))}
                   className="mt-2 h-10 w-full cursor-pointer rounded-md bg-blue-400 pt-2 text-center text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
                 />
-              </div>
-
-              {isConfirmID && (
-                <button
-                  onClick={() => {
-                    setValue('confirm_id', undefined)
-                    setIsConfirmID(false)
-                    resetField('id')
-
-                    //Focus Error 대처
-                    window.setTimeout(() => document.getElementById('id')?.focus(), 0)
-                  }}
-                  className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
-                >
-                  수정
-                </button>
               )}
-
-              {isConfirmID && <label className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 아이디입니다.</label>}
             </div>
 
             {errors.id && !!watch('id') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.id.message}</p>}
@@ -272,34 +268,37 @@ export const SignUpForm = () => {
           <div className="mb-6">
             <div className="flex h-fit w-fit flex-col">
               <HookFormInput register={register('email')} error={errors.email} id="email" label="이메일" type="email" disabled={isConfirmEmail} />
-              <input
-                {...register('confirm_email')}
-                id="confirm_email"
-                type="checkbox"
-                name="confirm_email"
-                checked={isConfirmEmail}
-                disabled={!!errors.email || getValues('email') === '' || isConfirmEmail}
-                onClick={() => confirmDuplicate('email', getValues('email'))}
-                className="mt-2 h-10 w-full cursor-pointer rounded-md bg-blue-400 pt-2 text-center text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
-              />
 
-              {isConfirmEmail && (
-                <button
-                  onClick={() => {
-                    setValue('confirm_email', undefined)
-                    setIsConfirmEmail(false)
-                    resetField('email')
+              {isConfirmEmail ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setValue('confirm_email', undefined)
+                      setIsConfirmEmail(false)
+                      resetField('email')
 
-                    //Focus Error 대처
-                    window.setTimeout(() => document.getElementById('email')?.focus(), 0)
-                  }}
-                  className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
-                >
-                  수정
-                </button>
+                      //Focus Error 대처
+                      window.setTimeout(() => document.getElementById('email')?.focus(), 0)
+                    }}
+                    className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
+                  >
+                    수정
+                  </button>
+                  <p className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 이메일입니다.</p>
+                </>
+              ) : (
+                <input
+                  {...register('confirm_email')}
+                  id="confirm_email"
+                  type="checkbox"
+                  name="confirm_email"
+                  checked={isConfirmEmail}
+                  disabled={!!errors.email || getValues('email') === '' || isConfirmEmail}
+                  onClick={() => confirmDuplicate('email', getValues('email'))}
+                  className="mt-2 h-10 w-full cursor-pointer rounded-md bg-blue-400 pt-2 text-center text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
+                />
               )}
 
-              {isConfirmEmail && <p className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 이메일입니다.</p>}
               {errors.email && !!watch('email') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.email.message}</p>}
             </div>
           </div>
