@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 enum Provider {
@@ -31,4 +31,15 @@ model User {
   selectable_agreement Boolean
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+model Product {
+  idx            String   @id @default(uuid())
+  name           String
+  category       String
+  original_price Int // 정가
+  discount_rate  Float? // 할인율 (0~100, 선택적)
+  imageUrl       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

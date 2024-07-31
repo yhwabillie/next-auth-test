@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next'
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
 import { NextRequest } from 'next/server'
 
-export const fetchProfileData = async (req: any) => {
+export const fetchProfileData = async () => {
   try {
     const session = await getServerSession(authOptions)
 
