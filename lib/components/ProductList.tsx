@@ -1,13 +1,48 @@
 'use client'
 
+import clsx from 'clsx'
+import { useState } from 'react'
+import { FieldValues, useForm } from 'react-hook-form'
+
 export const ProductList = (props: any) => {
+  const [isAllChecked, setIsAllChecked] = useState(false)
+  const {
+    register,
+    watch,
+    reset,
+    handleSubmit,
+    setFocus,
+    setValue,
+    getValues,
+    resetField,
+    formState: { errors },
+  } = useForm<FieldValues>({
+    mode: 'onChange',
+    // resolver: zodResolver(SignInSchema),
+    defaultValues: {},
+  })
+
+  console.log(isAllChecked)
+
   return (
     <table className="mt-5">
       <thead>
         <tr>
           <th>
             <label className="block h-4 w-4 border border-blue-500">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                onChange={() => {
+                  const newValue = !isAllChecked
+                  const values = Object.keys(getValues())
+
+                  values.forEach((value) => {
+                    setValue(value, newValue)
+                  })
+
+                  setIsAllChecked(newValue)
+                }}
+              />
             </label>
           </th>
           <th>이름</th>
@@ -22,8 +57,22 @@ export const ProductList = (props: any) => {
         {props.data.map((item: any, index: number) => (
           <tr key={index}>
             <td>
-              <label htmlFor={item.idx} className="block h-4 w-4 border border-blue-500">
-                <input type="checkbox" id={item.idx} />
+              <label
+                htmlFor={item.idx}
+                className={clsx('block h-4 w-4 border', {
+                  'border-red-500': watch(`${item.idx}`),
+                  'border-blue-500': !watch(`${item.idx}`),
+                })}
+              >
+                <input
+                  {...register(`${item.idx}`)}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    const isChecked = event.target.checked
+                    setValue(`${item.idx}`, isChecked)
+                  }}
+                  type="checkbox"
+                  id={item.idx}
+                />
               </label>
             </td>
             <td>{item.name}</td>
