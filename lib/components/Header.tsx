@@ -13,6 +13,7 @@ enum TooltipTypes {
   CART = 'CART',
   WISH = 'WISH',
   DROP_DWN = 'DROP_DWN',
+  ADD_PRODUCT = 'ADD_PRODUCT',
 }
 
 export const Header = () => {
@@ -32,36 +33,58 @@ export const Header = () => {
         {session && session.user ? (
           <nav className="flex items-center">
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <button
-                  onMouseEnter={() => showTooltip(TooltipTypes.WISH)}
-                  onMouseLeave={() => closeTooltip()}
-                  className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
-                >
-                  <span className="sr-only">위시리스트</span>
-                  <FaHeartCirclePlus className="text-lg text-pink-200" />
-                </button>
-                {activeModal === TooltipTypes.WISH && (
-                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[80px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                    위시리스트
-                  </span>
-                )}
-              </div>
-              <div className="relative">
-                <button
-                  onMouseEnter={() => showTooltip(TooltipTypes.CART)}
-                  onMouseLeave={() => closeTooltip()}
-                  className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
-                >
-                  <span className="sr-only">장바구니</span>
-                  <FaShoppingCart className="text-lg text-white" />
-                </button>
-                {activeModal === TooltipTypes.CART && (
-                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                    장바구니
-                  </span>
-                )}
-              </div>
+              {session.user.user_type === 'indivisual' ? (
+                <>
+                  <div className="relative">
+                    <button
+                      onMouseEnter={() => showTooltip(TooltipTypes.WISH)}
+                      onMouseLeave={() => closeTooltip()}
+                      className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                    >
+                      <span className="sr-only">위시리스트</span>
+                      <FaHeartCirclePlus className="text-lg text-pink-200" />
+                    </button>
+                    {activeModal === TooltipTypes.WISH && (
+                      <span className="absolute bottom-[-35px] left-[50%] box-border block w-[80px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                        위시리스트
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <button
+                      onMouseEnter={() => showTooltip(TooltipTypes.CART)}
+                      onMouseLeave={() => closeTooltip()}
+                      className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                    >
+                      <span className="sr-only">장바구니</span>
+                      <FaShoppingCart className="text-lg text-white" />
+                    </button>
+                    {activeModal === TooltipTypes.CART && (
+                      <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                        장바구니
+                      </span>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="relative">
+                  <Link
+                    href="/add-product"
+                    onMouseEnter={() => showTooltip(TooltipTypes.ADD_PRODUCT)}
+                    onMouseLeave={() => closeTooltip()}
+                    className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                  >
+                    <span className="sr-only">상품등록</span>
+                    <FaShoppingCart className="text-lg text-white" />
+                  </Link>
+                  {activeModal === TooltipTypes.ADD_PRODUCT && (
+                    <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                      상품등록
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="relative">
                 <button
                   onMouseEnter={() => showTooltip(TooltipTypes.PROFILE)}

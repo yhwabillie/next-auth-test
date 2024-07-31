@@ -85,8 +85,6 @@ export const SignUpForm = () => {
     formData.append('input_data', blob)
     formData.append('profile_img', data.profile_img[0])
 
-    setIsFormLoading(true)
-
     toast.promise(
       axios({
         method: 'post',
@@ -100,17 +98,14 @@ export const SignUpForm = () => {
         loading: '데이터 전송 중입니다.',
         success: () => {
           reset()
-          router.refresh()
+          router.push('/')
           return `회원가입이 완료되었습니다. 🎉`
         },
         error: (err) => {
           console.log(err)
           return `${err}`
         },
-        finally: () => {
-          setIsFormLoading(false)
-          router.refresh()
-        },
+        finally: () => {},
       },
     )
   }
