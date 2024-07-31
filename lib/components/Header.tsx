@@ -88,7 +88,7 @@ export const Header = () => {
                   >
                     <h3 className="sr-only">사용자 메뉴 드롭다운</h3>
                     <h4 className="block border-b-[1px] border-white/50 pb-2 text-center font-medium text-white">
-                      <strong className="block text-xs font-medium">일반회원</strong>
+                      <strong className="block text-xs font-medium">{session.user.user_type === 'indivisual' ? '일반 사용자' : '관리자'}</strong>
                       <span>{session.user.name}</span> 님
                     </h4>
                     <Link

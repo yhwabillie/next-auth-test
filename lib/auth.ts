@@ -47,15 +47,13 @@ const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/signIn',
   },
-  session: {},
   callbacks: {
-    // signIn: async ({ user, account, profile, email, credentials }) => {
-    //   return true
-    // },
-    jwt: async ({ token, user, trigger, session }) => {
+    jwt: async ({ token, user, profile, account, session, trigger }) => {
       // authorize callback으로 리턴받은 user 객체
       // 기본 제공 키값중 email을 이용하여 필요한 로그인 사용자 DB 정보 조회
       // user 객체에 다시 재정제 및 정제 데이터를 token으로 다시 리턴
+      // session, profile 비어있음
+
       try {
         if (user) {
           const userInfo = await prisma.user.findUnique({
@@ -64,17 +62,22 @@ const authOptions: NextAuthOptions = {
             },
             select: {
               idx: true,
-              name: true,
+              provider: true,
               user_type: true,
+              name: true,
               profile_img: true,
             },
           })
 
+          if (!userInfo) throw new Error('세션 email와 일치하는 이메일 DB조회에 실패했습니다.')
+
           token.user = {}
-          token.user.idx = userInfo?.idx
-          token.user.name = userInfo?.name
-          token.user.user_type = userInfo?.user_type
-          token.user.profile_img = userInfo?.profile_img
+          token.user.idx = userInfo.idx
+          token.user.provider = userInfo.provider
+          token.user.user_type = userInfo.user_type
+          token.user.name = userInfo.name
+          token.user.profile_img = userInfo.profile_img
+          console.log('token========>', token)
         }
 
         //세션 update 메소드 트리거 (이름, 프로필 이미지)
@@ -108,7 +111,7 @@ const authOptions: NextAuthOptions = {
     },
 
     session: async ({ session, token }) => {
-      //리턴된 token 정보를 session 내부에 추가
+      //리턴된 token.user 정보를 session 내부에 추가
       //session 리턴
       try {
         session.user = token.user

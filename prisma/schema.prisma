@@ -8,10 +8,19 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Provider {
+  credential
+}
+
+enum UserType {
+  indivisual
+  admin
+}
+
 model User {
   idx                  String   @id @default(uuid())
-  provider             String
-  user_type            String
+  provider             Provider
+  user_type            UserType
   id                   String   @unique
   email                String   @unique
   name                 String
