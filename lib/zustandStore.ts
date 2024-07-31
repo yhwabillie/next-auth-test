@@ -14,3 +14,13 @@ export const useAgreementStore = create<AgreementState>((set) => ({
   },
   setAgreement: (data: AgreementSchemaType) => set({ agreements: data }),
 }))
+
+type ModalState = {
+  modalState: boolean
+  setModalState: (data: boolean) => void
+}
+
+export const useModalStore = create<ModalState>((set) => ({
+  modalState: false,
+  setModalState: (data: boolean) => set({ modalState: data }),
+}))

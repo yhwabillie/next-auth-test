@@ -1,7 +1,7 @@
 'use client'
 import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile, updateUserPw } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
-import { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, Suspense, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
@@ -9,10 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signOut, useSession } from 'next-auth/react'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
 import { Button } from './Button'
-import { HookFormRadioItem } from './HookFormRadioItem'
 import { HookFormInput } from './HookFormInput'
 import { HookFormCheckBox } from './HookFormCheckBox'
 import { useRouter } from 'next/navigation'
+import { useModalStore } from '../zustandStore'
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -70,8 +70,16 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
   })
 
   const [activeModal, setActiveModal] = useState(ModalTypes.NONE)
-  const openModal = (type: ModalTypes) => setActiveModal(type)
-  const closeModal = () => setActiveModal(ModalTypes.NONE)
+  const { setModalState } = useModalStore((state) => state)
+
+  const openModal = (type: ModalTypes) => {
+    setModalState(true)
+    setActiveModal(type)
+  }
+  const closeModal = () => {
+    setModalState(false)
+    setActiveModal(ModalTypes.NONE)
+  }
 
   const nameRef = useRef<HTMLInputElement>(null)
   const saveNameBtnRef = useRef<HTMLButtonElement>(null)

@@ -1,7 +1,6 @@
 import { AuthProvider } from '@/lib/components/AuthProvider'
 import type { Metadata } from 'next'
 import { Header } from '@/lib/components/Header'
-import { Footer } from '@/lib/components/Footer'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -17,13 +16,11 @@ interface RootLayoutType {
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
   return (
     <html lang="ko">
-      <body>
-        <AuthProvider>
-          <Toaster position="top-center" theme="light" richColors closeButton />
-          <Header />
-          <main className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600">{children}</main>
-        </AuthProvider>
-      </body>
+      <AuthProvider>
+        <Toaster position="top-center" theme="light" richColors closeButton />
+        <Header />
+        <main className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600">{children}</main>
+      </AuthProvider>
     </html>
   )
 }
