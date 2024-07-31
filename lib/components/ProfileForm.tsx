@@ -12,6 +12,7 @@ import { Button } from './Button'
 import { HookFormRadioItem } from './HookFormRadioItem'
 import { HookFormInput } from './HookFormInput'
 import { HookFormCheckBox } from './HookFormCheckBox'
+import { useRouter } from 'next/navigation'
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -40,6 +41,7 @@ enum ModalTypes {
 }
 
 export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
+  const router = useRouter()
   const { data: session, status, update } = useSession()
   const [profileImage, setProfileImage] = useState('')
   const [confirmedPW, setConfirmedPW] = useState(false)
@@ -50,6 +52,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
     watch,
     getValues,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm<IProfileFormData>({
     mode: 'onChange',
@@ -90,6 +93,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
       if (status === 'authenticated') {
         update({ name: getValues('name') })
+        router.refresh()
         toast.success('사용자 이름을 업데이트하였습니다.')
       }
     } catch (error: any) {
@@ -104,6 +108,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
     })
 
     if (response.success) {
+      router.refresh()
       toast.success('이용정보 동의 업데이트가 완료되었습니다.')
 
       if (!nameRef.current) return
@@ -194,6 +199,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         setConfirmedPW(response)
         toast.success('비밀번호가 확인되었습니다.')
       } else {
+        resetField('input_password')
+        setFocus('input_password')
         toast.error('비밀번호가 일치하지 않습니다, 다시 입력하세요.')
       }
     } catch (error: any) {
@@ -207,6 +214,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       const response = await updateUserPw(data.idx, getValues('password'))
 
       if (response) {
+        resetField('input_password')
         toast.warning('기존 비밀번호와 동일합니다, 다른 비밀번호로 입력해주세요.')
       } else {
         setConfirmedPW(false)
@@ -274,7 +282,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 type="button"
                 ref={saveNameBtnRef}
                 onClick={handleUpdateUserName}
-                disabled={(errors.name && !!watch('name')) || watch('name') === ''}
+                disabled={errors.name !== undefined || watch('name') === ''}
                 className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-400 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-400"
               >
                 업데이트
@@ -295,7 +303,12 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                   <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.input_password.message}</p>
                 )}
               </div>
-              <Button type="button" disalbe={watch('input_password') === ''} clickEvent={handleConfirmCurrentPw} label="현재 비밀번호 확인" />
+              <Button
+                type="button"
+                disalbe={watch('input_password') === '' || watch('input_password') === undefined}
+                clickEvent={handleConfirmCurrentPw}
+                label="현재 비밀번호 확인"
+              />
             </div>
 
             {confirmedPW && (
@@ -376,51 +389,98 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               </div>
               <Button type="button" clickEvent={() => openModal(ModalTypes.SELECTABLE)} label="전문보기" />
             </div>
-            <Button type="button" clickEvent={handleUpdateUserAgreement} label="정보 동의 업데이트" />
+            <Button
+              type="button"
+              disalbe={data.selectable_agreement === getValues('selectable_agreement')}
+              clickEvent={handleUpdateUserAgreement}
+              label="정보 동의 업데이트"
+            />
           </fieldset>
         </form>
       </Suspense>
 
       {/* Modal */}
       {activeModal === ModalTypes.SERVICE && (
-        <div>
-          <h1>SERVICE</h1>
-          <div>
-            <h2>service_agreement</h2>
-            <p>
+        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
+          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+            <h2 className="text-center text-2xl font-semibold tracking-tighter">서비스 이용 동의 (필수) 전문</h2>
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
-              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
-            </p>
-          </div>
-          <button onClick={closeModal}>닫기</button>
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+            </div>
+
+            <Button label="닫기" clickEvent={closeModal} />
+          </section>
         </div>
       )}
 
       {activeModal === ModalTypes.PRIVACY && (
-        <div>
-          <h1>PRIVACY</h1>
-          <div>
-            <h2>service_agreement</h2>
-            <p>
+        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
+          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+            <h2 className="text-center text-2xl font-semibold tracking-tighter">개인 정보 이용 동의 (필수) 전문</h2>
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
-              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
-            </p>
-          </div>
-          <button onClick={closeModal}>닫기</button>
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+            </div>
+
+            <Button label="닫기" clickEvent={closeModal} />
+          </section>
         </div>
       )}
 
       {activeModal === ModalTypes.SELECTABLE && (
-        <div>
-          <h1>SELECTABLE</h1>
-          <div>
-            <h2>service_agreement</h2>
-            <p>
+        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
+          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+            <h2 className="text-center text-2xl font-semibold tracking-tighter">마케팅 이용 동의 (선택) 전문</h2>
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
-              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
-            </p>
-          </div>
-          <button onClick={closeModal}>닫기</button>
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
+              accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
+              elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
+              consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates
+              magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet
+              consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit
+              deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum
+              enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum.
+            </div>
+
+            <Button label="닫기" clickEvent={closeModal} />
+          </section>
         </div>
       )}
     </>
