@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
       <AuthProvider>
         <Toaster position="top-center" theme="light" richColors closeButton />
         <Header />
-        <main className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600">{children}</main>
+        <main className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600 px-5">{children}</main>
       </AuthProvider>
     </html>
   )

@@ -1,17 +1,5 @@
 'use server'
 import prisma from '@/lib/prisma'
-import { NextRequest } from 'next/server'
-
-// model Product {
-//     idx            String   @id @default(uuid())
-//     name           String
-//     category       String
-//     original_price Int // 정가
-//     discount_rate  Float? // 할인율 (0~100, 선택적)
-//     imageUrl       String
-//     createdAt      DateTime @default(now())
-//     updatedAt      DateTime @updatedAt
-//   }
 
 export interface ICreateProductProps {
   name: string
@@ -34,6 +22,23 @@ export const createProduct = async (data: ICreateProductProps) => {
     })
 
     return products
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteProducts = async (products: any) => {
+  console.log(Object.keys(products))
+
+  try {
+    for (const product of Object.keys(products)) {
+      console.log(product)
+      await prisma.product.delete({
+        where: {
+          idx: product,
+        },
+      })
+    }
   } catch (error) {
     console.log(error)
   }

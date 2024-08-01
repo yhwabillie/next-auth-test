@@ -104,15 +104,6 @@ export const ProductUploadForm = () => {
           />
         </div>
       </div>
-
-      <div className="flex flex-row justify-end gap-2">
-        <div className="w-[230px]">
-          <Button label="선택 Excel 다운로드" disalbe={true} />
-        </div>
-        <div className="w-[150px]">
-          <Button label="선택 삭제" disalbe={true} />
-        </div>
-      </div>
     </>
   )
 }
