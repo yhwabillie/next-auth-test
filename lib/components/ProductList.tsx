@@ -37,14 +37,25 @@ export const ProductList = ({ data: { data } }: any) => {
     })
   }
 
-  const toggleItem = (key: any, isChecked: boolean) => {
+  const toggleItem = (key: string, isChecked: boolean) => {
     setItems((prevItems) => {
+      const updatedItems = { ...prevItems }
+
       if (isChecked) {
         // Check: Set the value to true
-        return { ...prevItems, [key]: true }
+        updatedItems[key] = true
+      } else {
+        // Uncheck: Set the value to false
+        updatedItems[key] = false
       }
 
-      return { ...prevItems, [key]: false }
+      // If the key already exists and the new value is the same, remove the key
+      if (prevItems.hasOwnProperty(key) && prevItems[key] === isChecked) {
+        const { [key]: _, ...remainingItems } = updatedItems
+        return remainingItems
+      }
+
+      return updatedItems
     })
   }
 
@@ -58,13 +69,12 @@ export const ProductList = ({ data: { data } }: any) => {
       return acc
     }, {})
 
-    console.log(result, '///')
-
     const response = await deleteSelectedProductsByIdx(result)
     console.log(response)
 
     router.refresh()
     setItems({})
+
     data.forEach((item: any) => {
       setValue(item.idx, false)
     })
@@ -82,11 +92,11 @@ export const ProductList = ({ data: { data } }: any) => {
         return acc
       }, {})
 
-      data.forEach((item: any) => {
-        setValue(item.idx, true)
+      Object.keys(watch()).forEach((item: any) => {
+        setValue(item, isChecked)
       })
 
-      setIsAllChecked(true)
+      setIsAllChecked(isChecked)
       setItems(result)
     } else if (!isChecked) {
       const result = data.reduce((acc: any, item: any) => {
@@ -94,16 +104,16 @@ export const ProductList = ({ data: { data } }: any) => {
         return acc
       }, {})
 
-      data.forEach((item: any) => {
-        setValue(item.idx, false)
+      Object.keys(watch()).forEach((item: any) => {
+        setValue(item, isChecked)
       })
 
-      setIsAllChecked(false)
+      setIsAllChecked(isChecked)
       setItems(result)
     }
   }
 
-  console.log('current items', items)
+  // console.log(items)
 
   return (
     <>
@@ -141,28 +151,16 @@ export const ProductList = ({ data: { data } }: any) => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const isChecked = event.target.checked
 
-                      if (isChecked) {
-                        setValue(`${item.idx}`, isChecked)
-                        toggleItem(`${item.idx}`, isChecked)
-                      } else if (!isChecked) {
-                        setValue(`${item.idx}`, isChecked)
-                        toggleItem(`${item.idx}`, isChecked)
-                      }
+                      setValue(`${item.idx}`, isChecked)
+                      toggleItem(`${item.idx}`, isChecked)
 
-                      console.log(
-                        Object.values(getValues()).every((item: any) => item === true),
-                        '///',
-                      )
-
-                      if (Object.values(getValues()).every((item: any) => item === true)) {
-                        if (!checkAllRef.current) return
-                        checkAllRef.current.checked = true
-                        setIsAllChecked(true)
-                      } else {
+                      if (!isChecked) {
                         if (!checkAllRef.current) return
                         checkAllRef.current.checked = false
                         setIsAllChecked(false)
                       }
+
+                      console.log(getValues(), '///')
                     }}
                     type="checkbox"
                     id={item.idx}
