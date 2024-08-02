@@ -14,7 +14,7 @@ export default async function Page() {
   let userData
 
   try {
-    userData = await fetchProfileData(req)
+    userData = await fetchProfileData()
   } catch (error) {
     console.error(error)
     userData = null
