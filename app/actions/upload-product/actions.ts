@@ -78,6 +78,8 @@ export const fetchAllProducts = async () => {
   try {
     const data = await prisma.product.findMany()
 
+    console.log('//////===>', data)
+
     if (!data) return { success: false }
 
     return { success: true, data }
