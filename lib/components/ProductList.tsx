@@ -51,6 +51,22 @@ export const ProductList = ({ data }: IDataProps) => {
     })
   }
 
+  const toggleItem2 = (key: string, isChecked: boolean) => {
+    setItems((prev) => {
+      const updatedItems = { ...prev }
+
+      // 새로 들어온 값과 기존 값이 같다면 반대로 설정
+      if (prev[key] === isChecked) {
+        updatedItems[key] = isChecked
+      } else {
+        // 새로 들어온 값으로 업데이트
+        updatedItems[key] = isChecked
+      }
+
+      return updatedItems
+    })
+  }
+
   const updateAllValues = (isChecked: boolean) => {
     setItems((prevItems) => {
       const updatedItems = Object.keys(prevItems).reduce(
@@ -78,10 +94,28 @@ export const ProductList = ({ data }: IDataProps) => {
     router.refresh()
 
     setItems({})
-
+    data?.forEach((item) => {
+      toggleItem2(item.idx, false)
+    })
     setIsAllChecked(false)
     if (!checkAllRef.current) return
     checkAllRef.current.checked = false
+  }
+
+  const updateDifferentValues = (current: { [key: string]: boolean }, newValues: { [key: string]: boolean }) => {
+    const updatedItems = Object.keys(current).reduce(
+      (acc, key) => {
+        if (current[key] !== newValues[key]) {
+          acc[key] = newValues[key]
+        } else {
+          acc[key] = current[key]
+        }
+        return acc
+      },
+      {} as { [key: string]: boolean },
+    )
+
+    return updatedItems
   }
 
   useEffect(() => {
@@ -134,8 +168,11 @@ export const ProductList = ({ data }: IDataProps) => {
                       })
                     } else if (Object.keys(items).length > 0 && isChecked) {
                       console.log('?')
+                      data?.forEach((item) => {
+                        toggleItem2(item.idx, true)
+                      })
 
-                      updateAllValues(true)
+                      // updateAllValues(isChecked)
                     } else {
                       setIsAllChecked(false)
                       updateAllValues(false)
