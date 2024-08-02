@@ -31,6 +31,8 @@ export const ProductList = ({ data }: IDataProps) => {
   const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
 
+  console.log('data 클라이언트===>', data)
+
   //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
   //중복객체가 있을시 배열에서 제거
   //check: true, unchecked: false 값 할당

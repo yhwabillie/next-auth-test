@@ -6,8 +6,10 @@ import { ProductList } from '@/lib/components/ProductList'
 export default async function Page() {
   const response = await fetchAllProducts()
 
-  if (!response.success) return
+  if (!response.success) throw new Error('데이터 패칭 실패')
   const products = response.data
+
+  console.log(products, '서버컴포넌트 데이터')
 
   return (
     <section className="py-20">
