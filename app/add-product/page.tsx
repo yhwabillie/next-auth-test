@@ -10,6 +10,7 @@ export default async function Page() {
   const products = response.data
 
   console.log(products, '서버컴포넌트 데이터')
+  console.log('==========> 서버컴포넌트')
 
   return (
     <section className="py-20">
