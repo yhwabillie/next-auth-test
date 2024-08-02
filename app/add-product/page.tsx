@@ -1,10 +1,10 @@
 'use server'
 import { ProductUploadForm } from '@/lib/components/ProductUploadForm'
-import { getProducts } from '../actions/upload-product/actions'
+import { fetchAllProducts } from '../actions/upload-product/actions'
 import { ProductList } from '@/lib/components/ProductList'
 
 export default async function Page() {
-  const products = await getProducts()
+  const products = await fetchAllProducts()
 
   return (
     <section className="py-20">

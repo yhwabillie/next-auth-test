@@ -83,6 +83,9 @@ export const ProductUploadForm = () => {
             if (event.target.files) {
               setFileName(event.target.files[0].name)
               setFile(event.target.files[0])
+            } else {
+              setFileName('')
+              setFile(null)
             }
           }}
           type="file"

@@ -27,10 +27,29 @@ export const createProduct = async (data: ICreateProductProps) => {
   }
 }
 
-export const deleteProducts = async (products: any) => {
-  console.log(Object.keys(products))
+interface IDeleteProducts {
+  [key: string]: boolean
+}
 
+export const deleteSelectedProductsByIdx = async (products: any) => {
+  // try {
+  //   // 모든 삭제 작업을 병렬로 실행
+  //   const deletePromises = Object.keys(products).map((productIdx) => {
+  //     console.log(`Deleting product with ID: ${productIdx}`)
+  //     return prisma.product.delete({
+  //       where: {
+  //         idx: productIdx,
+  //       },
+  //     })
+  //   })
+  //   await Promise.all(deletePromises)
+  //   return { success: true }
+  // } catch (error) {
+  //   console.error('Error deleting selected products:', error)
+  //   throw new Error('Failed to delete selected products')
+  // }
   try {
+    console.log(products)
     for (const product of Object.keys(products)) {
       console.log(product)
       await prisma.product.delete({
@@ -39,6 +58,8 @@ export const deleteProducts = async (products: any) => {
         },
       })
     }
+
+    return { success: true }
   } catch (error) {
     console.log(error)
   }
@@ -54,11 +75,12 @@ export const createBulkProduct = async (products: ICreateProductProps[]) => {
   }
 }
 
-export const getProducts = async () => {
+export const fetchAllProducts = async (): Promise<{ success: boolean; data?: any[]; error?: string }> => {
   try {
     const products = await prisma.product.findMany()
-    return products
-  } catch (error) {
-    console.log(error)
+    return { success: true, data: products }
+  } catch (error: any) {
+    console.error('Error fetching products:', error)
+    return { success: false, error: error.message }
   }
 }

@@ -1,49 +1,105 @@
 'use client'
 
 import clsx from 'clsx'
-import { useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { Button } from './Button'
 import { FaCheck } from 'react-icons/fa'
-import { deleteProducts } from '@/app/actions/upload-product/actions'
+import { deleteSelectedProductsByIdx } from '@/app/actions/upload-product/actions'
 import { useRouter } from 'next/navigation'
+import { object } from 'zod'
 
-export const ProductList = (props: any) => {
+interface ItemsType {
+  [key: string]: boolean
+}
+
+export const ProductList = ({ data: { data } }: any) => {
   const router = useRouter()
+  const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
-  const {
-    register,
-    watch,
-    reset,
-    handleSubmit,
-    setFocus,
-    setValue,
-    getValues,
-    resetField,
-    formState: { errors },
-  } = useForm<FieldValues>({
+  const { register, watch, reset, setValue, getValues } = useForm<FieldValues>({
     mode: 'onChange',
-    // resolver: zodResolver(SignInSchema),
-    defaultValues: {},
   })
 
-  const deleteData = async () => {
-    const allValues = watch()
-    const excludedId = 'check_all'
-    const filteredValues = Object.keys(allValues)
-      .filter((key) => key !== excludedId && allValues[key])
-      .reduce<any>((obj, key) => {
-        obj[key] = allValues[key]
-        return obj
+  const checkAllRef = useRef<HTMLInputElement>(null)
+
+  const toggleItems = (newItems: { [key: string]: boolean }) => {
+    setItems((prevItems) => {
+      const updatedItems = { ...prevItems }
+
+      Object.keys(newItems).forEach((key) => {
+        if (!prevItems.hasOwnProperty(key)) {
+          updatedItems[key] = true
+        }
+      })
+
+      return updatedItems
+    })
+  }
+
+  const toggleItem = (key: any, isChecked: boolean) => {
+    setItems((prevItems) => {
+      if (isChecked) {
+        // Check: Set the value to true
+        return { ...prevItems, [key]: true }
+      }
+
+      return { ...prevItems, [key]: false }
+    })
+  }
+
+  const deleteSelectedProducts = async () => {
+    console.log('go Server===>', items)
+
+    // const result = Object.keys(items).reduce((acc: any, key) => {
+    //   if (items[key] === true) {
+    //     acc[key] = items[key]
+    //   }
+    //   return acc
+    // }, {})
+
+    // console.log('result', result)
+
+    const response = await deleteSelectedProductsByIdx(items)
+    console.log(response)
+
+    router.refresh()
+    setItems({})
+    data.forEach((item: any) => {
+      setValue(item.idx, false)
+    })
+    if (!checkAllRef.current) return
+    checkAllRef.current.checked = false
+    setIsAllChecked(false)
+  }
+
+  const handleChangeCheckAll = (event: ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.currentTarget.checked
+
+    if (isChecked) {
+      const result = data.reduce((acc: any, item: any) => {
+        acc[item.idx] = true
+        return acc
       }, {})
 
-    console.log(filteredValues)
+      data.forEach((item: any) => {
+        setValue(item.idx, true)
+      })
 
-    try {
-      await deleteProducts(filteredValues)
-      router.refresh()
-    } catch (error) {
-      console.log(error)
+      setIsAllChecked(true)
+      setItems(result)
+    } else if (!isChecked) {
+      const result = data.reduce((acc: any, item: any) => {
+        acc[item.idx] = false
+        return acc
+      }, {})
+
+      data.forEach((item: any) => {
+        setValue(item.idx, false)
+      })
+
+      setIsAllChecked(false)
+      setItems(result)
     }
   }
 
@@ -54,29 +110,16 @@ export const ProductList = (props: any) => {
           <Button label="전체 Excel 다운로드" disalbe={true} />
         </div>
         <div className="w-[150px]">
-          <Button label="선택 삭제" clickEvent={deleteData} />
+          <Button label="선택 삭제" clickEvent={deleteSelectedProducts} />
         </div>
       </div>
       <table className="mt-5 w-full border-collapse">
         <thead className="bg-gray-100">
           <tr className="h-10 border-b border-gray-300">
             <th className="box-border w-[5%]">
-              <label className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
-                <input
-                  {...register('check_all')}
-                  type="checkbox"
-                  onChange={() => {
-                    const newValue = !isAllChecked
-                    const values = Object.keys(getValues())
-
-                    values.forEach((value) => {
-                      setValue(value, newValue)
-                    })
-
-                    setIsAllChecked(newValue)
-                  }}
-                />
-                {watch('check_all') && <FaCheck />}
+              <label htmlFor="check_all" className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
+                <input ref={checkAllRef} id="check_all" type="checkbox" onChange={handleChangeCheckAll} />
+                {isAllChecked && <FaCheck />}
               </label>
             </th>
             <th className="w-[50%] text-center text-sm">이름</th>
@@ -87,7 +130,7 @@ export const ProductList = (props: any) => {
           </tr>
         </thead>
         <tbody>
-          {props.data.map((item: any, index: number) => (
+          {data.map((item: any, index: number) => (
             <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="w-[5%]">
                 <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
@@ -96,11 +139,22 @@ export const ProductList = (props: any) => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const isChecked = event.target.checked
                       setValue(`${item.idx}`, isChecked)
+                      toggleItem(`${item.idx}`, isChecked)
+
+                      if (Object.values(getValues()).every((item: any) => item === true)) {
+                        if (!checkAllRef.current) return
+                        checkAllRef.current.checked = true
+                        setIsAllChecked(true)
+                      } else {
+                        if (!checkAllRef.current) return
+                        checkAllRef.current.checked = false
+                        setIsAllChecked(false)
+                      }
                     }}
                     type="checkbox"
                     id={item.idx}
                   />
-                  {watch(`${item.idx}`) && <FaCheck />}
+                  {getValues(`${item.idx}`) && <FaCheck />}
                 </label>
               </td>
               <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
