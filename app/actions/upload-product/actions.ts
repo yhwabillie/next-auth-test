@@ -51,7 +51,6 @@ export const deleteSelectedProductsByIdx = async (products: any) => {
   try {
     console.log(products)
     for (const product of Object.keys(products)) {
-      console.log(product)
       await prisma.product.delete({
         where: {
           idx: product,

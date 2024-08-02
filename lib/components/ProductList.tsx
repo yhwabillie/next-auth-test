@@ -51,16 +51,16 @@ export const ProductList = ({ data: { data } }: any) => {
   const deleteSelectedProducts = async () => {
     console.log('go Server===>', items)
 
-    // const result = Object.keys(items).reduce((acc: any, key) => {
-    //   if (items[key] === true) {
-    //     acc[key] = items[key]
-    //   }
-    //   return acc
-    // }, {})
+    const result = Object.keys(items).reduce((acc: any, key: any) => {
+      if (items[key] === true) {
+        acc[key] = items[key]
+      }
+      return acc
+    }, {})
 
-    // console.log('result', result)
+    console.log(result, '///')
 
-    const response = await deleteSelectedProductsByIdx(items)
+    const response = await deleteSelectedProductsByIdx(result)
     console.log(response)
 
     router.refresh()
@@ -103,6 +103,8 @@ export const ProductList = ({ data: { data } }: any) => {
     }
   }
 
+  console.log('current items', items)
+
   return (
     <>
       <div className="flex flex-row justify-end gap-2">
@@ -138,8 +140,19 @@ export const ProductList = ({ data: { data } }: any) => {
                     {...register(`${item.idx}`)}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const isChecked = event.target.checked
-                      setValue(`${item.idx}`, isChecked)
-                      toggleItem(`${item.idx}`, isChecked)
+
+                      if (isChecked) {
+                        setValue(`${item.idx}`, isChecked)
+                        toggleItem(`${item.idx}`, isChecked)
+                      } else if (!isChecked) {
+                        setValue(`${item.idx}`, isChecked)
+                        toggleItem(`${item.idx}`, isChecked)
+                      }
+
+                      console.log(
+                        Object.values(getValues()).every((item: any) => item === true),
+                        '///',
+                      )
 
                       if (Object.values(getValues()).every((item: any) => item === true)) {
                         if (!checkAllRef.current) return
