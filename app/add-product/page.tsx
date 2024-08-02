@@ -4,7 +4,10 @@ import { fetchAllProducts } from '../actions/upload-product/actions'
 import { ProductList } from '@/lib/components/ProductList'
 
 export default async function Page() {
-  const products = await fetchAllProducts()
+  const response = await fetchAllProducts()
+
+  if (!response.success) return
+  const products = response.data
 
   return (
     <section className="py-20">

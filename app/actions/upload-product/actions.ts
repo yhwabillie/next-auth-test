@@ -74,12 +74,14 @@ export const createBulkProduct = async (products: ICreateProductProps[]) => {
   }
 }
 
-export const fetchAllProducts = async (): Promise<{ success: boolean; data?: any[]; error?: string }> => {
+export const fetchAllProducts = async () => {
   try {
-    const products = await prisma.product.findMany()
-    return { success: true, data: products }
+    const data = await prisma.product.findMany()
+
+    if (!data) return { success: false }
+
+    return { success: true, data }
   } catch (error: any) {
-    console.error('Error fetching products:', error)
-    return { success: false, error: error.message }
+    throw new Error(error)
   }
 }

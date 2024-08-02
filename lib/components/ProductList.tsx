@@ -1,60 +1,65 @@
 'use client'
-
-import clsx from 'clsx'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { Button } from './Button'
 import { FaCheck } from 'react-icons/fa'
 import { deleteSelectedProductsByIdx } from '@/app/actions/upload-product/actions'
 import { useRouter } from 'next/navigation'
-import { object } from 'zod'
 
 interface ItemsType {
   [key: string]: boolean
 }
 
-export const ProductList = ({ data: { data } }: any) => {
+interface IDataProps {
+  data:
+    | {
+        idx: string
+        name: string
+        category: string
+        original_price: number
+        discount_rate: number | null
+        imageUrl: string
+        createdAt: Date
+        updatedAt: Date
+      }[]
+    | undefined
+}
+
+export const ProductList = ({ data }: IDataProps) => {
   const router = useRouter()
+  const checkAllRef = useRef<HTMLInputElement>(null)
   const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
-  const { register, watch, reset, setValue, getValues } = useForm<FieldValues>({
-    mode: 'onChange',
-  })
 
-  const checkAllRef = useRef<HTMLInputElement>(null)
+  //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
+  //중복객체가 있을시 배열에서 제거
+  //check: true, unchecked: false 값 할당
+  //중복된 키값이 발견되면 새로운 값으로 업데이트
+  const toggleItem = (key: string, isChecked: boolean) => {
+    setItems((prev) => {
+      const updatedItems = { ...prev }
 
-  const toggleItems = (newItems: { [key: string]: boolean }) => {
-    setItems((prevItems) => {
-      const updatedItems = { ...prevItems }
-
-      Object.keys(newItems).forEach((key) => {
-        if (!prevItems.hasOwnProperty(key)) {
-          updatedItems[key] = true
-        }
-      })
+      // 새로 들어온 값과 기존 값이 같다면 반대로 설정
+      if (prev[key] === isChecked) {
+        updatedItems[key] = !isChecked
+      } else {
+        // 새로 들어온 값으로 업데이트
+        updatedItems[key] = isChecked
+      }
 
       return updatedItems
     })
   }
 
-  const toggleItem = (key: string, isChecked: boolean) => {
+  const updateAllValues = (isChecked: boolean) => {
     setItems((prevItems) => {
-      const updatedItems = { ...prevItems }
-
-      if (isChecked) {
-        // Check: Set the value to true
-        updatedItems[key] = true
-      } else {
-        // Uncheck: Set the value to false
-        updatedItems[key] = false
-      }
-
-      // If the key already exists and the new value is the same, remove the key
-      if (prevItems.hasOwnProperty(key) && prevItems[key] === isChecked) {
-        const { [key]: _, ...remainingItems } = updatedItems
-        return remainingItems
-      }
-
+      const updatedItems = Object.keys(prevItems).reduce(
+        (acc, key) => {
+          acc[key] = isChecked
+          return acc
+        },
+        {} as { [key: string]: boolean },
+      )
       return updatedItems
     })
   }
@@ -70,50 +75,34 @@ export const ProductList = ({ data: { data } }: any) => {
     }, {})
 
     const response = await deleteSelectedProductsByIdx(result)
-    console.log(response)
-
     router.refresh()
+
     setItems({})
 
-    data.forEach((item: any) => {
-      setValue(item.idx, false)
-    })
+    setIsAllChecked(false)
     if (!checkAllRef.current) return
     checkAllRef.current.checked = false
-    setIsAllChecked(false)
   }
 
-  const handleChangeCheckAll = (event: ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.currentTarget.checked
+  useEffect(() => {
+    console.log('items===>', items)
+    console.log('data 개수===>', data?.length)
 
-    if (isChecked) {
-      const result = data.reduce((acc: any, item: any) => {
-        acc[item.idx] = true
-        return acc
-      }, {})
+    //data와 items(최종 결과 배열)의 개수가 같으면 allChecked
+    //아닐경우 allChecked 해제
+    if (Object.values(items).filter((item) => item === true).length === data?.length) {
+      console.log('같음')
 
-      Object.keys(watch()).forEach((item: any) => {
-        setValue(item, isChecked)
-      })
-
-      setIsAllChecked(isChecked)
-      setItems(result)
-    } else if (!isChecked) {
-      const result = data.reduce((acc: any, item: any) => {
-        acc[item.idx] = false
-        return acc
-      }, {})
-
-      Object.keys(watch()).forEach((item: any) => {
-        setValue(item, isChecked)
-      })
-
-      setIsAllChecked(isChecked)
-      setItems(result)
+      if (Object.values(items).filter((item) => item === true).length === 0 || data?.length === 0) return
+      setIsAllChecked(true)
+      if (!checkAllRef.current) return
+      checkAllRef.current.checked = true
+    } else {
+      setIsAllChecked(false)
+      if (!checkAllRef.current) return
+      checkAllRef.current.checked = false
     }
-  }
-
-  // console.log(items)
+  }, [data, items])
 
   return (
     <>
@@ -130,7 +119,28 @@ export const ProductList = ({ data: { data } }: any) => {
           <tr className="h-10 border-b border-gray-300">
             <th className="box-border w-[5%]">
               <label htmlFor="check_all" className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
-                <input ref={checkAllRef} id="check_all" type="checkbox" onChange={handleChangeCheckAll} />
+                <input
+                  ref={checkAllRef}
+                  id="check_all"
+                  type="checkbox"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    const isChecked = event.target.checked
+
+                    if (Object.keys(items).length === 0 && isChecked) {
+                      setIsAllChecked(true)
+
+                      data?.forEach((item) => {
+                        toggleItem(item.idx, true)
+                      })
+                    } else if (Object.keys(items).length > 0 && isChecked) {
+                      setIsAllChecked(true)
+                      updateAllValues(true)
+                    } else {
+                      setIsAllChecked(false)
+                      updateAllValues(false)
+                    }
+                  }}
+                />
                 {isAllChecked && <FaCheck />}
               </label>
             </th>
@@ -142,38 +152,31 @@ export const ProductList = ({ data: { data } }: any) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item: any, index: number) => (
+          {data?.map((item, index) => (
             <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="w-[5%]">
                 <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
                   <input
-                    {...register(`${item.idx}`)}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       const isChecked = event.target.checked
 
-                      setValue(`${item.idx}`, isChecked)
                       toggleItem(`${item.idx}`, isChecked)
 
-                      if (!isChecked) {
-                        if (!checkAllRef.current) return
-                        checkAllRef.current.checked = false
-                        setIsAllChecked(false)
-                      }
-
-                      console.log(getValues(), '///')
+                      if (!checkAllRef.current) return
+                      checkAllRef.current.checked = isChecked
                     }}
                     type="checkbox"
                     id={item.idx}
                   />
-                  {getValues(`${item.idx}`) && <FaCheck />}
+                  {items[`${item.idx}`] && <FaCheck />}
                 </label>
               </td>
               <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
               <td className="box-border w-[15%] text-center text-sm">{item.category}</td>
               <td className="box-border w-[10%] text-center text-sm">{item.original_price.toLocaleString('ko-KR')}</td>
-              <td className="box-border w-[10%] text-center text-sm">{`${item.discount_rate * 100}%`}</td>
+              <td className="box-border w-[10%] text-center text-sm">{`${item.discount_rate! * 100}%`}</td>
               <td className="box-border w-[10%] pr-2 text-right text-sm">
-                {`${(item.original_price - item.original_price * item.discount_rate).toLocaleString('ko-KR')}`}
+                {`${(item.original_price - item.original_price * item.discount_rate!).toLocaleString('ko-KR')}`}
               </td>
             </tr>
           ))}
