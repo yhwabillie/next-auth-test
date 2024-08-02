@@ -133,7 +133,8 @@ export const ProductList = ({ data }: IDataProps) => {
                         toggleItem(item.idx, true)
                       })
                     } else if (Object.keys(items).length > 0 && isChecked) {
-                      setIsAllChecked(true)
+                      console.log('?')
+
                       updateAllValues(true)
                     } else {
                       setIsAllChecked(false)
