@@ -72,9 +72,9 @@ export const createBulkProduct = async (products: ICreateProductProps[]) => {
 
 export const fetchAllProducts = async () => {
   try {
-    const data = await prisma.product.findFirst({
-      where: {
-        category: '가전',
+    const data = await prisma.product.findMany({
+      select: {
+        idx: true,
       },
     })
 
