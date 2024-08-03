@@ -1,15 +1,33 @@
 'use server'
 import prisma from '@/lib/prisma'
 
-export interface ICreateProductProps {
+export interface Product {
+  idx: string
   name: string
   category: string
   original_price: number
-  discount_rate?: number
+  discount_rate: number | null
   imageUrl: string
+  createdAt: Date
+  updatedAt: Date
 }
 
-export const createProduct = async (data: ICreateProductProps) => {
+/** admin 상품 데이터 업로드
+ * - 상품 데이터 GET
+ * */
+export const fetchProducts = async (): Promise<Product[]> => {
+  try {
+    const products = await prisma.product.findMany()
+    return products
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+/** admin 상품 데이터 업로드
+ * - 상품 데이터 CREATE
+ * */
+export const createProduct = async (data: Product) => {
   try {
     const products = await prisma.product.create({
       data: {
@@ -60,28 +78,12 @@ export const deleteSelectedProductsByIdx = async (products: any) => {
   }
 }
 
-export const createBulkProduct = async (products: ICreateProductProps[]) => {
+export const createBulkProduct = async (products: Product[]) => {
   try {
     for (const product of products) {
       await createProduct(product)
     }
   } catch (error) {
     console.log(error)
-  }
-}
-
-export const fetchAllProducts = async () => {
-  try {
-    const data = await prisma.product.findMany()
-
-    if (!data) {
-      throw new Error('data not found')
-    }
-
-    console.log('=======>', data)
-
-    return data
-  } catch (error: any) {
-    throw new Error(error)
   }
 }

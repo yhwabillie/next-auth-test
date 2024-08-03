@@ -1,7 +1,6 @@
 'use client'
-import { createBulkProduct, ICreateProductProps } from '@/app/actions/upload-product/actions'
+import { createBulkProduct, Product } from '@/app/actions/upload-product/actions'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from './Button'
 import { FieldValues, useForm } from 'react-hook-form'
 import { useProductStore } from '../zustandStore'
@@ -11,25 +10,14 @@ export const ProductUploadForm = () => {
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const { setProductState } = useProductStore((state) => state)
-  const {
-    register,
-    watch,
-    reset,
-    handleSubmit,
-    setFocus,
-    setValue,
-    getValues,
-    resetField,
-    formState: { errors },
-  } = useForm<FieldValues>({
+  const { register, setValue, getValues, resetField } = useForm<FieldValues>({
     mode: 'onChange',
-    // resolver: zodResolver(SignInSchema),
-    defaultValues: {},
   })
 
-  const saveData = () => {
+  const handleClickSaveData = () => {
     if (file) {
       const reader = new FileReader()
+
       reader.onload = async (e) => {
         const data = e.target?.result
 
@@ -43,7 +31,7 @@ export const ProductUploadForm = () => {
           const workSheet = workbook.Sheets[sheetName]
 
           //Json
-          const json: ICreateProductProps[] = XLSX.utils.sheet_to_json(workSheet)
+          const json: Product[] = XLSX.utils.sheet_to_json(workSheet)
 
           try {
             await createBulkProduct(JSON.parse(JSON.stringify(json)))
@@ -83,7 +71,7 @@ export const ProductUploadForm = () => {
           id="upload"
           onChange={(event: any) => {
             if (event.target.files.length === 1) {
-              setFileName(event.target.files[0]?.name)
+              setFileName(event.target.files[0].name)
               setFile(event.target.files[0])
             } else {
               setFileName('')
@@ -98,7 +86,7 @@ export const ProductUploadForm = () => {
         <div className="w-[200px]">
           <Button
             label="데이터 업로드"
-            clickEvent={saveData}
+            clickEvent={handleClickSaveData}
             disalbe={file === null || getValues('upload') === undefined || getValues('upload') === null}
           />
         </div>

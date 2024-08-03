@@ -1,47 +1,112 @@
 'use client'
-import { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
-import { FieldValues, useForm } from 'react-hook-form'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './Button'
 import { FaCheck } from 'react-icons/fa'
-import { deleteSelectedProductsByIdx, fetchAllProducts } from '@/app/actions/upload-product/actions'
-import { useRouter } from 'next/navigation'
-import { fetchData } from 'next-auth/client/_utils'
+import { deleteSelectedProductsByIdx, fetchProducts } from '@/app/actions/upload-product/actions'
 import { useProductStore } from '../zustandStore'
+import { toast } from 'sonner'
+import { LoadingSpinner } from './LoadingSpinner'
+import { Product } from '@prisma/client'
 
-interface ItemsType {
+interface CheckedItem {
   [key: string]: boolean
 }
 
-interface IDataProps {
-  data:
-    | {
-        idx: string
-        name: string
-        category: string
-        original_price: number
-        discount_rate: number | null
-        imageUrl: string
-        createdAt: Date
-        updatedAt: Date
-      }[]
-    | undefined
-}
-
 export const ProductList = () => {
-  const router = useRouter()
   const checkAllRef = useRef<HTMLInputElement>(null)
-  const [data, setData] = useState<any>([])
-  const [items, setItems] = useState<ItemsType>({})
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<Product[]>([])
+  const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
   const { productState } = useProductStore()
   const { setProductState } = useProductStore((state) => state)
 
-  //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
-  //중복객체가 있을시 배열에서 제거
-  //check: true, unchecked: false 값 할당
-  //중복된 키값이 발견되면 새로운 값으로 업데이트
-  const toggleItem = (key: string, isChecked: boolean) => {
-    setItems((prev) => {
+  /**
+   * - checkedItems 객체 내의 값들이 모두 true인지 확인하여 모든 아이템이 체크되었는지 확인
+   * - 모든 아이템이 체크되었으면 checkAllRef를 업데이트
+   * - checkAllRef : 전체 체크 input element ref
+   * - checkedItems : DB에 최종 저장되는 결과 state
+   */
+  const updateCheckAllStatus = () => {
+    const checkedItemsArray = Object.values(checkedItems)
+    const checkedCount = checkedItemsArray.filter((item) => item === true).length
+    const totalItems = data?.length ?? 0
+
+    if (checkedCount === totalItems && totalItems > 0) {
+      setIsAllChecked(true)
+      if (checkAllRef.current) {
+        checkAllRef.current.checked = true
+      }
+    } else {
+      setIsAllChecked(false)
+      if (checkAllRef.current) {
+        checkAllRef.current.checked = false
+      }
+    }
+  }
+
+  /**
+   * - 상품 리스트에서 삭제된 항목 제거
+   * - 선택된 제품 idx가 같은 데이터를 data 배열에서 삭제
+   * @param {Product[]} array - 최초 fetch data 배열
+   * @param {Record<string, boolean>} selectedItems - 선택된 제품 idx와 그 상태를 가진 객체
+   * @returns {Product[]} - 선택된 제품이 제거된 새로운 데이터 배열
+   */
+  const removeMatchingProducts = (array: Product[], selectedItems: Record<string, boolean>): Product[] => {
+    return array.filter((item) => !selectedItems.hasOwnProperty(item.idx))
+  }
+
+  /**
+   * 선택된 item을 삭제하고 상태를 업데이트하는 event handler 함수
+   */
+  const handleDeleteSelected = async () => {
+    console.log('서버로 저장되는 데이터===>', checkedItems)
+
+    //item이 체크되면 true값을 할당, 값이 true인 것을 필터링
+    const selectedItems = Object.keys(checkedItems).reduce((acc: CheckedItem, key: string) => {
+      if (checkedItems[key]) {
+        acc[key] = checkedItems[key]
+      }
+      return acc
+    }, {})
+
+    console.log('잔여 데이터에서 빼야하는 데이터===>', selectedItems)
+
+    //DB mutate
+    try {
+      await deleteSelectedProductsByIdx(selectedItems)
+      console.log('서버에서 삭제 성공')
+
+      // 상태 초기화 및 업데이트
+      setCheckedItems({})
+
+      data?.forEach((item: Product) => {
+        updateCheckedItem(item.idx, false)
+      })
+
+      console.log('잔여 데이터', data)
+      setIsAllChecked(false)
+
+      if (!checkAllRef.current) return
+      checkAllRef.current.checked = false
+
+      console.log('최종 잔여 데이터', removeMatchingProducts(data, selectedItems))
+      setData(removeMatchingProducts(data, selectedItems))
+    } catch (error) {
+      console.error('Failed to delete selected products:', error)
+      toast.error('선택한 제품을 삭제하는 데 실패했습니다. 다시 시도해주세요.')
+    }
+  }
+
+  /**
+   * - 개별 체크박스 클릭 시 isChecked 값을 checkItems state에 저장 (toggle)
+   * - 신규 isChecked와 기존 isChecked의 값이 같다면 반대 값으로 업데이트 (idx 비교)
+   * - 같지 않으면 신규 값으로 업데이트
+   * @param {string} key - 체크박스의 제품 키값
+   * @param {boolean} isChecked - 체크 여부
+   */
+  const toggleCheckedItem = (key: string, isChecked: boolean) => {
+    setCheckedItems((prev) => {
       const updatedItems = { ...prev }
 
       // 새로 들어온 값과 기존 값이 같다면 반대로 설정
@@ -56,24 +121,28 @@ export const ProductList = () => {
     })
   }
 
-  const toggleItem2 = (key: string, isChecked: boolean) => {
-    setItems((prev) => {
+  /**
+   * - 개별 체크박스 클릭 시 isChecked 값을 checkItems state에 저장 (toggle)
+   * - 무조건 할당된 isChecked value를 신규값으로 업데이트
+   * @param {string} key - 체크박스의 제품 키값
+   * @param {boolean} isChecked - 체크 여부
+   */
+  const updateCheckedItem = (key: string, isChecked: boolean) => {
+    setCheckedItems((prev) => {
       const updatedItems = { ...prev }
 
-      // 새로 들어온 값과 기존 값이 같다면 반대로 설정
-      if (prev[key] === isChecked) {
-        updatedItems[key] = isChecked
-      } else {
-        // 새로 들어온 값으로 업데이트
-        updatedItems[key] = isChecked
-      }
+      updatedItems[key] = isChecked
 
       return updatedItems
     })
   }
 
+  /**
+   * - isChecked 값을 모든 checkedItems 항목에 대해 업데이트
+   * @param {boolean} isChecked - 체크 여부
+   */
   const updateAllValues = (isChecked: boolean) => {
-    setItems((prevItems) => {
+    setCheckedItems((prevItems) => {
       const updatedItems = Object.keys(prevItems).reduce(
         (acc, key) => {
           acc[key] = isChecked
@@ -85,68 +154,29 @@ export const ProductList = () => {
     })
   }
 
-  const removeMatchingProducts = (products: any, keys: any) => {
-    return products.filter((product: any) => !keys.hasOwnProperty(product.idx))
-  }
-
-  const deleteSelectedProducts = async () => {
-    console.log('go Server===>', items)
-
-    const result = Object.keys(items).reduce((acc: any, key: any) => {
-      if (items[key] === true) {
-        acc[key] = items[key]
-      }
-      return acc
-    }, {})
-
-    console.log('잔여 데이터에서 빼야하는거', result)
-
-    const response = await deleteSelectedProductsByIdx(result)
-
-    setItems({})
-
-    data?.forEach((item: any) => {
-      toggleItem2(item.idx, false)
-    })
-
-    console.log('잔여 데이터', data)
-    setIsAllChecked(false)
-    if (!checkAllRef.current) return
-    checkAllRef.current.checked = false
-
-    console.log('최종 잔여 데이터', removeMatchingProducts(data, result))
-    setData(removeMatchingProducts(data, result))
-  }
-
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await fetchAllProducts()
+    const fetchData = async () => {
+      try {
+        const products = await fetchProducts()
 
-      setData(products)
+        setData(products)
+      } catch (error: any) {
+        console.error('Failed to fetch products:', error) // 디버그용
+        toast.error('데이터 fetch에 실패했습니다, 다시 시도해주세요.') // 사용자 알림용
+      } finally {
+        setLoading(false)
+      }
     }
 
-    fetchProducts()
-    console.log('업데이트 여부', productState)
+    //fetch
+    fetchData()
+
+    //엑셀 데이터에서 DB 업로드 분기 - 리셋
     setProductState(false)
 
-    console.log('items===>', items)
-    console.log('data 개수===>', data?.length)
-
-    //data와 items(최종 결과 배열)의 개수가 같으면 allChecked
-    //아닐경우 allChecked 해제
-    if (Object.values(items).filter((item) => item === true).length === data?.length) {
-      console.log('같음')
-
-      if (Object.values(items).filter((item) => item === true).length === 0 || data?.length === 0) return
-      setIsAllChecked(true)
-      if (!checkAllRef.current) return
-      checkAllRef.current.checked = true
-    } else {
-      setIsAllChecked(false)
-      if (!checkAllRef.current) return
-      checkAllRef.current.checked = false
-    }
-  }, [items, productState])
+    //fetch data와 checkedItems의 개수가 같으면 모두 체크
+    updateCheckAllStatus()
+  }, [checkedItems, productState])
 
   return (
     <>
@@ -155,41 +185,44 @@ export const ProductList = () => {
           <Button label="전체 Excel 다운로드" disalbe={true} />
         </div>
         <div className="w-[150px]">
-          <Button label="선택 삭제" clickEvent={deleteSelectedProducts} />
+          <Button label="선택 삭제" clickEvent={handleDeleteSelected} />
         </div>
       </div>
       <table className="mt-5 w-full border-collapse">
         <thead className="bg-gray-100">
-          <tr className="h-10 border-b border-gray-300">
+          <tr className="h-10 border-b border-t border-gray-300">
             <th className="box-border w-[5%]">
-              <label htmlFor="check_all" className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
+              <label
+                htmlFor="check_all"
+                className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50 bg-white"
+              >
                 <input
                   ref={checkAllRef}
                   id="check_all"
                   type="checkbox"
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     const isChecked = event.target.checked
+                    const checkedItemsCount = Object.keys(checkedItems).length
 
-                    if (Object.keys(items).length === 0 && isChecked) {
-                      setIsAllChecked(true)
+                    if (isChecked) {
+                      if (checkedItemsCount === 0) {
+                        setIsAllChecked(true)
 
-                      data?.forEach((item: any) => {
-                        toggleItem(item.idx, true)
-                      })
-                    } else if (Object.keys(items).length > 0 && isChecked) {
-                      console.log('?')
-                      data?.forEach((item: any) => {
-                        toggleItem2(item.idx, true)
-                      })
-
-                      // updateAllValues(isChecked)
+                        data.forEach((item: Product) => {
+                          toggleCheckedItem(item.idx, true)
+                        })
+                      } else if (checkedItemsCount > 0) {
+                        data.forEach((item: Product) => {
+                          updateCheckedItem(item.idx, true)
+                        })
+                      }
                     } else {
                       setIsAllChecked(false)
                       updateAllValues(false)
                     }
                   }}
                 />
-                {isAllChecked && <FaCheck />}
+                {isAllChecked && <FaCheck className="cursor-pointer text-blue-600" />}
               </label>
             </th>
             <th className="w-[50%] text-center text-sm">이름</th>
@@ -203,12 +236,12 @@ export const ProductList = () => {
           {data.map((item: any, index: any) => (
             <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="w-[5%]">
-                <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
+                <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50">
                   <input
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                       const isChecked = event.target.checked
 
-                      toggleItem(`${item.idx}`, isChecked)
+                      toggleCheckedItem(`${item.idx}`, isChecked)
 
                       if (!checkAllRef.current) return
                       checkAllRef.current.checked = isChecked
@@ -216,7 +249,7 @@ export const ProductList = () => {
                     type="checkbox"
                     id={item.idx}
                   />
-                  {items[`${item.idx}`] && <FaCheck />}
+                  {checkedItems[`${item.idx}`] && <FaCheck className="cursor-pointer text-blue-600" />}
                 </label>
               </td>
               <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
@@ -230,6 +263,11 @@ export const ProductList = () => {
           ))}
         </tbody>
       </table>
+      {loading && (
+        <div className="flex items-center justify-center py-10">
+          <LoadingSpinner />
+        </div>
+      )}
     </>
   )
 }
