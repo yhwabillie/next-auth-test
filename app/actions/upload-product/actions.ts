@@ -27,10 +27,6 @@ export const createProduct = async (data: ICreateProductProps) => {
   }
 }
 
-interface IDeleteProducts {
-  [key: string]: boolean
-}
-
 export const deleteSelectedProductsByIdx = async (products: any) => {
   // try {
   //   // 모든 삭제 작업을 병렬로 실행
@@ -76,7 +72,19 @@ export const createBulkProduct = async (products: ICreateProductProps[]) => {
 
 export const fetchAllProducts = async () => {
   try {
-    const data = await prisma.product.findMany()
+    const data = await prisma.product.findMany({
+      select: {
+        idx: true,
+        name: true,
+        category: true,
+      },
+    })
+
+    if (!data) {
+      throw new Error('data not found')
+    }
+
+    console.log('=======>', data)
 
     return data
   } catch (error: any) {
