@@ -25,124 +25,124 @@ interface IDataProps {
     | undefined
 }
 
-export const ProductList = ({ data }: IDataProps) => {
+export const ProductList = (props: any) => {
   const router = useRouter()
   const checkAllRef = useRef<HTMLInputElement>(null)
   const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
 
-  console.log('data 클라이언트===>', data)
+  console.log('data 클라이언트===>', props)
 
-  //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
-  //중복객체가 있을시 배열에서 제거
-  //check: true, unchecked: false 값 할당
-  //중복된 키값이 발견되면 새로운 값으로 업데이트
-  const toggleItem = (key: string, isChecked: boolean) => {
-    setItems((prev) => {
-      const updatedItems = { ...prev }
+  // //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
+  // //중복객체가 있을시 배열에서 제거
+  // //check: true, unchecked: false 값 할당
+  // //중복된 키값이 발견되면 새로운 값으로 업데이트
+  // const toggleItem = (key: string, isChecked: boolean) => {
+  //   setItems((prev) => {
+  //     const updatedItems = { ...prev }
 
-      // 새로 들어온 값과 기존 값이 같다면 반대로 설정
-      if (prev[key] === isChecked) {
-        updatedItems[key] = !isChecked
-      } else {
-        // 새로 들어온 값으로 업데이트
-        updatedItems[key] = isChecked
-      }
+  //     // 새로 들어온 값과 기존 값이 같다면 반대로 설정
+  //     if (prev[key] === isChecked) {
+  //       updatedItems[key] = !isChecked
+  //     } else {
+  //       // 새로 들어온 값으로 업데이트
+  //       updatedItems[key] = isChecked
+  //     }
 
-      return updatedItems
-    })
-  }
+  //     return updatedItems
+  //   })
+  // }
 
-  const toggleItem2 = (key: string, isChecked: boolean) => {
-    setItems((prev) => {
-      const updatedItems = { ...prev }
+  // const toggleItem2 = (key: string, isChecked: boolean) => {
+  //   setItems((prev) => {
+  //     const updatedItems = { ...prev }
 
-      // 새로 들어온 값과 기존 값이 같다면 반대로 설정
-      if (prev[key] === isChecked) {
-        updatedItems[key] = isChecked
-      } else {
-        // 새로 들어온 값으로 업데이트
-        updatedItems[key] = isChecked
-      }
+  //     // 새로 들어온 값과 기존 값이 같다면 반대로 설정
+  //     if (prev[key] === isChecked) {
+  //       updatedItems[key] = isChecked
+  //     } else {
+  //       // 새로 들어온 값으로 업데이트
+  //       updatedItems[key] = isChecked
+  //     }
 
-      return updatedItems
-    })
-  }
+  //     return updatedItems
+  //   })
+  // }
 
-  const updateAllValues = (isChecked: boolean) => {
-    setItems((prevItems) => {
-      const updatedItems = Object.keys(prevItems).reduce(
-        (acc, key) => {
-          acc[key] = isChecked
-          return acc
-        },
-        {} as { [key: string]: boolean },
-      )
-      return updatedItems
-    })
-  }
+  // const updateAllValues = (isChecked: boolean) => {
+  //   setItems((prevItems) => {
+  //     const updatedItems = Object.keys(prevItems).reduce(
+  //       (acc, key) => {
+  //         acc[key] = isChecked
+  //         return acc
+  //       },
+  //       {} as { [key: string]: boolean },
+  //     )
+  //     return updatedItems
+  //   })
+  // }
 
-  const deleteSelectedProducts = async () => {
-    console.log('go Server===>', items)
+  // const deleteSelectedProducts = async () => {
+  //   console.log('go Server===>', items)
 
-    const result = Object.keys(items).reduce((acc: any, key: any) => {
-      if (items[key] === true) {
-        acc[key] = items[key]
-      }
-      return acc
-    }, {})
+  //   const result = Object.keys(items).reduce((acc: any, key: any) => {
+  //     if (items[key] === true) {
+  //       acc[key] = items[key]
+  //     }
+  //     return acc
+  //   }, {})
 
-    const response = await deleteSelectedProductsByIdx(result)
-    router.refresh()
+  //   const response = await deleteSelectedProductsByIdx(result)
+  //   router.refresh()
 
-    setItems({})
-    data?.forEach((item) => {
-      toggleItem2(item.idx, false)
-    })
-    setIsAllChecked(false)
-    if (!checkAllRef.current) return
-    checkAllRef.current.checked = false
-  }
+  //   setItems({})
+  //   data?.forEach((item) => {
+  //     toggleItem2(item.idx, false)
+  //   })
+  //   setIsAllChecked(false)
+  //   if (!checkAllRef.current) return
+  //   checkAllRef.current.checked = false
+  // }
 
-  const updateDifferentValues = (current: { [key: string]: boolean }, newValues: { [key: string]: boolean }) => {
-    const updatedItems = Object.keys(current).reduce(
-      (acc, key) => {
-        if (current[key] !== newValues[key]) {
-          acc[key] = newValues[key]
-        } else {
-          acc[key] = current[key]
-        }
-        return acc
-      },
-      {} as { [key: string]: boolean },
-    )
+  // const updateDifferentValues = (current: { [key: string]: boolean }, newValues: { [key: string]: boolean }) => {
+  //   const updatedItems = Object.keys(current).reduce(
+  //     (acc, key) => {
+  //       if (current[key] !== newValues[key]) {
+  //         acc[key] = newValues[key]
+  //       } else {
+  //         acc[key] = current[key]
+  //       }
+  //       return acc
+  //     },
+  //     {} as { [key: string]: boolean },
+  //   )
 
-    return updatedItems
-  }
+  //   return updatedItems
+  // }
 
-  useEffect(() => {
-    console.log('items===>', items)
-    console.log('data 개수===>', data?.length)
+  // useEffect(() => {
+  //   console.log('items===>', items)
+  //   console.log('data 개수===>', data?.length)
 
-    //data와 items(최종 결과 배열)의 개수가 같으면 allChecked
-    //아닐경우 allChecked 해제
-    if (Object.values(items).filter((item) => item === true).length === data?.length) {
-      console.log('같음')
+  //   //data와 items(최종 결과 배열)의 개수가 같으면 allChecked
+  //   //아닐경우 allChecked 해제
+  //   if (Object.values(items).filter((item) => item === true).length === data?.length) {
+  //     console.log('같음')
 
-      if (Object.values(items).filter((item) => item === true).length === 0 || data?.length === 0) return
-      setIsAllChecked(true)
-      if (!checkAllRef.current) return
-      checkAllRef.current.checked = true
-    } else {
-      setIsAllChecked(false)
-      if (!checkAllRef.current) return
-      checkAllRef.current.checked = false
-    }
-  }, [data, items])
+  //     if (Object.values(items).filter((item) => item === true).length === 0 || data?.length === 0) return
+  //     setIsAllChecked(true)
+  //     if (!checkAllRef.current) return
+  //     checkAllRef.current.checked = true
+  //   } else {
+  //     setIsAllChecked(false)
+  //     if (!checkAllRef.current) return
+  //     checkAllRef.current.checked = false
+  //   }
+  // }, [data, items])
 
   return (
     <>
-      <div className="flex flex-row justify-end gap-2">
+      {/* <div className="flex flex-row justify-end gap-2">
         <div className="w-[230px]">
           <Button label="전체 Excel 다운로드" disalbe={true} />
         </div>
@@ -221,7 +221,7 @@ export const ProductList = ({ data }: IDataProps) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </>
   )
 }

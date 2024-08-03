@@ -4,10 +4,9 @@ import { fetchAllProducts } from '../actions/upload-product/actions'
 import { ProductList } from '@/lib/components/ProductList'
 
 export default async function Page() {
-  const response = await fetchAllProducts()
+  const products = await fetchAllProducts()
 
-  if (!response.success) throw new Error('데이터 패칭 실패')
-  const products = response.data
+  console.log('Response===>', products)
 
   return (
     <section className="py-20">
