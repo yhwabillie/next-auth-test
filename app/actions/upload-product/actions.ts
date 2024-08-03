@@ -72,11 +72,7 @@ export const createBulkProduct = async (products: ICreateProductProps[]) => {
 
 export const fetchAllProducts = async () => {
   try {
-    const data = await prisma.product.findMany({
-      select: {
-        idx: true,
-      },
-    })
+    const data = await prisma.product.findMany()
 
     if (!data) {
       throw new Error('data not found')
