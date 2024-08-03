@@ -15,6 +15,7 @@ interface CheckedItem {
 export const ProductList = () => {
   const checkAllRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(true)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const [data, setData] = useState<Product[]>([])
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
@@ -71,6 +72,7 @@ export const ProductList = () => {
     }, {})
 
     console.log('잔여 데이터에서 빼야하는 데이터===>', selectedItems)
+    setDeleteLoading(true) // 로딩 시작
 
     //DB mutate
     try {
@@ -95,6 +97,8 @@ export const ProductList = () => {
     } catch (error) {
       console.error('Failed to delete selected products:', error)
       toast.error('선택한 제품을 삭제하는 데 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setDeleteLoading(false) // 로딩 상태 해제
     }
   }
 
@@ -185,7 +189,7 @@ export const ProductList = () => {
           <Button label="전체 Excel 다운로드" disalbe={true} />
         </div>
         <div className="w-[150px]">
-          <Button label="선택 삭제" clickEvent={handleDeleteSelected} />
+          <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading} />
         </div>
       </div>
       <table className="mt-5 w-full border-collapse">
@@ -233,7 +237,7 @@ export const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item: any, index: any) => (
+          {data.map((item: Product, index: any) => (
             <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="w-[5%]">
                 <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50">
