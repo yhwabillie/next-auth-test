@@ -1,10 +1,11 @@
 'use client'
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, Suspense, useEffect, useRef, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { Button } from './Button'
 import { FaCheck } from 'react-icons/fa'
-import { deleteSelectedProductsByIdx } from '@/app/actions/upload-product/actions'
+import { deleteSelectedProductsByIdx, fetchAllProducts } from '@/app/actions/upload-product/actions'
 import { useRouter } from 'next/navigation'
+import { fetchData } from 'next-auth/client/_utils'
 
 interface ItemsType {
   [key: string]: boolean
@@ -25,13 +26,21 @@ interface IDataProps {
     | undefined
 }
 
-export const ProductList = ({ data }: IDataProps) => {
+export const ProductList = () => {
   const router = useRouter()
   const checkAllRef = useRef<HTMLInputElement>(null)
+  const [data, setData] = useState<any>([])
   const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
 
-  console.log('data 클라이언트===>', data)
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const products = await fetchAllProducts()
+      setData(products)
+    }
+
+    fetchProducts()
+  }, [])
 
   //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
   //중복객체가 있을시 배열에서 제거
@@ -82,6 +91,10 @@ export const ProductList = ({ data }: IDataProps) => {
     })
   }
 
+  const removeMatchingProducts = (products: any, keys: any) => {
+    return products.filter((product: any) => !keys.hasOwnProperty(product.idx))
+  }
+
   const deleteSelectedProducts = async () => {
     console.log('go Server===>', items)
 
@@ -92,16 +105,24 @@ export const ProductList = ({ data }: IDataProps) => {
       return acc
     }, {})
 
+    console.log('잔여 데이터에서 빼야하는거', result)
+
     const response = await deleteSelectedProductsByIdx(result)
     router.refresh()
-
     setItems({})
-    data?.forEach((item) => {
+
+    data?.forEach((item: any) => {
       toggleItem2(item.idx, false)
     })
+
+    console.log('잔여 데이터', data)
     setIsAllChecked(false)
     if (!checkAllRef.current) return
     checkAllRef.current.checked = false
+
+    console.log('최종 잔여 데이터', removeMatchingProducts(data, result))
+
+    setData(removeMatchingProducts(data, result))
   }
 
   const updateDifferentValues = (current: { [key: string]: boolean }, newValues: { [key: string]: boolean }) => {
@@ -140,6 +161,8 @@ export const ProductList = ({ data }: IDataProps) => {
     }
   }, [data, items])
 
+  console.log(data)
+
   return (
     <>
       <div className="flex flex-row justify-end gap-2">
@@ -165,12 +188,12 @@ export const ProductList = ({ data }: IDataProps) => {
                     if (Object.keys(items).length === 0 && isChecked) {
                       setIsAllChecked(true)
 
-                      data?.forEach((item) => {
+                      data?.forEach((item: any) => {
                         toggleItem(item.idx, true)
                       })
                     } else if (Object.keys(items).length > 0 && isChecked) {
                       console.log('?')
-                      data?.forEach((item) => {
+                      data?.forEach((item: any) => {
                         toggleItem2(item.idx, true)
                       })
 
@@ -192,7 +215,7 @@ export const ProductList = ({ data }: IDataProps) => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((item, index) => (
+          {data.map((item: any, index: any) => (
             <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="w-[5%]">
                 <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 items-center justify-center border border-gray-500/50">
