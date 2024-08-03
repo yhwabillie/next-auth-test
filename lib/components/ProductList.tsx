@@ -118,22 +118,6 @@ export const ProductList = () => {
     setData(removeMatchingProducts(data, result))
   }
 
-  const updateDifferentValues = (current: { [key: string]: boolean }, newValues: { [key: string]: boolean }) => {
-    const updatedItems = Object.keys(current).reduce(
-      (acc, key) => {
-        if (current[key] !== newValues[key]) {
-          acc[key] = newValues[key]
-        } else {
-          acc[key] = current[key]
-        }
-        return acc
-      },
-      {} as { [key: string]: boolean },
-    )
-
-    return updatedItems
-  }
-
   useEffect(() => {
     const fetchProducts = async () => {
       const products = await fetchAllProducts()

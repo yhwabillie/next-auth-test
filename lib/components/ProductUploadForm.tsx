@@ -1,17 +1,16 @@
 'use client'
 import { createBulkProduct, ICreateProductProps } from '@/app/actions/upload-product/actions'
-import { ChangeEvent, useEffect, useState } from 'react'
-import * as XLSX from 'xlsx'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from './Button'
 import { FieldValues, useForm } from 'react-hook-form'
 import { useProductStore } from '../zustandStore'
+import * as XLSX from 'xlsx'
 
 export const ProductUploadForm = () => {
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const { setProductState } = useProductStore((state) => state)
-  const router = useRouter()
   const {
     register,
     watch,
@@ -83,8 +82,8 @@ export const ProductUploadForm = () => {
           {...register('upload')}
           id="upload"
           onChange={(event: any) => {
-            if (event.target.files) {
-              setFileName(event.target.files[0].name)
+            if (event.target.files.length === 1) {
+              setFileName(event.target.files[0]?.name)
               setFile(event.target.files[0])
             } else {
               setFileName('')
@@ -97,7 +96,11 @@ export const ProductUploadForm = () => {
       </fieldset>
       <div className="mb-20 flex justify-center gap-2">
         <div className="w-[200px]">
-          <Button label="데이터 업로드" clickEvent={saveData} disalbe={getValues('upload') === null || getValues('upload') === undefined} />
+          <Button
+            label="데이터 업로드"
+            clickEvent={saveData}
+            disalbe={file === null || getValues('upload') === undefined || getValues('upload') === null}
+          />
         </div>
         <div className="w-[200px]">
           <Button
@@ -106,7 +109,7 @@ export const ProductUploadForm = () => {
               setFileName('')
               setValue('upload', null)
             }}
-            disalbe={file === null}
+            disalbe={file === null || getValues('upload') === undefined || getValues('upload') === null}
           />
         </div>
       </div>
