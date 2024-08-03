@@ -5,10 +5,12 @@ import * as XLSX from 'xlsx'
 import { useRouter } from 'next/navigation'
 import { Button } from './Button'
 import { FieldValues, useForm } from 'react-hook-form'
+import { useProductStore } from '../zustandStore'
 
 export const ProductUploadForm = () => {
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const { setProductState } = useProductStore((state) => state)
   const router = useRouter()
   const {
     register,
@@ -33,7 +35,6 @@ export const ProductUploadForm = () => {
         const data = e.target?.result
 
         if (data) {
-          console.log('data===>', data)
           const workbook = XLSX.read(data, { type: 'binary' })
 
           //SheetName
@@ -47,9 +48,11 @@ export const ProductUploadForm = () => {
 
           try {
             await createBulkProduct(JSON.parse(JSON.stringify(json)))
+            console.log('출발지==>', JSON.parse(JSON.stringify(json)))
+            setProductState(true)
+
             setFileName('')
             resetField('upload')
-            router.refresh()
           } catch (error) {
             console.log(error)
           }

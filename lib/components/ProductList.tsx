@@ -6,6 +6,7 @@ import { FaCheck } from 'react-icons/fa'
 import { deleteSelectedProductsByIdx, fetchAllProducts } from '@/app/actions/upload-product/actions'
 import { useRouter } from 'next/navigation'
 import { fetchData } from 'next-auth/client/_utils'
+import { useProductStore } from '../zustandStore'
 
 interface ItemsType {
   [key: string]: boolean
@@ -32,15 +33,8 @@ export const ProductList = () => {
   const [data, setData] = useState<any>([])
   const [items, setItems] = useState<ItemsType>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await fetchAllProducts()
-      setData(products)
-    }
-
-    fetchProducts()
-  }, [])
+  const { productState } = useProductStore()
+  const { setProductState } = useProductStore((state) => state)
 
   //체크박스 클릭시 isChecked값을 최종 배열에 저장 toggle
   //중복객체가 있을시 배열에서 제거
@@ -108,7 +102,7 @@ export const ProductList = () => {
     console.log('잔여 데이터에서 빼야하는거', result)
 
     const response = await deleteSelectedProductsByIdx(result)
-    router.refresh()
+
     setItems({})
 
     data?.forEach((item: any) => {
@@ -121,7 +115,6 @@ export const ProductList = () => {
     checkAllRef.current.checked = false
 
     console.log('최종 잔여 데이터', removeMatchingProducts(data, result))
-
     setData(removeMatchingProducts(data, result))
   }
 
@@ -142,6 +135,16 @@ export const ProductList = () => {
   }
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      const products = await fetchAllProducts()
+
+      setData(products)
+    }
+
+    fetchProducts()
+    console.log('업데이트 여부', productState)
+    setProductState(false)
+
     console.log('items===>', items)
     console.log('data 개수===>', data?.length)
 
@@ -159,9 +162,7 @@ export const ProductList = () => {
       if (!checkAllRef.current) return
       checkAllRef.current.checked = false
     }
-  }, [data, items])
-
-  console.log(data)
+  }, [items, productState])
 
   return (
     <>

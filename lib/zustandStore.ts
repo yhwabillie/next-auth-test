@@ -24,3 +24,13 @@ export const useModalStore = create<ModalState>((set) => ({
   modalState: false,
   setModalState: (data: boolean) => set({ modalState: data }),
 }))
+
+interface ProductState {
+  productState: boolean
+  setProductState: (data: boolean) => void
+}
+
+export const useProductStore = create<ProductState>((set) => ({
+  productState: false,
+  setProductState: (data: boolean) => set({ productState: data }),
+}))
