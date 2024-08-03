@@ -1,14 +1,16 @@
 'use client'
 import { createBulkProduct, Product } from '@/app/actions/upload-product/actions'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './Button'
 import { FieldValues, useForm } from 'react-hook-form'
 import { useProductStore } from '../zustandStore'
 import * as XLSX from 'xlsx'
 
 export const ProductUploadForm = () => {
+  const [updateLoading, setUpdateLoading] = useState(false)
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const { productState } = useProductStore()
   const { setProductState } = useProductStore((state) => state)
   const { register, setValue, getValues, resetField } = useForm<FieldValues>({
     mode: 'onChange',
@@ -34,6 +36,8 @@ export const ProductUploadForm = () => {
           const json: Product[] = XLSX.utils.sheet_to_json(workSheet)
 
           try {
+            setUpdateLoading(true) // 로딩
+
             await createBulkProduct(JSON.parse(JSON.stringify(json)))
             console.log('출발지==>', JSON.parse(JSON.stringify(json)))
             setProductState(true)
@@ -42,6 +46,9 @@ export const ProductUploadForm = () => {
             resetField('upload')
           } catch (error) {
             console.log(error)
+            setUpdateLoading(false) // 로딩 상태 해제
+          } finally {
+            setUpdateLoading(false) // 로딩 상태 해제
           }
         }
       }
@@ -87,7 +94,8 @@ export const ProductUploadForm = () => {
           <Button
             label="데이터 업로드"
             clickEvent={handleClickSaveData}
-            disalbe={file === null || getValues('upload') === undefined || getValues('upload') === null}
+            spinner={updateLoading}
+            disalbe={file === null || getValues('upload') === undefined || getValues('upload') === null || updateLoading}
           />
         </div>
         <div className="w-[200px]">

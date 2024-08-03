@@ -175,6 +175,10 @@ export const ProductList = () => {
     //fetch
     fetchData()
 
+    if (productState) {
+      setLoading(true)
+    }
+
     //엑셀 데이터에서 DB 업로드 분기 - 리셋
     setProductState(false)
 
@@ -192,85 +196,89 @@ export const ProductList = () => {
           <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading} />
         </div>
       </div>
-      <table className="mt-5 w-full border-collapse">
-        <thead className="bg-gray-100">
-          <tr className="h-10 border-b border-t border-gray-300">
-            <th className="box-border w-[5%]">
-              <label
-                htmlFor="check_all"
-                className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50 bg-white"
-              >
-                <input
-                  ref={checkAllRef}
-                  id="check_all"
-                  type="checkbox"
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    const isChecked = event.target.checked
-                    const checkedItemsCount = Object.keys(checkedItems).length
 
-                    if (isChecked) {
-                      if (checkedItemsCount === 0) {
-                        setIsAllChecked(true)
-
-                        data.forEach((item: Product) => {
-                          toggleCheckedItem(item.idx, true)
-                        })
-                      } else if (checkedItemsCount > 0) {
-                        data.forEach((item: Product) => {
-                          updateCheckedItem(item.idx, true)
-                        })
-                      }
-                    } else {
-                      setIsAllChecked(false)
-                      updateAllValues(false)
-                    }
-                  }}
-                />
-                {isAllChecked && <FaCheck className="cursor-pointer text-blue-600" />}
-              </label>
-            </th>
-            <th className="w-[50%] text-center text-sm">이름</th>
-            <th className="w-[10%] text-center text-sm">카테고리</th>
-            <th className="w-[10%] text-center text-sm">정가</th>
-            <th className="w-[10%] text-center text-sm">할인</th>
-            <th className="w-[15%] text-center text-sm">판매가</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item: Product, index: any) => (
-            <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-              <td className="w-[5%]">
-                <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50">
-                  <input
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      const isChecked = event.target.checked
-
-                      toggleCheckedItem(`${item.idx}`, isChecked)
-
-                      if (!checkAllRef.current) return
-                      checkAllRef.current.checked = isChecked
-                    }}
-                    type="checkbox"
-                    id={item.idx}
-                  />
-                  {checkedItems[`${item.idx}`] && <FaCheck className="cursor-pointer text-blue-600" />}
-                </label>
-              </td>
-              <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
-              <td className="box-border w-[15%] text-center text-sm">{item.category}</td>
-              <td className="box-border w-[10%] text-center text-sm">{item.original_price.toLocaleString('ko-KR')}</td>
-              <td className="box-border w-[10%] text-center text-sm">{`${item.discount_rate! * 100}%`}</td>
-              <td className="box-border w-[10%] pr-2 text-right text-sm">
-                {`${(item.original_price - item.original_price * item.discount_rate!).toLocaleString('ko-KR')}`}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {loading && (
+      {loading ? (
         <div className="flex items-center justify-center py-10">
           <LoadingSpinner />
         </div>
+      ) : (
+        <>
+          <table className="mt-5 w-full border-collapse">
+            <thead className="bg-gray-100">
+              <tr className="h-10 border-b border-t border-gray-300">
+                <th className="box-border w-[5%]">
+                  <label
+                    htmlFor="check_all"
+                    className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50 bg-white"
+                  >
+                    <input
+                      ref={checkAllRef}
+                      id="check_all"
+                      type="checkbox"
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        const isChecked = event.target.checked
+                        const checkedItemsCount = Object.keys(checkedItems).length
+
+                        if (isChecked) {
+                          if (checkedItemsCount === 0) {
+                            setIsAllChecked(true)
+
+                            data.forEach((item: Product) => {
+                              toggleCheckedItem(item.idx, true)
+                            })
+                          } else if (checkedItemsCount > 0) {
+                            data.forEach((item: Product) => {
+                              updateCheckedItem(item.idx, true)
+                            })
+                          }
+                        } else {
+                          setIsAllChecked(false)
+                          updateAllValues(false)
+                        }
+                      }}
+                    />
+                    {isAllChecked && <FaCheck className="cursor-pointer text-blue-600" />}
+                  </label>
+                </th>
+                <th className="w-[50%] text-center text-sm">이름</th>
+                <th className="w-[10%] text-center text-sm">카테고리</th>
+                <th className="w-[10%] text-center text-sm">정가</th>
+                <th className="w-[10%] text-center text-sm">할인</th>
+                <th className="w-[15%] text-center text-sm">판매가</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item: Product, index: any) => (
+                <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="w-[5%]">
+                    <label htmlFor={item.idx} className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50">
+                      <input
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          const isChecked = event.target.checked
+
+                          toggleCheckedItem(`${item.idx}`, isChecked)
+
+                          if (!checkAllRef.current) return
+                          checkAllRef.current.checked = isChecked
+                        }}
+                        type="checkbox"
+                        id={item.idx}
+                      />
+                      {checkedItems[`${item.idx}`] && <FaCheck className="cursor-pointer text-blue-600" />}
+                    </label>
+                  </td>
+                  <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
+                  <td className="box-border w-[15%] text-center text-sm">{item.category}</td>
+                  <td className="box-border w-[10%] text-center text-sm">{item.original_price.toLocaleString('ko-KR')}</td>
+                  <td className="box-border w-[10%] text-center text-sm">{`${item.discount_rate! * 100}%`}</td>
+                  <td className="box-border w-[10%] pr-2 text-right text-sm">
+                    {`${(item.original_price - item.original_price * item.discount_rate!).toLocaleString('ko-KR')}`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </>
   )
