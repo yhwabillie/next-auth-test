@@ -12,6 +12,14 @@ export interface Product {
   updatedAt: Date
 }
 
+export interface UpdateProduct {
+  idx: string
+  name: string
+  original_price: number
+  discount_rate: number
+  imageUrl: string
+}
+
 /** admin 상품 데이터 업로드
  * - 상품 데이터 fetch
  * @param {number} page - 페이지 번호
@@ -81,6 +89,29 @@ export const createProduct = async (data: Product) => {
     return products
   } catch (error) {
     console.log(error)
+  }
+}
+
+/** admin 상품 데이터 업로드
+ * - 상품 데이터 UPDATE
+ * @param {UpdateProductParams} params - 업데이트할 상품의 정보를 포함한 객체
+ *   @property {string} idx - 상품의 고유 식별자
+ *   @property {string} name - 상품의 이름
+ *   @property {number} original_price - 상품의 원래 가격
+ *   @property {number} discount_rate - 상품의 할인율
+ *   @property {string} imageUrl - 상품의 이미지 URL
+ *
+ * @returns {Promise<Product>} - 업데이트된 상품 정보를 반환
+ * */
+export const updateProduct = async ({ idx, name, original_price, discount_rate, imageUrl }: UpdateProduct): Promise<Product> => {
+  try {
+    const updatedProduct = await prisma.product.update({
+      where: { idx },
+      data: { name, original_price, discount_rate, imageUrl },
+    })
+    return updatedProduct
+  } catch (error: any) {
+    throw new Error(error)
   }
 }
 

@@ -2,12 +2,13 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './Button'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaCheck } from 'react-icons/fa'
-import { deleteSelectedProductsByIdx, fetchCategories, fetchProducts } from '@/app/actions/upload-product/actions'
+import { deleteSelectedProductsByIdx, fetchCategories, fetchProducts, UpdateProduct, updateProduct } from '@/app/actions/upload-product/actions'
 import { useProductStore } from '../zustandStore'
 import { toast } from 'sonner'
 import { LoadingSpinner } from './LoadingSpinner'
 import { Product } from '@prisma/client'
 import * as XLSX from 'xlsx'
+import { ProductItemModal } from './ProductItemModal'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -31,6 +32,9 @@ export const ProductList = () => {
 
   const { productState } = useProductStore()
   const { setProductState } = useProductStore((state) => state)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   /**
    * - checkedItems 객체 내의 값들이 모두 true인지 확인하여 모든 아이템이 체크되었는지 확인
@@ -327,6 +331,38 @@ export const ProductList = () => {
     window.URL.revokeObjectURL(url)
   }
 
+  /**
+   * 선택한 제품 클릭 handler event
+   * - 선택한 제품의 상세 정보를 레이어 모달창 show
+   * - 제품 정보를 편집할 수 있는 입력 필드와 저장 및 취소 버튼을 포함
+   * @param {Product} product - 클릭된 제품 데이터
+   */
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product)
+    setIsModalOpen(true)
+  }
+
+  /**
+   * 함수는 모달을 닫고, 선택된 제품 정보를 초기화
+   */
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedProduct(null)
+  }
+
+  /**
+   * 업데이트된 제품 정보를 서버에 저장하고, 성공적으로 저장되면 상태를 업데이트
+   */
+  const saveProduct = async (updatedProduct: UpdateProduct) => {
+    try {
+      const savedProduct = await updateProduct(updatedProduct)
+      setData((prevProducts) => prevProducts.map((product) => (product.idx === savedProduct.idx ? savedProduct : product)))
+      closeModal()
+    } catch (error) {
+      console.error('Failed to update product:', error)
+    }
+  }
+
   useEffect(() => {
     fetchData(currentPage, selectedCategory)
     fetchCategoryData()
@@ -437,7 +473,9 @@ export const ProductList = () => {
                       {checkedItems[`${item.idx}`] && <FaCheck className="cursor-pointer text-blue-600" />}
                     </label>
                   </td>
-                  <td className="box-border w-[50%] break-all p-2 text-left text-sm">{item.name}</td>
+                  <td onClick={() => handleProductClick(item)} className="box-border w-[50%] break-all p-2 text-left text-sm">
+                    {item.name}
+                  </td>
                   <td className="box-border w-[15%] text-center text-sm">{item.category}</td>
                   <td className="box-border w-[10%] text-center text-sm">{item.original_price.toLocaleString('ko-KR')}</td>
                   <td className="box-border w-[10%] text-center text-sm">{`${item.discount_rate! * 100}%`}</td>
@@ -451,6 +489,8 @@ export const ProductList = () => {
           <div className="flex flex-row items-center justify-center gap-3 py-10">{renderPaginationButtons()}</div>
         </>
       )}
+
+      {selectedProduct && <ProductItemModal isOpen={isModalOpen} onClose={closeModal} product={selectedProduct} onSave={saveProduct} />}
     </>
   )
 }
