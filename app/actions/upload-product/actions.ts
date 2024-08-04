@@ -13,12 +13,24 @@ export interface Product {
 }
 
 /** admin 상품 데이터 업로드
- * - 상품 데이터 GET
+ * - 상품 데이터 fetch
+ * @param {number} page - 페이지 번호
+ * @param {number} limit - 페이지당 항목 수
+ * @returns {Promise<{ products: Product[], totalProducts: number }>}
  * */
-export const fetchProducts = async (): Promise<Product[]> => {
+export const fetchProducts = async (page: number, limit: number): Promise<{ products: Product[]; totalProducts: number }> => {
   try {
-    const products = await prisma.product.findMany()
-    return products
+    const skip = (page - 1) * limit
+
+    const [products, totalProducts] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: limit,
+      }),
+      prisma.product.count(),
+    ])
+
+    return { products, totalProducts }
   } catch (error: any) {
     throw new Error(error)
   }

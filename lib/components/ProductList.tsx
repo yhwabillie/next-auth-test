@@ -16,9 +16,15 @@ export const ProductList = () => {
   const checkAllRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(true)
   const [deleteLoading, setDeleteLoading] = useState(false)
+
+  const pageLimit = 3
+  const [totalPages, setTotalPages] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+
   const [data, setData] = useState<Product[]>([])
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [isAllChecked, setIsAllChecked] = useState(false)
+
   const { productState } = useProductStore()
   const { setProductState } = useProductStore((state) => state)
 
@@ -100,6 +106,9 @@ export const ProductList = () => {
     } finally {
       setDeleteLoading(false) // 로딩 상태 해제
     }
+
+    //삭제후 DB를 다시 fetch
+    fetchData(currentPage)
   }
 
   /**
@@ -158,33 +167,87 @@ export const ProductList = () => {
     })
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const products = await fetchProducts()
+  /**
+   * - products DB 데이터 GET
+   *  @param {number} page - 현재 페이지
+   */
+  const fetchData = async (page: number) => {
+    try {
+      const { products, totalProducts } = await fetchProducts(page, pageLimit)
+      setData(products)
+      setTotalPages(Math.ceil(totalProducts / pageLimit))
+      setCurrentPage(page)
+    } catch (error: any) {
+      console.error('Failed to fetch products:', error) // 디버그용
+      toast.error('데이터 fetch에 실패했습니다, 다시 시도해주세요.') // 사용자 알림용
+    } finally {
+      setLoading(false)
+    }
+  }
 
-        setData(products)
-      } catch (error: any) {
-        console.error('Failed to fetch products:', error) // 디버그용
-        toast.error('데이터 fetch에 실패했습니다, 다시 시도해주세요.') // 사용자 알림용
-      } finally {
-        setLoading(false)
-      }
+  /**
+   * - 현재 페이지 변경
+   * @param page - 현재 페이지
+   */
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  /**
+   * - 현재 페이지를 기준으로 앞뒤로 1 페이지 버튼만 표시
+   */
+  const renderPaginationButtons = () => {
+    const pageButtons = []
+    const startPage = Math.max(2, currentPage - 1)
+    const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+    // Always show the first page button
+    pageButtons.push(
+      <button key="first" onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
+        1
+      </button>,
+    )
+
+    // Add buttons for pages in the range [startPage, endPage]
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button key={i} onClick={() => handlePageChange(i)} disabled={i === currentPage}>
+          {i}
+        </button>,
+      )
     }
 
-    //fetch
-    fetchData()
+    // Always show the last page button
+    if (totalPages > 1) {
+      pageButtons.push(
+        <button key="last" onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
+          {totalPages}
+        </button>,
+      )
+    }
+
+    return pageButtons
+  }
+
+  useEffect(() => {
+    fetchData(currentPage)
 
     if (productState) {
       setLoading(true)
     }
 
+    if (currentPage) {
+      setLoading(true)
+    }
+
     //엑셀 데이터에서 DB 업로드 분기 - 리셋
     setProductState(false)
+  }, [productState, currentPage])
 
-    //fetch data와 checkedItems의 개수가 같으면 모두 체크
+  useEffect(() => {
+    // fetch data와 checkedItems의 개수가 같으면 모두 체크
     updateCheckAllStatus()
-  }, [checkedItems, productState])
+  }, [checkedItems])
 
   return (
     <>
@@ -196,6 +259,11 @@ export const ProductList = () => {
           <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading} />
         </div>
       </div>
+      <select>
+        <option>카테고리</option>
+        <option>가전</option>
+        <option>뷰티</option>
+      </select>
 
       {loading ? (
         <div className="flex items-center justify-center py-10">
@@ -278,6 +346,7 @@ export const ProductList = () => {
               ))}
             </tbody>
           </table>
+          <div>{renderPaginationButtons()}</div>
         </>
       )}
     </>
