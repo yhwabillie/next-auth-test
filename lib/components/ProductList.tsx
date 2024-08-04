@@ -2,7 +2,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './Button'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaCheck } from 'react-icons/fa'
-import { deleteSelectedProductsByIdx, fetchProducts } from '@/app/actions/upload-product/actions'
+import { deleteSelectedProductsByIdx, fetchCategories, fetchProducts } from '@/app/actions/upload-product/actions'
 import { useProductStore } from '../zustandStore'
 import { toast } from 'sonner'
 import { LoadingSpinner } from './LoadingSpinner'
@@ -20,6 +20,9 @@ export const ProductList = () => {
   const pageLimit = 10
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const [categories, setCategories] = useState<string[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const [data, setData] = useState<Product[]>([])
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
@@ -108,7 +111,7 @@ export const ProductList = () => {
     }
 
     //삭제후 DB를 다시 fetch, 로딩 시작
-    fetchData(currentPage)
+    fetchData(currentPage, selectedCategory)
     setLoading(true)
   }
 
@@ -152,7 +155,7 @@ export const ProductList = () => {
   }
 
   /**
-   * - isChecked 값을 모든 checkedItems 항목에 대해 업데이트
+   * isChecked 값을 모든 checkedItems 항목에 대해 업데이트
    * @param {boolean} isChecked - 체크 여부
    */
   const updateAllValues = (isChecked: boolean) => {
@@ -169,12 +172,13 @@ export const ProductList = () => {
   }
 
   /**
-   * - products DB 데이터 GET
-   *  @param {number} page - 현재 페이지
+   * products DB 데이터 GET
+   * @param {number} page - 현재 페이지
+   * @param {string | null} category - 필터링할 카테고리 (선택 사항)
    */
-  const fetchData = async (page: number) => {
+  const fetchData = async (page: number, category: string | null) => {
     try {
-      const { products, totalProducts } = await fetchProducts(page, pageLimit)
+      const { products, totalProducts } = await fetchProducts(page, pageLimit, category)
       setData(products)
       setTotalPages(Math.ceil(totalProducts / pageLimit))
       setCurrentPage(page)
@@ -187,7 +191,7 @@ export const ProductList = () => {
   }
 
   /**
-   * - 현재 페이지 변경
+   * 현재 페이지 변경
    * @param page - 현재 페이지
    */
   const handlePageChange = (page: number) => {
@@ -195,7 +199,7 @@ export const ProductList = () => {
   }
 
   /**
-   * - 현재 페이지를 기준으로 앞뒤로 1 페이지 버튼만 표시
+   * 현재 페이지를 기준으로 앞뒤로 1 페이지 버튼만 표시
    */
   const renderPaginationButtons = () => {
     const pageButtons = []
@@ -264,8 +268,30 @@ export const ProductList = () => {
     return pageButtons
   }
 
+  /**
+   * 카테고리 데이터 가져오기
+   */
+  const fetchCategoryData = async () => {
+    try {
+      const categories = await fetchCategories()
+      setCategories(categories)
+    } catch (error) {
+      console.error('Failed to fetch categories:', error)
+    }
+  }
+
+  /**
+   * 선택된 카테고리를 상태로 설정하고, 페이지를 첫 페이지로 리셋
+   * @param {ChangeEvent<HTMLSelectElement>} event
+   */
+  const handleCategoryChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(event.target.value)
+    setCurrentPage(1)
+  }
+
   useEffect(() => {
-    fetchData(currentPage)
+    fetchData(currentPage, selectedCategory)
+    fetchCategoryData()
 
     if (productState) {
       setLoading(true)
@@ -277,7 +303,7 @@ export const ProductList = () => {
 
     //엑셀 데이터에서 DB 업로드 분기 - 리셋
     setProductState(false)
-  }, [productState, currentPage])
+  }, [productState, currentPage, selectedCategory])
 
   useEffect(() => {
     // fetch data와 checkedItems의 개수가 같으면 모두 체크
@@ -294,10 +320,13 @@ export const ProductList = () => {
           <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading} />
         </div>
       </div>
-      <select>
-        <option>카테고리</option>
-        <option>가전</option>
-        <option>뷰티</option>
+      <select onChange={handleCategoryChange} value={selectedCategory || ''}>
+        <option value="">전체</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
       </select>
 
       {loading ? (
