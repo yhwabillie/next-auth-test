@@ -26,16 +26,25 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-10 h-[80px] bg-blue-400/50 backdrop-blur-md">
       <div className="mx-auto flex h-full w-[768px] items-center justify-between px-5">
-        <h1>
-          <Link href="/">Next Auth</Link>
-        </h1>
+        <nav className="flex flex-row gap-3">
+          <h1>
+            <span className="sr-only">제품 검색</span>
+            <Link href="/">MAIN</Link>
+          </h1>
+          <ul className="flex flex-row gap-3">
+            <li>
+              <span className="sr-only">제품 리스트</span>
+              <Link href="/products">PRODUCTS</Link>
+            </li>
+          </ul>
+        </nav>
 
-        {session && session.user ? (
-          <nav className="flex items-center">
+        <nav className="flex items-center">
+          {session && session.user ? (
             <div className="flex items-center gap-3">
               {session.user.user_type === 'indivisual' ? (
                 <>
-                  <div className="relative">
+                  {/* <div className="relative">
                     <button
                       onMouseEnter={() => showTooltip(TooltipTypes.WISH)}
                       onMouseLeave={() => closeTooltip()}
@@ -49,7 +58,7 @@ export const Header = () => {
                         위시리스트
                       </span>
                     )}
-                  </div>
+                  </div> */}
                   <div className="relative">
                     <button
                       onMouseEnter={() => showTooltip(TooltipTypes.CART)}
@@ -57,6 +66,9 @@ export const Header = () => {
                       className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
                     >
                       <span className="sr-only">장바구니</span>
+                      <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
+                        10
+                      </span>
                       <FaShoppingCart className="text-lg text-white" />
                     </button>
                     {activeModal === TooltipTypes.CART && (
@@ -98,12 +110,12 @@ export const Header = () => {
                     <Image src={session.user.profile_img!} className="object-cover" alt="user profile" width={40} height={40} />
                   )}
                 </button>
+
                 {activeModal === TooltipTypes.PROFILE && (
                   <span className="absolute bottom-[-35px] left-[50%] box-border block w-[80px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
                     마이페이지
                   </span>
                 )}
-
                 {activeModal === TooltipTypes.DROP_DWN && (
                   <div
                     onMouseLeave={() => closeTooltip()}
@@ -120,6 +132,18 @@ export const Header = () => {
                     >
                       마이페이지
                     </Link>
+                    <Link
+                      href="/profile"
+                      className="mt-4 block text-center text-sm text-white/80 transition-all duration-150 ease-in-out hover:text-white"
+                    >
+                      위시리스트
+                    </Link>
+                    <Link
+                      href="/profile"
+                      className="mt-4 block text-center text-sm text-white/80 transition-all duration-150 ease-in-out hover:text-white"
+                    >
+                      주문목록
+                    </Link>
                     <div className="mt-4">
                       <button
                         onClick={() => signOut({ callbackUrl: '/signIn' })}
@@ -132,23 +156,23 @@ export const Header = () => {
                 )}
               </div>
             </div>
-          </nav>
-        ) : (
-          <nav className="flex gap-3">
-            <Link
-              href="/signIn"
-              className="box-border rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signUp/agreement"
-              className="leading-1 box-border rounded-md bg-pink-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-pink-500"
-            >
-              회원가입
-            </Link>
-          </nav>
-        )}
+          ) : (
+            <div className="flex gap-3">
+              <Link
+                href="/signIn"
+                className="box-border rounded-md bg-blue-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signUp/agreement"
+                className="leading-1 box-border rounded-md bg-pink-400 px-5 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-pink-500"
+              >
+                회원가입
+              </Link>
+            </div>
+          )}
+        </nav>
       </div>
     </header>
   )

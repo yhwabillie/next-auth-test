@@ -1,6 +1,6 @@
 'use server'
 import { ProductUploadForm } from '@/lib/components/ProductUploadForm'
-import { ProductList } from '@/lib/components/ProductList'
+import { ProductList } from '@/lib/components/admin/ProductList'
 
 export default async function Page() {
   return (
