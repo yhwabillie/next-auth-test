@@ -7,6 +7,7 @@ import { useProductStore } from '../zustandStore'
 import { toast } from 'sonner'
 import { LoadingSpinner } from './LoadingSpinner'
 import { Product } from '@prisma/client'
+import * as XLSX from 'xlsx'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -289,6 +290,43 @@ export const ProductList = () => {
     setCurrentPage(1)
   }
 
+  /**
+   * 상품 리스트를 엑셀 파일로 다운로드
+   * - 프론트에서 필터된 상태를 반영하여 파일 생성
+   * - 다운로드 연월일 시간을 파일 이름에 적용하여 버전 구별
+   */
+  const handleDownload = () => {
+    // 필요한 칼럼을 제외한 새로운 객체 배열 생성
+    const filteredProducts = data.map(({ idx, imageUrl, createdAt, updatedAt, ...rest }) => ({
+      제품명: rest.name,
+      카테고리: rest.category,
+      정가: rest.original_price,
+      할인율: rest.discount_rate,
+    }))
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredProducts)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Products')
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
+    const url = window.URL.createObjectURL(blob)
+
+    const a = document.createElement('a')
+    a.href = url
+
+    const date = new Date()
+    const formattedDate = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`
+    const formattedTime = `${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}${String(date.getSeconds()).padStart(2, '0')}`
+    a.download = `products_${formattedDate}_${formattedTime}${selectedCategory ? `_${selectedCategory}` : ''}.xlsx`
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+  }
+
   useEffect(() => {
     fetchData(currentPage, selectedCategory)
     fetchCategoryData()
@@ -314,10 +352,10 @@ export const ProductList = () => {
     <>
       <div className="flex flex-row justify-end gap-2">
         <div className="w-[230px]">
-          <Button label="전체 Excel 다운로드" disalbe={true} />
+          <Button label="전체 Excel 다운로드" clickEvent={handleDownload} disalbe={!(data.length > 0)} />
         </div>
         <div className="w-[150px]">
-          <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading} />
+          <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading || !(data.length > 0)} />
         </div>
       </div>
       <select onChange={handleCategoryChange} value={selectedCategory || ''}>
