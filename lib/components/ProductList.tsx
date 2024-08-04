@@ -1,7 +1,7 @@
 'use client'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Button } from './Button'
-import { FaCheck } from 'react-icons/fa'
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaCheck } from 'react-icons/fa'
 import { deleteSelectedProductsByIdx, fetchProducts } from '@/app/actions/upload-product/actions'
 import { useProductStore } from '../zustandStore'
 import { toast } from 'sonner'
@@ -17,7 +17,7 @@ export const ProductList = () => {
   const [loading, setLoading] = useState(true)
   const [deleteLoading, setDeleteLoading] = useState(false)
 
-  const pageLimit = 3
+  const pageLimit = 10
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -107,8 +107,9 @@ export const ProductList = () => {
       setDeleteLoading(false) // 로딩 상태 해제
     }
 
-    //삭제후 DB를 다시 fetch
+    //삭제후 DB를 다시 fetch, 로딩 시작
     fetchData(currentPage)
+    setLoading(true)
   }
 
   /**
@@ -198,30 +199,64 @@ export const ProductList = () => {
    */
   const renderPaginationButtons = () => {
     const pageButtons = []
-    const startPage = Math.max(2, currentPage - 1)
-    const endPage = Math.min(totalPages - 1, currentPage + 1)
 
-    // Always show the first page button
-    pageButtons.push(
-      <button key="first" onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
-        1
-      </button>,
-    )
-
-    // Add buttons for pages in the range [startPage, endPage]
-    for (let i = startPage; i <= endPage; i++) {
+    // 맨 앞으로 화살표 버튼
+    if (currentPage > 1) {
       pageButtons.push(
-        <button key={i} onClick={() => handlePageChange(i)} disabled={i === currentPage}>
-          {i}
+        <button key="first" className="h-10 w-10 bg-pink-400" onClick={() => handlePageChange(1)}>
+          <FaAngleDoubleLeft />
         </button>,
       )
     }
 
-    // Always show the last page button
-    if (totalPages > 1) {
+    // 이전 화살표 버튼 (1번째 페이지가 아닐 경우 show)
+    if (currentPage > 1) {
       pageButtons.push(
-        <button key="last" onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>
-          {totalPages}
+        <button key="prev" className="h-10 w-10 bg-gray-400" onClick={() => handlePageChange(currentPage - 1)}>
+          <FaAngleLeft />
+        </button>,
+      )
+    }
+
+    // 이전 페이지 버튼 (1번째 페이지가 아닐 경우 show)
+    if (currentPage > 1) {
+      pageButtons.push(
+        <button key={currentPage - 1} className="h-10 w-10 bg-blue-400" onClick={() => handlePageChange(currentPage - 1)}>
+          {currentPage - 1}
+        </button>,
+      )
+    }
+
+    // 현재 페이지 버튼 (항상 show)
+    pageButtons.push(
+      <button key="current" className="h-10 w-10 bg-blue-600" disabled>
+        {currentPage}
+      </button>,
+    )
+
+    // 다음 페이지 버튼 (마지막 페이지가 아닐 경우 show)
+    if (currentPage < totalPages) {
+      pageButtons.push(
+        <button key={currentPage + 1} className="h-10 w-10 bg-blue-400" onClick={() => handlePageChange(currentPage + 1)}>
+          {currentPage + 1}
+        </button>,
+      )
+    }
+
+    // 다음 화살표 버튼 (마지막 페이지가 아닐 경우 show)
+    if (currentPage < totalPages) {
+      pageButtons.push(
+        <button key="next" className="h-10 w-10 bg-gray-400" onClick={() => handlePageChange(currentPage + 1)}>
+          <FaAngleRight />
+        </button>,
+      )
+    }
+
+    // 맨 뒤로 화살표 버튼
+    if (currentPage < totalPages) {
+      pageButtons.push(
+        <button key="last" className="h-10 w-10 bg-pink-400" onClick={() => handlePageChange(totalPages)}>
+          <FaAngleDoubleRight />
         </button>,
       )
     }
@@ -346,7 +381,7 @@ export const ProductList = () => {
               ))}
             </tbody>
           </table>
-          <div>{renderPaginationButtons()}</div>
+          <div className="flex flex-row items-center justify-center gap-3 py-10">{renderPaginationButtons()}</div>
         </>
       )}
     </>
