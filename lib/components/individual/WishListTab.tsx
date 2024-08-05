@@ -45,7 +45,7 @@ export const WishListTab = () => {
   const fetchCartData = async () => {
     try {
       const response = await fetchCartlist(userIdx!)
-      setCartlist(response.map((item) => item.productIdx))
+      setCartlist(response.map(({ product }) => product.idx))
     } catch (error) {
       console.error('Failed to fetch cartlist:', error)
       toast.error('cartlist 데이터 fetch에 실패했습니다, 다시 시도해주세요.')

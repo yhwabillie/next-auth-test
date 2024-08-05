@@ -13,6 +13,38 @@ export const fetchCartlist = async (userIdx: string) => {
 
     const cartlist = await prisma.cartList.findMany({
       where: {
+        userIdx: session.user.idx,
+      },
+      select: {
+        product: {
+          select: {
+            category: true,
+            discount_rate: true,
+            idx: true,
+            name: true,
+            imageUrl: true,
+            original_price: true,
+          },
+        },
+      },
+    })
+    return cartlist
+  } catch (error) {
+    console.error('Error adding to cartlist:', error)
+    throw new Error('Failed to add to cartlist')
+  }
+}
+
+export const fetchCartlistIdx = async (userIdx: string) => {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session || !session.user) {
+      throw new Error('User not authenticated')
+    }
+
+    const cartlist = await prisma.cartList.findMany({
+      where: {
         userIdx,
       },
       select: {

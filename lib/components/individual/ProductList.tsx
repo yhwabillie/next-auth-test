@@ -1,5 +1,5 @@
 'use client'
-import { addToCartlist, fetchCartlist, removeFromCartlist } from '@/app/actions/cartlist/actions'
+import { addToCartlist, fetchCartlistIdx, removeFromCartlist } from '@/app/actions/cartlist/actions'
 import { fetchProducts } from '@/app/actions/products/actions'
 import { addToWishlist, fetchWishlistIdx, removeFromWishlist } from '@/app/actions/wishlist/actions'
 import { Product } from '@prisma/client'
@@ -54,7 +54,7 @@ export const ProductList = () => {
    */
   const fetchCartData = async () => {
     try {
-      const response = await fetchCartlist(userIdx!)
+      const response = await fetchCartlistIdx(userIdx!)
       setCartlist(response.map((item) => item.productIdx))
     } catch (error) {
       console.error('Failed to fetch cartlist:', error)
