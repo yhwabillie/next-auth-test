@@ -3,7 +3,7 @@ import authOptions from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 
-export const fetchWishlist = async (userIdx: string) => {
+export const fetchCartlist = async (userIdx: string) => {
   try {
     const session = await getServerSession(authOptions)
 
@@ -11,7 +11,7 @@ export const fetchWishlist = async (userIdx: string) => {
       throw new Error('User not authenticated')
     }
 
-    const wishlist = await prisma.wishlist.findMany({
+    const cartlist = await prisma.cartList.findMany({
       where: {
         userIdx,
       },
@@ -20,14 +20,14 @@ export const fetchWishlist = async (userIdx: string) => {
       },
     })
 
-    return wishlist
+    return cartlist
   } catch (error) {
-    console.error('Error adding to wishlist:', error)
-    throw new Error('Failed to add to wishlist')
+    console.error('Error adding to cartlist:', error)
+    throw new Error('Failed to add to cartlist')
   }
 }
 
-export const addToWishlist = async (userIdx: string, productIdx: string) => {
+export const addToCartlist = async (userIdx: string, productIdx: string) => {
   try {
     const session = await getServerSession(authOptions)
 
@@ -35,21 +35,22 @@ export const addToWishlist = async (userIdx: string, productIdx: string) => {
       throw new Error('User not authenticated')
     }
 
-    const wishlistItem = await prisma.wishlist.create({
+    const cartlist = await prisma.cartList.create({
       data: {
         userIdx: userIdx,
         productIdx: productIdx,
+        quantity: 1,
       },
     })
 
-    return wishlistItem
+    return cartlist
   } catch (error) {
     console.error('Error adding to wishlist:', error)
     throw new Error('Failed to add to wishlist')
   }
 }
 
-export const removeFromWishlist = async (userIdx: string, productIdx: string) => {
+export const removeFromCartlist = async (userIdx: string, productIdx: string) => {
   try {
     const session = await getServerSession(authOptions)
 
@@ -57,7 +58,7 @@ export const removeFromWishlist = async (userIdx: string, productIdx: string) =>
       throw new Error('User not authenticated')
     }
 
-    await prisma.wishlist.delete({
+    await prisma.cartList.delete({
       where: {
         userIdx_productIdx: {
           userIdx: userIdx,
@@ -65,9 +66,9 @@ export const removeFromWishlist = async (userIdx: string, productIdx: string) =>
         },
       },
     })
-    return { message: 'Removed from wishlist' }
+    return { message: 'Removed from cartlist' }
   } catch (error) {
-    console.error('Error removing from wishlist:', error)
-    throw new Error('Failed to remove from wishlist')
+    console.error('Error removing from cartlist:', error)
+    throw new Error('Failed to remove from cartlist')
   }
 }
