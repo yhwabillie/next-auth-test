@@ -53,7 +53,7 @@ export const Header = () => {
                     >
                       <span className="sr-only">마이쇼핑 - 장바구니</span>
                       <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
-                        10
+                        {session.user.cartlist_length}
                       </span>
                       <FaShoppingCart className="text-lg text-white" />
                     </Link>

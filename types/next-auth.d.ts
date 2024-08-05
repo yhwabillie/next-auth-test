@@ -1,3 +1,4 @@
+import { CartList } from '@prisma/client'
 import NextAuth from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 
@@ -10,6 +11,7 @@ interface User {
   user_type?: UserType
   name?: string
   profile_img?: string
+  cartlist_length?: number
 }
 
 declare module 'next-auth/jwt' {

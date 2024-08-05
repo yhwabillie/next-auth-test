@@ -43,7 +43,14 @@ export const addToCartlist = async (userIdx: string, productIdx: string) => {
       },
     })
 
-    return cartlist
+    // 장바구니 항목 갯수 조회
+    const cartlistCount = await prisma.cartList.count({
+      where: {
+        userIdx: userIdx,
+      },
+    })
+
+    return cartlistCount
   } catch (error) {
     console.error('Error adding to wishlist:', error)
     throw new Error('Failed to add to wishlist')
@@ -66,7 +73,15 @@ export const removeFromCartlist = async (userIdx: string, productIdx: string) =>
         },
       },
     })
-    return { message: 'Removed from cartlist' }
+
+    // 장바구니 항목 갯수 조회
+    const cartlistCount = await prisma.cartList.count({
+      where: {
+        userIdx: userIdx,
+      },
+    })
+
+    return cartlistCount
   } catch (error) {
     console.error('Error removing from cartlist:', error)
     throw new Error('Failed to remove from cartlist')

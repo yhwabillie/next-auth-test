@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 export const ProductList = () => {
-  const { data: session } = useSession()
+  const { data: session, update, status } = useSession()
   const [wishlist, setWishlist] = useState<any>([])
   const [cartlist, setCartlist] = useState<any>([])
   const userIdx = session?.user?.idx
@@ -96,13 +96,25 @@ export const ProductList = () => {
    */
   const toggleCartlist = async (productIdx: string) => {
     if (isProductInCartlist(productIdx)) {
-      console.log('잇으면 빼자')
-      await removeFromCartlist(userIdx!, productIdx)
-      setCartlist((prev: any) => prev.filter((idx: any) => idx !== productIdx))
+      try {
+        const response = await removeFromCartlist(userIdx!, productIdx)
+        // if (!response) {
+        //   toast.error('장바구니 제거에 실패했습니다. 다시 시도해주세요.')
+        //   return
+        // }
+        update({ cartlist_length: response })
+        console.log(response, '////')
+
+        setCartlist((prev: any) => prev.filter((idx: any) => idx !== productIdx))
+      } catch (error) {}
     } else {
-      console.log('없으면 넣자')
-      await addToCartlist(userIdx!, productIdx)
-      setCartlist((prev: any) => [...prev, productIdx])
+      try {
+        const response = await addToCartlist(userIdx!, productIdx)
+
+        update({ cartlist_length: response })
+        console.log(response, '////')
+        setCartlist((prev: any) => [...prev, productIdx])
+      } catch (error) {}
     }
   }
 
