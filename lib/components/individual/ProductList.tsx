@@ -1,7 +1,7 @@
 'use client'
 import { addToCartlist, fetchCartlist, removeFromCartlist } from '@/app/actions/cartlist/actions'
 import { fetchProducts } from '@/app/actions/products/actions'
-import { addToWishlist, fetchWishlist, removeFromWishlist } from '@/app/actions/wishlist/actions'
+import { addToWishlist, fetchWishlistIdx, removeFromWishlist } from '@/app/actions/wishlist/actions'
 import { Product } from '@prisma/client'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
@@ -41,7 +41,7 @@ export const ProductList = () => {
    */
   const fetchWishData = async () => {
     try {
-      const response = await fetchWishlist(userIdx!)
+      const response = await fetchWishlistIdx(userIdx!)
       setWishlist(response.map((item) => item.productIdx))
     } catch (error) {
       console.error('Failed to fetch wishlist:', error)
@@ -98,13 +98,7 @@ export const ProductList = () => {
     if (isProductInCartlist(productIdx)) {
       try {
         const response = await removeFromCartlist(userIdx!, productIdx)
-        // if (!response) {
-        //   toast.error('장바구니 제거에 실패했습니다. 다시 시도해주세요.')
-        //   return
-        // }
         update({ cartlist_length: response })
-        console.log(response, '////')
-
         setCartlist((prev: any) => prev.filter((idx: any) => idx !== productIdx))
       } catch (error) {}
     } else {
@@ -112,7 +106,6 @@ export const ProductList = () => {
         const response = await addToCartlist(userIdx!, productIdx)
 
         update({ cartlist_length: response })
-        console.log(response, '////')
         setCartlist((prev: any) => [...prev, productIdx])
       } catch (error) {}
     }

@@ -118,30 +118,6 @@ const authOptions: NextAuthOptions = {
           }
 
           return token
-
-          // if (session.name !== undefined) {
-          //   token = { ...token, name: session.name, user: { ...token.user, name: session.name } }
-          //   console.log('Update Name Token Data====>', token)
-          //   return token
-          // }
-
-          // if (session.profile_img === 'undefined') {
-          //   token = { ...token, user: { ...token.user, profile_img: 'undefined' } }
-          //   console.log('Update Profile Token Data====>', token)
-          //   return token
-          // } else if (session.profile_img !== 'undefined') {
-          //   token = { ...token, user: { ...token.user, profile_img: session.profile_img } }
-          //   console.log('Update Profile Token Data====>', token)
-          //   return token
-          // }
-
-          // if (session.cartlist_length !== undefined) {
-          //   token = { ...token, user: { ...token.user, cartlist_length: session.cartlist_length } }
-          //   console.log('Update Cartlist Length Token Data====>', token)
-          //   return token
-          // }
-
-          // return token
         }
 
         return token
