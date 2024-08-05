@@ -110,8 +110,17 @@ export const MainPage = () => {
               }
             })}
           </>
+        ) : !initialLoad && query ? (
+          <p>No products found</p>
         ) : (
-          !initialLoad && query && <p>No products found</p>
+          <div>
+            <h3>베스트 셀러</h3>
+            <ul>
+              <li>1위</li>
+              <li>2위</li>
+              <li>3위</li>
+            </ul>
+          </div>
         )}
       </div>
       {loading && <p>Loading...</p>}

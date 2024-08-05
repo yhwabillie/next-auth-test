@@ -44,36 +44,22 @@ export const Header = () => {
             <div className="flex items-center gap-3">
               {session.user.user_type === 'indivisual' ? (
                 <>
-                  {/* <div className="relative">
-                    <button
-                      onMouseEnter={() => showTooltip(TooltipTypes.WISH)}
-                      onMouseLeave={() => closeTooltip()}
-                      className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
-                    >
-                      <span className="sr-only">위시리스트</span>
-                      <FaHeartCirclePlus className="text-lg text-pink-200" />
-                    </button>
-                    {activeModal === TooltipTypes.WISH && (
-                      <span className="absolute bottom-[-35px] left-[50%] box-border block w-[80px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                        위시리스트
-                      </span>
-                    )}
-                  </div> */}
                   <div className="relative">
-                    <button
+                    <Link
+                      href="/my-shopping"
                       onMouseEnter={() => showTooltip(TooltipTypes.CART)}
                       onMouseLeave={() => closeTooltip()}
                       className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
                     >
-                      <span className="sr-only">장바구니</span>
+                      <span className="sr-only">마이쇼핑 - 장바구니</span>
                       <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
                         10
                       </span>
                       <FaShoppingCart className="text-lg text-white" />
-                    </button>
+                    </Link>
                     {activeModal === TooltipTypes.CART && (
                       <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                        장바구니
+                        마이쇼핑
                       </span>
                     )}
                   </div>
@@ -113,7 +99,7 @@ export const Header = () => {
 
                 {activeModal === TooltipTypes.PROFILE && (
                   <span className="absolute bottom-[-35px] left-[50%] box-border block w-[80px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                    마이페이지
+                    회원정보
                   </span>
                 )}
                 {activeModal === TooltipTypes.DROP_DWN && (
@@ -130,19 +116,7 @@ export const Header = () => {
                       href="/profile"
                       className="mt-4 block text-center text-sm text-white/80 transition-all duration-150 ease-in-out hover:text-white"
                     >
-                      마이페이지
-                    </Link>
-                    <Link
-                      href="/profile"
-                      className="mt-4 block text-center text-sm text-white/80 transition-all duration-150 ease-in-out hover:text-white"
-                    >
-                      위시리스트
-                    </Link>
-                    <Link
-                      href="/profile"
-                      className="mt-4 block text-center text-sm text-white/80 transition-all duration-150 ease-in-out hover:text-white"
-                    >
-                      주문목록
+                      회원정보
                     </Link>
                     <div className="mt-4">
                       <button

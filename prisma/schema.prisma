@@ -18,28 +18,97 @@ enum UserType {
 }
 
 model User {
-  idx                  String   @id @default(uuid())
+  idx                  String     @id @default(uuid())
   provider             Provider
   user_type            UserType
-  id                   String   @unique
-  email                String   @unique
+  id                   String     @unique
+  email                String     @unique
   name                 String
   password             String
   profile_img          String
   service_agreement    Boolean
   privacy_agreement    Boolean
   selectable_agreement Boolean
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  addresses            Address[]
+  wishlist             Wishlist[]
+  cartlist             CartList[]
+  orders               Order[]
+}
+
+model Address {
+  idx           String  @id @default(uuid())
+  userIdx       String
+  recipientName String // 받는이
+  phoneNumber   String // 연락처
+  addressName   String? // 배송지명 (선택)
+  addressLine1  String //서울특별시 강남구 테헤란로 123
+  addressLine2  String //아파트 101동 1001호
+  isDefault     Boolean @default(false) //주소가 사용자의 기본 주소인지 여부
+  deliveryNote  String? // 배송메모 (선택)
+  user          User    @relation(fields: [userIdx], references: [idx])
+  orders        Order[]
+
+  @@unique([userIdx, isDefault], name: "unique_default_address")
 }
 
 model Product {
-  idx            String   @id @default(uuid())
+  idx            String      @id @default(uuid())
   name           String
   category       String
-  original_price Int // 정가
-  discount_rate  Float? // 할인율 (0~100, 선택적)
+  original_price Int
+  discount_rate  Float?
   imageUrl       String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  wishlist       Wishlist[]
+  cartlist       CartList[]
+  orderItems     OrderItem[]
+}
+
+//사용자의 전체 주문 정보
+model Order {
+  idx         String      @id @default(uuid())
+  userIdx     String
+  addressIdx  String
+  status      String      @default("pending") //주문의 상태 (pending, shipped, delivered)
+  totalAmount Float
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userIdx], references: [idx])
+  address     Address     @relation(fields: [addressIdx], references: [idx])
+  orderItems  OrderItem[]
+}
+
+model Wishlist {
+  idx        String  @id @default(uuid())
+  userIdx    String
+  productIdx String
+  user       User    @relation(fields: [userIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx])
+
+  @@unique([userIdx, productIdx])
+}
+
+model CartList {
+  idx        String  @id @default(uuid())
+  userIdx    String
+  productIdx String
+  quantity   Int
+  user       User    @relation(fields: [userIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx])
+
+  @@unique([userIdx, productIdx])
+}
+
+//각 주문에 포함된 개별 제품 정보
+model OrderItem {
+  idx        String  @id @default(uuid())
+  orderIdx   String
+  productIdx String
+  quantity   Int
+  price      Float
+  order      Order   @relation(fields: [orderIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx])
 }
