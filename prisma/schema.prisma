@@ -86,7 +86,7 @@ model Wishlist {
   userIdx    String
   productIdx String
   user       User    @relation(fields: [userIdx], references: [idx])
-  product    Product @relation(fields: [productIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx], onDelete: Cascade)
 
   @@unique([userIdx, productIdx])
 }
@@ -97,7 +97,7 @@ model CartList {
   productIdx String
   quantity   Int
   user       User    @relation(fields: [userIdx], references: [idx])
-  product    Product @relation(fields: [productIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx], onDelete: Cascade)
 
   @@unique([userIdx, productIdx])
 }

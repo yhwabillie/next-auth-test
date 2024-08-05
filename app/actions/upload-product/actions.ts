@@ -133,8 +133,21 @@ export const deleteSelectedProductsByIdx = async (products: any) => {
   //   throw new Error('Failed to delete selected products')
   // }
   try {
-    console.log(products)
     for (const product of Object.keys(products)) {
+      // 연관된 cartlist 항목 삭제
+      await prisma.cartList.deleteMany({
+        where: {
+          productIdx: product,
+        },
+      })
+
+      // 연관된 Wishlist 항목 삭제
+      await prisma.wishlist.deleteMany({
+        where: {
+          productIdx: product,
+        },
+      })
+
       await prisma.product.delete({
         where: {
           idx: product,

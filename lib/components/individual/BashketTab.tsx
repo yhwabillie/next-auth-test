@@ -86,6 +86,7 @@ export const BasketTab = () => {
         <div>
           <strong>주문자 정보</strong>
           <ul>
+            <li>회원구분: {session?.user?.user_type === 'indivisual' ? '일반회원' : '어드민'}</li>
             <li>이름: {session?.user?.name}</li>
             <li>휴대전화</li>
             <li>이메일: </li>
@@ -124,22 +125,10 @@ export const BasketTab = () => {
             <p>{totalPrice >= 30000 ? '3만원 이상 무료배송' : '배송비 +3000원'}</p>
             <h3>최종결제: ${totalPrice >= 30000 ? totalPrice : totalPrice + 3000}</h3>
           </div>
-          {/* <ul>
-            <li>
-              <span>제품명</span>
-              <span>1200원</span>
-            </li>
-          </ul>
-          <p>배송비 (30,000원 이상 무료)</p>
-          <p>0 원</p>
-          <div>
-            <span>최종 결제 금액</span>
-            <span>45000원</span>
-          </div> */}
         </div>
 
-        {/* <p>주문 내용을 모두 확인 하였으며, 결제에 동의합니다.</p>
-        <button>5,000 원 결제하기</button> */}
+        <p>주문 내용을 모두 확인 하였으며, 결제에 동의합니다.</p>
+        <button>{totalPrice >= 30000 ? totalPrice : totalPrice + 3000} 원 결제하기</button>
       </div>
     </div>
   )
