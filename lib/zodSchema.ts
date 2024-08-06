@@ -1,5 +1,33 @@
 import { z } from 'zod'
 
+const postcodeRegex = /^[0-9]{5}$/
+
+export const AddressSchema = z.object({
+  address_name: z.string().min(1, 'address_name 필요'),
+  recipient_name: z.string().min(1, 'recipient_name 필요'),
+  phone_number: z.string().regex(/^010\d{8}$/, {
+    message: 'Invalid phone number format',
+  }),
+  postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
+  addressLine1: z.string().min(1, 'addressLine1 필요'),
+  addressLine2: z.string().min(1, 'addressLine2 필요'),
+  delivery_note: z.string().min(1, 'delivery_note 필요'),
+})
+
+export type AddressSchemaType = z.infer<typeof AddressSchema>
+
+export const OrderSchema = z.object({
+  phoneNumber: z.string().regex(/^010\d{8}$/, {
+    message: 'Invalid phone number format',
+  }),
+  payment: z.enum(['신용카드', '실시간 계좌이체']),
+  totalAmount: z.string().regex(/^\d+(\.\d{1,2})?$/, {
+    message: 'Total amount must be a valid number with up to 2 decimal places',
+  }),
+})
+
+export type OrderSchemaType = z.infer<typeof OrderSchema>
+
 export const UserNameSchema = () => {
   return z.string().regex(/^[ㄱ-ㅎ가-힣]{2,8}$/g, '2자-8자 사이의 한글로 작성하세요 (공백, 특수문자 X)')
 }

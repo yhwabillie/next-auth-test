@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 enum Provider {
@@ -42,11 +42,12 @@ model Address {
   userIdx       String
   recipientName String // 받는이
   phoneNumber   String // 연락처
-  addressName   String? // 배송지명 (선택)
+  addressName   String // 배송지명 (선택)
   addressLine1  String //서울특별시 강남구 테헤란로 123
   addressLine2  String //아파트 101동 1001호
   isDefault     Boolean @default(false) //주소가 사용자의 기본 주소인지 여부
-  deliveryNote  String? // 배송메모 (선택)
+  deliveryNote  String // 배송메모 (선택)
+  postcode      String
   user          User    @relation(fields: [userIdx], references: [idx])
   orders        Order[]
 

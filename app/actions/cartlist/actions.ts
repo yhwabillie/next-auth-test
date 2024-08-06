@@ -26,6 +26,7 @@ export const fetchCartlist = async (userIdx: string) => {
             original_price: true,
           },
         },
+        quantity: true,
       },
     })
     return cartlist
