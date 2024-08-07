@@ -2,6 +2,20 @@ import { z } from 'zod'
 
 const postcodeRegex = /^[0-9]{5}$/
 
+export const AddressFormSchema = z.object({
+  addressName: z.string().min(1, 'address_name 필요'),
+  recipientName: z.string().min(1, 'recipient_name 필요'),
+  phoneNumber: z.string().regex(/^010\d{8}$/, {
+    message: 'Invalid phone number format',
+  }),
+  postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
+  addressLine1: z.string().min(1, 'addressLine1 필요'),
+  addressLine2: z.string().min(1, 'addressLine2 필요'),
+  deliveryNote: z.string().min(1, 'delivery_note 필요'),
+})
+
+export type AddressFormSchemaType = z.infer<typeof AddressFormSchema>
+
 export const ETCAddressSchema = z.object({
   etc1_address_name: z.string().min(1, 'address_name 필요'),
   etc1_recipient_name: z.string().min(1, 'recipient_name 필요'),
