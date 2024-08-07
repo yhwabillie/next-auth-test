@@ -4,9 +4,11 @@ import { useSession } from 'next-auth/react'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { FaCheck, FaCheckSquare, FaSquare } from 'react-icons/fa'
 import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
+import { FieldValue, FieldValues, useForm } from 'react-hook-form'
 import { OrderSchema, OrderSchemaType } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { fetchAddressList } from '@/app/actions/address/actions'
+import { addNewOrder } from '@/app/actions/order/actions'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -16,6 +18,7 @@ export const CartListTab = () => {
   const { data: session, update, status } = useSession()
   const userIdx = session?.user?.idx
   const [data, setData] = useState<any[]>([])
+  const [address, setAddress] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [selectedTab, setSelectedTab] = useState('tab1')
@@ -29,26 +32,6 @@ export const CartListTab = () => {
     mode: 'onChange',
     resolver: zodResolver(OrderSchema),
   })
-
-  // const onSubmitForm = (data: any) => {
-  //   try {
-  //     //checkedItemDetails
-  //     const order_items = checkedItemDetails.map((item) => ({
-  //       productIdx: item.product.idx,
-  //       price: item.product.original_price - item.product.original_price * item.product.discount_rate,
-  //       quantity: item.quantity,
-  //     }))
-
-  //     const order = {
-  //       userIdx: userIdx,
-  //       addressIdx: '',
-  //       totalAmount: totalPrice,
-  //       orderItems: order_items,
-  //     }
-
-  //     console.log(order)
-  //   } catch (error) {}
-  // }
 
   const fetchData = async () => {
     try {
@@ -113,7 +96,6 @@ export const CartListTab = () => {
    * 클릭한 상품을 쇼핑카트에 제거
    */
   const removeCartItem = async (productIdx: string) => {
-    console.log(productIdx, '///')
     try {
       const response = await removeFromCartlist(userIdx!, productIdx)
       update({ cartlist_length: response })
@@ -127,12 +109,49 @@ export const CartListTab = () => {
    * 배송지 radio 버튼 tab
    */
   const handleTabChange = (event: any) => {
-    console.log(event)
     setSelectedTab(event.target.value)
+  }
+
+  /**
+   * 세션 사용자의 배송지 데이터 fetch
+   */
+  const fetchAddressData = async () => {
+    try {
+      const response = await fetchAddressList(userIdx!)
+
+      if (!response) toast.error('배송지 데이터 fetch 실패')
+      setAddress(response)
+    } catch (error) {}
+  }
+
+  /**
+   * 최종 주문 데이터 submit
+   */
+  const handleSubmitOrder = async (data: any) => {
+    const result = {
+      userIdx,
+      addressIdx: data.addressIdx,
+      totalAmount: data.totalAmount,
+      orderItems: checkedItemDetails,
+    }
+
+    if (checkedItemDetails.length > 0) {
+      console.log(result)
+
+      try {
+        const response = await addNewOrder(result)
+
+        console.log('response==>', response)
+        toast.success('주문이 전송되었습니다.')
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   useEffect(() => {
     fetchData()
+    fetchAddressData()
   }, [])
 
   if (loading) return <div>Loading...</div>
@@ -140,7 +159,7 @@ export const CartListTab = () => {
   return (
     <>
       <h4 className="mb-10 text-2xl font-bold">상품 결제하기</h4>
-      <form>
+      <form onSubmit={handleSubmit(handleSubmitOrder)}>
         <fieldset className="mb-10 border-b border-gray-300">
           <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">장바구니</h5>
           <ul className="flex flex-col gap-5 px-2 py-4">
@@ -201,46 +220,35 @@ export const CartListTab = () => {
           <ul className="flex flex-col gap-2 pb-2">
             <li className="flex flex-row gap-4">
               <span>배송지 선택</span>
-              <ul className="flex flex-row items-center gap-5">
-                <li>
-                  <label>
-                    <input type="radio" name="address" onChange={handleTabChange} value="tab1" checked={selectedTab === 'tab1'} />
-                    <span>배송지 이름1</span>
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <input type="radio" name="address" onChange={handleTabChange} value="tab2" checked={selectedTab === 'tab2'} />
-                    <span>배송지 이름2</span>
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <input type="radio" name="address" onChange={handleTabChange} value="tab3" checked={selectedTab === 'tab3'} />
-                    <span>배송지 이름3</span>
-                  </label>
-                </li>
-              </ul>
+
+              {address.map((item, index) => (
+                <input key={index} {...register('addressIdx')} value={item.idx} type="radio" />
+              ))}
             </li>
           </ul>
 
-          {selectedTab === 'tab1' && (
-            <ul>
-              <li>
-                <span>받는이</span>
-                <span>잉뉴화</span>
-              </li>
-              <li>
-                <span>연락처</span>
-                <span>000-0000-0000</span>
-              </li>
-              <li>
-                <span>배송요청사항</span>
-                <select>
-                  <option>문앞에 부탁드립니다.</option>
-                </select>
-              </li>
-            </ul>
+          {address.map(
+            (item, index) =>
+              selectedTab === `tab${index + 1}` && (
+                <ul key={index}>
+                  <li>
+                    <span>받는이</span>
+                    <span>{item.recipientName}</span>
+                  </li>
+                  <li>
+                    <span>연락처</span>
+                    <input {...register('phoneNumber')} type="text" value={item.phoneNumber} />
+                  </li>
+                  <li>
+                    <span>배송지</span>
+                    <span>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</span>
+                  </li>
+                  <li>
+                    <span>배송 요청사항</span>
+                    <span>{item.deliveryNote}</span>
+                  </li>
+                </ul>
+              ),
           )}
         </fieldset>
 
@@ -252,13 +260,13 @@ export const CartListTab = () => {
               <ul className="flex flex-row items-center gap-5">
                 <li>
                   <label>
-                    <input type="radio" value="credit_card" name="payment" defaultChecked />
+                    <input {...register('payment')} type="radio" value="credit_card" name="payment" defaultChecked />
                     <span>신용카드</span>
                   </label>
                 </li>
                 <li>
                   <label>
-                    <input type="radio" value="bank_transfer" name="payment" />
+                    <input {...register('payment')} type="radio" value="bank_transfer" name="payment" />
                     <span>실시간 계좌이체</span>
                   </label>
                 </li>
@@ -285,6 +293,7 @@ export const CartListTab = () => {
 
                 <li className="mt-4 flex flex-row items-center justify-between border-t border-blue-600 py-4">
                   <span className="text-md text-red-600">최종 결제금액</span>
+                  <input {...register('totalAmount')} type="number" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} />
                   <span className="text-2xl font-bold text-red-600">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원`}</span>
                 </li>
               </ul>

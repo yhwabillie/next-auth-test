@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth'
  */
 export const updateAddress = async (
   userIdx: string,
+  addressIdx: string,
   addressData: {
     recipientName: string
     phoneNumber: string
@@ -22,7 +23,7 @@ export const updateAddress = async (
     const response = await prisma.address.updateMany({
       where: {
         userIdx: userIdx,
-        isDefault: true,
+        idx: addressIdx,
       },
       data: addressData,
     })

@@ -48,10 +48,11 @@ export const OrderSchema = z.object({
   phoneNumber: z.string().regex(/^010\d{8}$/, {
     message: 'Invalid phone number format',
   }),
-  payment: z.enum(['신용카드', '실시간 계좌이체']),
+  payment: z.enum(['credit_card', 'bank_transfer']),
   totalAmount: z.string().regex(/^\d+(\.\d{1,2})?$/, {
     message: 'Total amount must be a valid number with up to 2 decimal places',
   }),
+  addressIdx: z.string(),
 })
 
 // 스키마 결합

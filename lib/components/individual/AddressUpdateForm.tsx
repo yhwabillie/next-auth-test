@@ -22,7 +22,7 @@ export const AddressUpdateForm = (props: any) => {
     console.log('submit=====>', data)
 
     try {
-      const response = await updateAddress(props.userIdx!, data)
+      const response = await updateAddress(props.userIdx!, props.updateData.idx, data)
 
       if (!response?.success) {
         toast.error('수정 실패')
