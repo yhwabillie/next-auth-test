@@ -1,6 +1,6 @@
 'use client'
 
-import { addToCartlist, fetchCartlist, removeFromCartlist } from '@/app/actions/cartlist/actions'
+import { addToCartlist, fetchCartList, removeFromCartlist } from '@/app/actions/cartlist/actions'
 import { fetchWishlist, removeFromWishlist, addToWishlist } from '@/app/actions/wishlist/actions'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
@@ -44,7 +44,7 @@ export const WishListTab = () => {
    */
   const fetchCartData = async () => {
     try {
-      const response = await fetchCartlist(userIdx!)
+      const response = await fetchCartList(userIdx!)
       setCartlist(response.map(({ product }) => product.idx))
     } catch (error) {
       console.error('Failed to fetch cartlist:', error)

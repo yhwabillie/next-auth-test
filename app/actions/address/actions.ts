@@ -23,6 +23,47 @@ export const hasDefaultAddress = async (userIdx: string) => {
   return defaultAddress
 }
 
+export const hasETCAddress = async (userIdx: string) => {
+  const ETCAddress = await prisma.address.findMany({
+    where: {
+      userIdx,
+      isDefault: false,
+    },
+    select: {
+      addressLine1: true,
+      addressLine2: true,
+      addressName: true,
+      deliveryNote: true,
+      phoneNumber: true,
+      recipientName: true,
+      postcode: true,
+    },
+  })
+
+  return ETCAddress
+}
+
+export const updateEtcAddress = async (
+  userIdx: string,
+  addressData: {
+    recipientName: string
+    phoneNumber: string
+    addressName: string
+    addressLine1: string
+    addressLine2: string
+    deliveryNote: string
+    postcode: string
+  },
+) => {
+  return await prisma.address.updateMany({
+    where: {
+      userIdx: userIdx,
+      isDefault: false,
+    },
+    data: addressData,
+  })
+}
+
 export const updateDefaultAddress = async (
   userIdx: string,
   addressData: {
@@ -68,6 +109,30 @@ export async function saveDefaultAddress(
       ...addressData,
       userIdx,
       isDefault: true,
+    },
+  })
+
+  return newAddress
+}
+
+export async function saveETCAddress(
+  userIdx: string,
+  addressData: {
+    recipientName: string
+    phoneNumber: string
+    addressName: string
+    addressLine1: string
+    addressLine2: string
+    deliveryNote: string
+    postcode: string
+  },
+) {
+  // 새로운 기본 배송지를 저장
+  const newAddress = await prisma.address.create({
+    data: {
+      ...addressData,
+      userIdx,
+      isDefault: false,
     },
   })
 

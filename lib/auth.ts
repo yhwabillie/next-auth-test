@@ -64,6 +64,7 @@ const authOptions: NextAuthOptions = {
               idx: true,
               provider: true,
               user_type: true,
+              email: true,
               name: true,
               profile_img: true,
               _count: {
@@ -81,6 +82,7 @@ const authOptions: NextAuthOptions = {
           token.user.provider = userInfo.provider
           token.user.user_type = userInfo.user_type
           token.user.name = userInfo.name
+          token.user.email = userInfo.email
           token.user.profile_img = userInfo.profile_img
           token.user.cartlist_length = userInfo._count.cartlist
 

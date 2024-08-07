@@ -2,6 +2,20 @@ import { z } from 'zod'
 
 const postcodeRegex = /^[0-9]{5}$/
 
+export const ETCAddressSchema = z.object({
+  etc1_address_name: z.string().min(1, 'address_name 필요'),
+  etc1_recipient_name: z.string().min(1, 'recipient_name 필요'),
+  etc1_phone_number: z.string().regex(/^010\d{8}$/, {
+    message: 'Invalid phone number format',
+  }),
+  etc1_postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
+  etc1_addressLine1: z.string().min(1, 'addressLine1 필요'),
+  etc1_addressLine2: z.string().min(1, 'addressLine2 필요'),
+  etc1_delivery_note: z.string().min(1, 'delivery_note 필요'),
+})
+
+export type ETCAddressSchemaType = z.infer<typeof ETCAddressSchema>
+
 export const AddressSchema = z.object({
   address_name: z.string().min(1, 'address_name 필요'),
   recipient_name: z.string().min(1, 'recipient_name 필요'),
@@ -25,6 +39,9 @@ export const OrderSchema = z.object({
     message: 'Total amount must be a valid number with up to 2 decimal places',
   }),
 })
+
+// 스키마 결합
+export const CombinedSchema = z.union([AddressSchema, ETCAddressSchema])
 
 export type OrderSchemaType = z.infer<typeof OrderSchema>
 

@@ -3,7 +3,7 @@ import authOptions from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 
-export const fetchCartlist = async (userIdx: string) => {
+export const fetchCartList = async (userIdx: string) => {
   try {
     const session = await getServerSession(authOptions)
 

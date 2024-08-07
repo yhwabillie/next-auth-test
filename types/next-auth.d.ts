@@ -10,6 +10,7 @@ interface User {
   provider?: Provider
   user_type?: UserType
   name?: string
+  email?: string
   profile_img?: string
   cartlist_length?: number
 }

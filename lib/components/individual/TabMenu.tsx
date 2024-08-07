@@ -3,14 +3,14 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import { AddressInfoTab } from './AddressInfoTab'
 import { WishListTab } from './WishListTab'
-import { BasketTab } from './BashketTab'
+import { CartListTab } from './CartLIstTab'
 import { OrderListTab } from './OrderListTab'
 
 export const TabMenu = () => {
   const tabs = [
     { id: 1, label: '배송정보', content: <AddressInfoTab /> },
     { id: 2, label: '위시리스트', content: <WishListTab /> },
-    { id: 3, label: '장바구니', content: <BasketTab /> },
+    { id: 3, label: '장바구니', content: <CartListTab /> },
     { id: 4, label: '주문/배송조회', content: <OrderListTab /> },
   ]
 
