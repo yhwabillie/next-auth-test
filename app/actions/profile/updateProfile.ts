@@ -125,25 +125,25 @@ export const updateUserName = async (idx: string, new_name: string) => {
 
 //사용자 정보 동의서 업데이트
 interface UpdateUserAgreementParams {
-  idx: string
+  agreementIdx: string
+  userIdx: string
   selectable_agreement: boolean
 }
 
-export const updateUserAgreement = async ({ idx, selectable_agreement }: UpdateUserAgreementParams) => {
+export const updateUserAgreement = async ({ agreementIdx, userIdx, selectable_agreement }: UpdateUserAgreementParams) => {
   try {
-    const user = await prisma.user.update({
+    console.log(agreementIdx, userIdx, selectable_agreement)
+    const user = await prisma.agreement.update({
       where: {
-        idx,
+        id: agreementIdx,
+        userIdx: userIdx,
       },
       data: {
-        selectable_agreement,
+        agreed: selectable_agreement,
       },
     })
 
-    // 필요하지 않은 사용자 데이터 로그 생략
-    console.log('User agreement updated for user with idx:', idx)
-
-    return { success: true, user }
+    return { success: true }
   } catch (error) {
     console.log(error)
     return { success: false, error: 'Failed to update agreements' }

@@ -23,9 +23,15 @@ export const fetchProfileData = async () => {
         name: true,
         password: true,
         profile_img: true,
-        service_agreement: true,
-        privacy_agreement: true,
-        selectable_agreement: true,
+        agreements: {
+          select: {
+            id: true,
+            agreed: true,
+            createdAt: true,
+            updatedAt: true,
+            type: true,
+          },
+        },
       },
     })
 

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
 import prisma from '@/lib/prisma'
 import dotenv from 'dotenv'
+
 dotenv.config()
 
 export async function POST(request: NextRequest) {
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest) {
     console.log('별도 프로필 사용 ========>', profile_img_result)
   }
 
+  console.log(inputData.agreements)
+
   // DB 생성
   try {
     const new_user = await prisma.user.create({
@@ -64,9 +67,15 @@ export async function POST(request: NextRequest) {
         email: inputData.email,
         password: hashedPassword,
         profile_img: profile_img_result!,
-        service_agreement: inputData.service_agreement,
-        privacy_agreement: inputData.privacy_agreement,
-        selectable_agreement: inputData.selectable_agreement,
+        agreements: {
+          create: inputData.agreements.map((item: any) => ({
+            type: item.type,
+            agreed: item.agreed,
+          })),
+        },
+      },
+      include: {
+        agreements: true,
       },
     })
 

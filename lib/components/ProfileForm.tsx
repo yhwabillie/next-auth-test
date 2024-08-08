@@ -13,6 +13,8 @@ import { HookFormInput } from './HookFormInput'
 import { HookFormCheckBox } from './HookFormCheckBox'
 import { useRouter } from 'next/navigation'
 import { useModalStore } from '../zustandStore'
+import { AgreementType } from '@prisma/client'
+import dayjs from 'dayjs'
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -27,9 +29,7 @@ export interface IProfileFetchData {
   id: string
   email: string
   password: string
-  service_agreement: boolean
-  privacy_agreement: boolean
-  selectable_agreement: boolean
+  agreements: any
   idx: string
 }
 
@@ -62,10 +62,10 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       name: data.name,
       id: data.id,
       email: data.email,
-      service_agreement: data.service_agreement,
-      privacy_agreement: data.privacy_agreement,
-      selectable_agreement: data.selectable_agreement,
       password_confirm: '',
+      service_agreement: data.agreements[0].agreed,
+      privacy_agreement: data.agreements[1].agreed,
+      selectable_agreement: data.agreements[2].agreed,
     },
   })
 
@@ -111,14 +111,13 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
   const handleUpdateUserAgreement = async () => {
     const response = await updateUserAgreement({
-      idx: data.idx,
+      agreementIdx: data.agreements[2].id,
+      userIdx: data.idx,
       selectable_agreement: getValues('selectable_agreement')!,
     })
-
     if (response.success) {
       router.refresh()
       toast.success('이용정보 동의 업데이트가 완료되었습니다.')
-
       if (!nameRef.current) return
       nameRef.current.disabled = true
     } else {
@@ -366,6 +365,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 readOnly={true}
               />
             </div>
+            <p>동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.SERVICE)} label="전문보기" />
           </div>
           <div className="mb-10">
@@ -379,6 +379,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 readOnly={true}
               />
             </div>
+            <p>동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.PRIVACY)} label="전문보기" />
           </div>
           <div className="mb-4">
@@ -394,11 +395,13 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 label="마케팅 이용 동의 (선택)"
               />
             </div>
+
+            <p>마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.SELECTABLE)} label="전문보기" />
           </div>
           <Button
             type="button"
-            disalbe={data.selectable_agreement === getValues('selectable_agreement')}
+            disalbe={data.agreements[2].agreed === getValues('selectable_agreement')}
             clickEvent={handleUpdateUserAgreement}
             label="정보 동의 업데이트"
           />

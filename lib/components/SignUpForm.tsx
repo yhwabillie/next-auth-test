@@ -16,6 +16,11 @@ import { Button } from './Button'
 import { HookFormRadioItem } from './HookFormRadioItem'
 require('dotenv').config()
 
+interface AgreementItemType {
+  type: string
+  agreed: boolean | undefined
+}
+
 export const SignUpForm = () => {
   const [profileImage, setProfileImage] = useState('')
   const [isConfirmID, setIsConfirmID] = useState(false)
@@ -67,15 +72,37 @@ export const SignUpForm = () => {
 
     const formData = new FormData()
 
+    const agreementTypes: AgreementItemType[] = [
+      {
+        type: 'SERVICE',
+        agreed: agreements.service_agreement,
+      },
+      {
+        type: 'PRIVACY',
+        agreed: agreements.privacy_agreement,
+      },
+      {
+        type: 'MARKETING',
+        agreed: agreements.selectable_agreement,
+      },
+    ]
+
+    const agreementArr: AgreementItemType[] = []
+
+    agreementTypes.forEach((item) => {
+      agreementArr.push({
+        type: item.type,
+        agreed: item.agreed,
+      })
+    })
+
     const inputData = {
       user_type: data.user_type,
       name: data.name,
       id: data.id,
       email: data.email,
       password: data.password,
-      service_agreement: agreements.service_agreement,
-      privacy_agreement: agreements.privacy_agreement,
-      selectable_agreement: agreements?.selectable_agreement,
+      agreements: agreementArr,
     }
 
     const blob = new Blob([JSON.stringify(inputData)], {
