@@ -40,13 +40,13 @@ model User {
 model Address {
   idx           String   @id @default(uuid())
   userIdx       String
-  recipientName String // 받는이
-  phoneNumber   String // 연락처
-  addressName   String // 배송지명 (선택)
-  addressLine1  String //서울특별시 강남구 테헤란로 123
-  addressLine2  String //아파트 101동 1001호
-  isDefault     Boolean  @default(false) //주소가 사용자의 기본 주소인지 여부
-  deliveryNote  String // 배송메모 (선택)
+  recipientName String
+  phoneNumber   String
+  addressName   String
+  addressLine1  String
+  addressLine2  String
+  isDefault     Boolean  @default(false)
+  deliveryNote  String
   postcode      String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -59,7 +59,7 @@ model Product {
   name           String
   category       String
   original_price Int
-  discount_rate  Float?
+  discount_rate  Float       @default(0)
   imageUrl       String
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
@@ -68,7 +68,6 @@ model Product {
   orderItems     OrderItem[]
 }
 
-//사용자의 전체 주문 정보
 model Order {
   idx         String      @id @default(uuid())
   userIdx     String
@@ -82,14 +81,14 @@ model Order {
   orderItems  OrderItem[]
 }
 
-model Wishlist {
+model OrderItem {
   idx        String  @id @default(uuid())
-  userIdx    String
+  orderIdx   String
   productIdx String
-  user       User    @relation(fields: [userIdx], references: [idx])
-  product    Product @relation(fields: [productIdx], references: [idx], onDelete: Cascade)
-
-  @@unique([userIdx, productIdx])
+  quantity   Int
+  unit_price Float
+  order      Order   @relation(fields: [orderIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx])
 }
 
 model CartList {
@@ -103,13 +102,12 @@ model CartList {
   @@unique([userIdx, productIdx])
 }
 
-//각 주문에 포함된 개별 제품 정보
-model OrderItem {
+model Wishlist {
   idx        String  @id @default(uuid())
-  orderIdx   String
+  userIdx    String
   productIdx String
-  quantity   Int
-  price      Float
-  order      Order   @relation(fields: [orderIdx], references: [idx])
-  product    Product @relation(fields: [productIdx], references: [idx])
+  user       User    @relation(fields: [userIdx], references: [idx])
+  product    Product @relation(fields: [productIdx], references: [idx], onDelete: Cascade)
+
+  @@unique([userIdx, productIdx])
 }

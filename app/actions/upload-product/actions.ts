@@ -6,7 +6,7 @@ export interface Product {
   name: string
   category: string
   original_price: number
-  discount_rate: number | null
+  discount_rate: number
   imageUrl: string
   createdAt: Date
   updatedAt: Date
