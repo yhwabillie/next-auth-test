@@ -15,7 +15,7 @@ export const addNewOrder = async (result: any) => {
       data: {
         userIdx: result.userIdx,
         addressIdx: result.addressIdx,
-        totalAmount: 13.4,
+        total_amount: 13.4,
         orderItems: {
           create: result.orderItems.map((item: any) => ({
             productIdx: item.idx,

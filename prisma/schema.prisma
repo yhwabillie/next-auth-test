@@ -17,24 +17,41 @@ enum UserType {
   admin
 }
 
+enum AgreementType {
+  SERVICE
+  PRIVACY
+  MARKETING
+}
+
 model User {
-  idx                  String     @id @default(uuid())
+  idx                  String      @id @default(uuid())
   provider             Provider
   user_type            UserType
-  id                   String     @unique
-  email                String     @unique
+  id                   String      @unique
+  email                String      @unique
   name                 String
   password             String
   profile_img          String
   service_agreement    Boolean
   privacy_agreement    Boolean
   selectable_agreement Boolean
-  createdAt            DateTime   @default(now())
-  updatedAt            DateTime   @updatedAt
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
   addresses            Address[]
   wishlist             Wishlist[]
   cartlist             CartList[]
   orders               Order[]
+  agreements           Agreement[]
+}
+
+model Agreement {
+  id        String        @id @default(uuid())
+  userIdx   String
+  type      AgreementType
+  agreed    Boolean
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userIdx], references: [idx])
 }
 
 model Address {
@@ -69,16 +86,16 @@ model Product {
 }
 
 model Order {
-  idx         String      @id @default(uuid())
-  userIdx     String
-  addressIdx  String
-  status      String      @default("pending") //주문의 상태 (pending, shipped, delivered)
-  totalAmount Float
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  user        User        @relation(fields: [userIdx], references: [idx])
-  address     Address     @relation(fields: [addressIdx], references: [idx])
-  orderItems  OrderItem[]
+  idx          String      @id @default(uuid())
+  userIdx      String
+  addressIdx   String
+  status       String      @default("pending") //주문의 상태 (pending, shipped, delivered)
+  total_amount Float
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  user         User        @relation(fields: [userIdx], references: [idx])
+  address      Address     @relation(fields: [addressIdx], references: [idx])
+  orderItems   OrderItem[]
 }
 
 model OrderItem {
