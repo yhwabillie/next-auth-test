@@ -48,10 +48,7 @@ export const OrderSchema = z.object({
   phoneNumber: z.string().regex(/^010\d{8}$/, {
     message: 'Invalid phone number format',
   }),
-  payment: z.enum(['credit_card', 'bank_transfer']),
-  totalAmount: z.string().regex(/^\d+(\.\d{1,2})?$/, {
-    message: 'Total amount must be a valid number with up to 2 decimal places',
-  }),
+  payment: z.enum(['CREDIT_CARD', 'BANK_TRANSFER']),
   addressIdx: z.string(),
 })
 

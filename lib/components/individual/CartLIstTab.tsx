@@ -21,11 +21,13 @@ export const CartListTab = () => {
   const [address, setAddress] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
-  const [selectedTab, setSelectedTab] = useState('tab1')
+  const [selectedTab, setSelectedTab] = useState<any>()
 
   const {
     register,
     setValue,
+    getValues,
+    setFocus,
     handleSubmit,
     formState: { errors },
   } = useForm<OrderSchemaType>({
@@ -90,6 +92,8 @@ export const CartListTab = () => {
     0,
   )
 
+  const finalPrice = totalPrice >= 30000 ? totalPrice : totalPrice + 3000
+
   const isShippingCost = totalPrice >= 30000 ? '배송비(3만원 이상 무료배송) 0원' : '배송비(+3,000원)'
 
   /**
@@ -121,31 +125,48 @@ export const CartListTab = () => {
 
       if (!response) toast.error('배송지 데이터 fetch 실패')
       setAddress(response)
+      setSelectedTab(response[0].idx)
     } catch (error) {}
   }
 
   /**
    * 최종 주문 데이터 submit
    */
+
   const handleSubmitOrder = async (data: any) => {
-    const result = {
-      userIdx,
+    const orderItems = checkedItemDetails.map((item: any) => {
+      return {
+        productIdx: item.idx,
+        quantity: item.quantity,
+        unit_price: item.original_price - item.original_price * item.discount_rate,
+      }
+    })
+
+    const newOrder = {
       addressIdx: data.addressIdx,
-      totalAmount: data.totalAmount,
-      orderItems: checkedItemDetails,
+      payment: data.payment,
+      total_amount: finalPrice,
+      orderItems: orderItems,
     }
 
-    if (checkedItemDetails.length > 0) {
-      console.log(result)
+    //상품을 선택하지 않았을 경우
+    if (!(checkedItemDetails.length > 0)) {
+      toast.error('결제할 상품을 선택하세요')
+      return
+    }
 
-      try {
-        const response = await addNewOrder(result)
+    try {
+      const response = await addNewOrder(newOrder)
 
-        console.log('response==>', response)
-        toast.success('주문이 전송되었습니다.')
-      } catch (error) {
-        console.log(error)
+      if (!response.success) {
+        toast.error('주문 전송 실패')
+        return
       }
+
+      toast.success('주문 데이터가 정상적으로 전송되었습니다')
+    } catch (error: any) {
+      console.error('Order creation failed:', error)
+      toast.error('주문 생성 중 오류가 발생했습니다. 다시 시도해 주세요.')
     }
   }
 
@@ -222,14 +243,21 @@ export const CartListTab = () => {
               <span>배송지 선택</span>
 
               {address.map((item, index) => (
-                <input key={index} {...register('addressIdx')} value={item.idx} type="radio" />
+                <input
+                  key={index}
+                  {...register('addressIdx')}
+                  value={item.idx}
+                  type="radio"
+                  onChange={handleTabChange}
+                  defaultChecked={index === 0}
+                />
               ))}
             </li>
           </ul>
 
           {address.map(
             (item, index) =>
-              selectedTab === `tab${index + 1}` && (
+              selectedTab === item.idx && (
                 <ul key={index}>
                   <li>
                     <span>받는이</span>
@@ -260,13 +288,13 @@ export const CartListTab = () => {
               <ul className="flex flex-row items-center gap-5">
                 <li>
                   <label>
-                    <input {...register('payment')} type="radio" value="credit_card" name="payment" defaultChecked />
+                    <input {...register('payment')} type="radio" value="CREDIT_CARD" name="payment" defaultChecked />
                     <span>신용카드</span>
                   </label>
                 </li>
                 <li>
                   <label>
-                    <input {...register('payment')} type="radio" value="bank_transfer" name="payment" />
+                    <input {...register('payment')} type="radio" value="BANK_TRANSFER" name="payment" />
                     <span>실시간 계좌이체</span>
                   </label>
                 </li>
@@ -293,7 +321,9 @@ export const CartListTab = () => {
 
                 <li className="mt-4 flex flex-row items-center justify-between border-t border-blue-600 py-4">
                   <span className="text-md text-red-600">최종 결제금액</span>
-                  <input {...register('totalAmount')} type="number" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} />
+
+                  <input id="total_amount" type="number" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} readOnly />
+
                   <span className="text-2xl font-bold text-red-600">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원`}</span>
                 </li>
               </ul>
@@ -304,113 +334,6 @@ export const CartListTab = () => {
         <div className="text-md mb-4 bg-gray-200 py-5 text-center">주문 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
 
         <button className="w-full bg-red-500 py-5 text-center text-lg font-bold text-white hover:bg-red-500/50">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원 결제하기`}</button>
-
-        {/* <div>
-        <h5>상품 결제하기</h5>
-        <div>
-          <strong>장바구니</strong>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <div>
-              {data.map((item, index) => (
-                <div key={index}>
-                  <label
-                    htmlFor={item.product.idx}
-                    className="mx-auto flex h-4 w-4 cursor-pointer items-center justify-center border border-gray-500/50"
-                  >
-                    <input
-                      id={item.product.idx}
-                      type="checkbox"
-                      checked={checkedItems[item.product.idx] || false}
-                      onChange={() => handleCheckboxChange(item.product.idx)}
-                    />
-                    {checkedItems[item.product.idx] && <FaCheck className="cursor-pointer text-blue-600" />}
-                  </label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    min={1}
-                    max={10}
-                    value={item.quantity}
-                    onChange={(e) => {
-                      setData((prevItems) =>
-                        prevItems.map((cartItem) =>
-                          cartItem.product.idx === item.product.idx ? { ...cartItem, quantity: parseInt(e.target.value, 10) } : cartItem,
-                        ),
-                      )
-                    }}
-                  />
-                  <strong>{item.product.name}</strong>
-                  <p>{item.product.original_price}</p>
-                  <p>{item.product.discount_rate}</p>
-                  <strong>{item.product.original_price - item.product.original_price * item.product.discount_rate}원</strong>
-                  <img src={item.product.imageUrl} alt={item.product.name} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div>
-          <strong>주문자 정보</strong>
-          <div>
-            <strong>회원구분:</strong>
-            <span>{session?.user?.user_type === 'indivisual' ? '일반회원' : '어드민'}</span>
-          </div>
-          <div>
-            <strong>이름:</strong>
-            <span>{session?.user?.name}</span>
-          </div>
-          <div>
-            <strong>이메일: </strong>
-            <span></span>
-          </div>
-          <div>
-            <strong>휴대폰 번호: </strong>
-            <input {...register('phoneNumber')} id="phoneNumber" type="text" placeholder="휴대폰 번호를 입력하세요" />
-          </div>
-        </div>
-        <div>
-          <strong>배송지 정보</strong>
-          <p>배송지 선택</p>
-          <p>수령자명</p>
-          <p>연락처</p>
-          <p>배송지</p>
-          <p>배송 요청사항</p>
-        </div>
-        <div>
-          <strong>결제 정보</strong>
-          <div>
-            <h2>결제수단</h2>
-            <fieldset>
-              <div>
-                <input {...register('payment')} id="credit_card" type="radio" value={'신용카드'} defaultChecked name="payment" />
-                <label>신용카드</label>
-              </div>
-              <div>
-                <input {...register('payment')} id="bank_transfer" type="radio" value={'실시간 계좌이체'} name="payment" />
-                <label>실시간 계좌이체</label>
-              </div>
-            </fieldset>
-          </div>
-          <div className="checked-items bg-blue-300 p-3">
-            <h2>구매금액</h2>
-            {checkedItemDetails.map((item) => (
-              <li key={item.product.idx}>
-                <strong>{item.product.name}</strong>
-                <span>{item.quantity}개</span>
-                <span>{(item.product.original_price - item.product.original_price * item.product.discount_rate) * item.quantity}</span>
-              </li>
-            ))}
-            <p>{totalPrice >= 30000 ? '3만원 이상 무료배송' : '배송비 +3000원'}</p>
-            <h3>최종결제: ${totalPrice >= 30000 ? totalPrice : totalPrice + 3000}</h3>
-            <input {...register('totalAmount')} type="text" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} />
-          </div>
-        </div>
-
-        <p>주문 내용을 모두 확인 하였으며, 결제에 동의합니다.</p>
-        <button>{totalPrice >= 30000 ? totalPrice : totalPrice + 3000} 원 결제하기</button>
-      </div> */}
       </form>
     </>
   )

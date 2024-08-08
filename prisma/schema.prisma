@@ -23,6 +23,11 @@ enum AgreementType {
   MARKETING
 }
 
+enum PaymentMethod {
+  CREDIT_CARD
+  BANK_TRANSFER
+}
+
 model User {
   idx                  String      @id @default(uuid())
   provider             Provider
@@ -86,15 +91,16 @@ model Product {
 }
 
 model Order {
-  idx          String      @id @default(uuid())
+  idx          String        @id @default(uuid())
   userIdx      String
   addressIdx   String
-  status       String      @default("pending") //주문의 상태 (pending, shipped, delivered)
+  status       String        @default("pending") //주문의 상태 (pending, shipped, delivered)
   total_amount Float
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  user         User        @relation(fields: [userIdx], references: [idx])
-  address      Address     @relation(fields: [addressIdx], references: [idx])
+  payment      PaymentMethod // 결제 방법 필드
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userIdx], references: [idx])
+  address      Address       @relation(fields: [addressIdx], references: [idx])
   orderItems   OrderItem[]
 }
 
@@ -104,7 +110,7 @@ model OrderItem {
   productIdx String
   quantity   Int
   unit_price Float
-  order      Order   @relation(fields: [orderIdx], references: [idx])
+  order      Order   @relation(fields: [orderIdx], references: [idx], onDelete: Cascade)
   product    Product @relation(fields: [productIdx], references: [idx])
 }
 
