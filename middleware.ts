@@ -8,6 +8,10 @@ export default async function middleware(req: NextRequest) {
   const token = await getToken({ req })
   const isAuthenticated = !!token
 
+  if (!SECRET_KEY) {
+    throw new Error('Missing JWT_SECRET environment variable')
+  }
+
   if (isAuthenticated) {
     if (req.nextUrl.pathname.startsWith(`/signIn`) || req.nextUrl.pathname.startsWith(`/signUp`) || req.nextUrl.pathname.startsWith(`/forgotPw`)) {
       return NextResponse.redirect(new URL('/', req.url))
@@ -18,10 +22,10 @@ export default async function middleware(req: NextRequest) {
     if (req.nextUrl.pathname.startsWith(`/profile`)) {
       return NextResponse.redirect(new URL('/signIn', req.url))
     }
-  }
 
-  if (!SECRET_KEY) {
-    throw new Error('Missing JWT_SECRET environment variable')
+    if (req.nextUrl.pathname.startsWith(`/my-shopping`)) {
+      return NextResponse.redirect(new URL('/signIn', req.url))
+    }
   }
 
   // reset-password url이 토큰이 없거나 유효하지 않으면 리디렉트
@@ -46,5 +50,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/reset-password/:path*',
+  matcher: ['/reset-password/:path*', '/profile/:path*', '/my-shopping/:path*', '/signIn/:path*', '/signUp/:path*', '/forgotPw/:path*'],
 }
