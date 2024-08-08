@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { FaShoppingCart } from 'react-icons/fa'
-import { FaHeartCirclePlus } from 'react-icons/fa6'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 enum TooltipTypes {
   NONE = 'NONE',
@@ -17,72 +18,79 @@ enum TooltipTypes {
 }
 
 export const Header = () => {
-  const router = useRouter()
   const [activeModal, setActiveModal] = useState(TooltipTypes.NONE)
   const showTooltip = (type: TooltipTypes) => setActiveModal(type)
   const closeTooltip = () => setActiveModal(TooltipTypes.NONE)
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const isAdmin = status === 'authenticated' && session && session.user && session.user.user_type === 'admin'
 
   return (
     <header className="sticky top-0 z-10 h-[80px] bg-blue-400/50 backdrop-blur-md">
       <div className="mx-auto flex h-full w-[768px] items-center justify-between px-5">
         <nav className="flex flex-row gap-3">
-          <h1>
-            <span className="sr-only">제품 검색</span>
-            <Link href="/">MAIN</Link>
-          </h1>
           <ul className="flex flex-row gap-3">
             <li>
-              <span className="sr-only">제품 리스트</span>
+              <h1>
+                <Link href="/">MAIN</Link>
+              </h1>
+            </li>
+            <li>
               <Link href="/products">PRODUCTS</Link>
             </li>
           </ul>
         </nav>
 
         <nav className="flex items-center">
-          {session && session.user ? (
-            <div className="flex items-center gap-3">
-              {session.user.user_type === 'indivisual' ? (
-                <>
-                  <div className="relative">
-                    <Link
-                      href="/my-shopping"
-                      onMouseEnter={() => showTooltip(TooltipTypes.CART)}
-                      onMouseLeave={() => closeTooltip()}
-                      className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
-                    >
-                      <span className="sr-only">마이쇼핑 - 장바구니</span>
-                      <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
-                        {session.user.cartlist_length}
-                      </span>
-                      <FaShoppingCart className="text-lg text-white" />
-                    </Link>
-                    {activeModal === TooltipTypes.CART && (
-                      <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                        마이쇼핑
-                      </span>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="relative">
-                  <Link
-                    href="/add-product"
-                    onMouseEnter={() => showTooltip(TooltipTypes.ADD_PRODUCT)}
-                    onMouseLeave={() => closeTooltip()}
-                    className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
-                  >
-                    <span className="sr-only">상품등록</span>
-                    <FaShoppingCart className="text-lg text-white" />
-                  </Link>
-                  {activeModal === TooltipTypes.ADD_PRODUCT && (
-                    <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
-                      상품등록
-                    </span>
-                  )}
-                </div>
-              )}
+          {status === 'loading' && (
+            <div className="flex gap-3">
+              <Skeleton width={75} height={40} />
+              <Skeleton width={75} height={40} />
+            </div>
+          )}
 
+          <div className="flex items-center gap-3">
+            {status === 'authenticated' && session && session.user && session.user.user_type === 'indivisual' && (
+              <div className="relative">
+                <Link
+                  href="/my-shopping"
+                  onMouseEnter={() => showTooltip(TooltipTypes.CART)}
+                  onMouseLeave={() => closeTooltip()}
+                  className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                >
+                  <span className="sr-only">마이쇼핑 - 장바구니</span>
+                  <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
+                    {session.user.cartlist_length}
+                  </span>
+                  <FaShoppingCart className="text-lg text-white" />
+                </Link>
+                {activeModal === TooltipTypes.CART && (
+                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                    마이쇼핑
+                  </span>
+                )}
+              </div>
+            )}
+
+            {isAdmin && (
+              <div className="relative">
+                <Link
+                  href="/add-product"
+                  onMouseEnter={() => showTooltip(TooltipTypes.ADD_PRODUCT)}
+                  onMouseLeave={() => closeTooltip()}
+                  className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+                >
+                  <span className="sr-only">상품등록</span>
+                  <FaShoppingCart className="text-lg text-white" />
+                </Link>
+                {activeModal === TooltipTypes.ADD_PRODUCT && (
+                  <span className="absolute bottom-[-35px] left-[50%] box-border block w-[70px] translate-x-[-50%] rounded-md bg-gray-700 px-3 py-2 text-center text-xs text-white shadow-lg">
+                    상품등록
+                  </span>
+                )}
+              </div>
+            )}
+
+            {status === 'authenticated' && session && session.user && (
               <div className="relative">
                 <button
                   onMouseEnter={() => showTooltip(TooltipTypes.PROFILE)}
@@ -129,8 +137,10 @@ export const Header = () => {
                   </div>
                 )}
               </div>
-            </div>
-          ) : (
+            )}
+          </div>
+
+          {status === 'unauthenticated' && (
             <div className="flex gap-3">
               <Link
                 href="/signIn"

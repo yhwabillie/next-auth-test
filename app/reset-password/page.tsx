@@ -15,7 +15,9 @@ export default async function Page() {
         </p>
       </header>
       <main>
-        <ResetPasswordForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ResetPasswordForm />
+        </Suspense>
       </main>
     </section>
   )
