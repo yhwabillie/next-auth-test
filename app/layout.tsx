@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Header } from '@/lib/components/Header'
 import { Toaster } from 'sonner'
 import './globals.css'
+import { FramerMotionProvider } from '@/lib/FramerMotionProvider'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',
@@ -19,7 +20,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
       <AuthProvider>
         <Toaster position="top-center" theme="light" richColors closeButton />
         <Header />
-        <main className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600 px-5">{children}</main>
+        <FramerMotionProvider>{children}</FramerMotionProvider>
       </AuthProvider>
     </html>
   )

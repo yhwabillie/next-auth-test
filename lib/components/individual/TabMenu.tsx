@@ -5,6 +5,7 @@ import { AddressInfoTab } from './AddressInfoTab'
 import { WishListTab } from './WishListTab'
 import { CartListTab } from './CartLIstTab'
 import { OrderListTab } from './OrderListTab'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export const TabMenu = () => {
   const tabs = [
@@ -37,14 +38,23 @@ export const TabMenu = () => {
         ))}
       </ul>
       <div className="mt-4">
-        {tabs.map(
-          (tab) =>
-            activeTab === tab.id && (
-              <div key={tab.id} className="rounded border p-4">
-                {tab.content}
-              </div>
-            ),
-        )}
+        <AnimatePresence mode="wait">
+          {tabs.map(
+            (tab) =>
+              activeTab === tab.id && (
+                <motion.div
+                  key={tab.id}
+                  initial={{ opacity: 0, x: -80 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 80 }}
+                  transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+                  className="overflow-hidden rounded border p-4"
+                >
+                  {tab.content}
+                </motion.div>
+              ),
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
