@@ -7,7 +7,7 @@ import { CartListTab } from './CartLIstTab'
 import { OrderListTab } from './OrderListTab'
 import { AnimatePresence, motion } from 'framer-motion'
 
-export const TabMenu = () => {
+export const UserShoppingTabs = () => {
   const tabs = [
     { id: 1, label: '배송정보', content: <AddressInfoTab /> },
     { id: 2, label: '위시리스트', content: <WishListTab /> },

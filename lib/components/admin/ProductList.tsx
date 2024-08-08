@@ -385,7 +385,10 @@ export const ProductList = () => {
   }, [checkedItems])
 
   return (
-    <>
+    <section aria-labelledby="product-list-heading">
+      <h4 id="product-list-heading" className="sr-only">
+        업로드된 상품 리스트
+      </h4>
       <div className="flex flex-row justify-end gap-2">
         <div className="w-[230px]">
           <Button label="전체 Excel 다운로드" clickEvent={handleDownload} disalbe={!(data.length > 0)} />
@@ -491,6 +494,6 @@ export const ProductList = () => {
       )}
 
       {selectedProduct && <ProductItemModal isOpen={isModalOpen} onClose={closeModal} product={selectedProduct} onSave={saveProduct} />}
-    </>
+    </section>
   )
 }

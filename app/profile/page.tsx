@@ -25,9 +25,17 @@ export default async function Page() {
   }
 
   return (
-    <section className="min-h-full px-5 py-10">
-      <h2 className="mb-4 block text-center text-2xl font-semibold text-gray-700">📌 마이페이지</h2>
-      <ProfileForm data={userData as IProfileFetchData} />
+    <section aria-labelledby="page-heading" className="min-h-full px-5 py-10">
+      <h2 id="page-heading" className="sr-only">
+        회원정보 관리 본문
+      </h2>
+      <header>
+        <h3 className="mb-4 block text-center text-2xl font-semibold text-gray-700">📌 회원정보 관리</h3>
+        <p className="text-center">회원정보를 업데이트하고 관리합니다.</p>
+      </header>
+      <main>
+        <ProfileForm data={userData as IProfileFetchData} />
+      </main>
     </section>
   )
 }

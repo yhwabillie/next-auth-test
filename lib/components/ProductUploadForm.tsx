@@ -58,7 +58,10 @@ export const ProductUploadForm = () => {
   }
 
   return (
-    <>
+    <section aria-labelledby="upload-form-heading">
+      <h4 id="upload-form-heading" className="sr-only">
+        상품 데이터 업로드 폼
+      </h4>
       <fieldset className="mb-5 flex flex-row justify-center">
         <input
           className="text-md box-border h-[50px] w-[400px] rounded-bl-md rounded-tl-md border border-gray-500/50 p-3 px-5 text-gray-500/40 shadow-md placeholder:text-gray-500/40 focus:outline-0"
@@ -109,6 +112,6 @@ export const ProductUploadForm = () => {
           />
         </div>
       </div>
-    </>
+    </section>
   )
 }

@@ -39,7 +39,7 @@ export const FramerMotionProvider = ({ children }: ProvidersProps) => {
 
   return (
     <AnimatePresence mode="wait">
-      <motion.main key={pathname} {...anim(pageTransition)} className="scroll mx-auto min-h-[1080px] w-[768px] border border-red-600 px-5">
+      <motion.main key={pathname} {...anim(pageTransition)} className="scroll mx-auto min-h-[1080px] overflow-x-hidden border border-red-600 px-5">
         {children}
       </motion.main>
     </AnimatePresence>

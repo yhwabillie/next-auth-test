@@ -118,7 +118,7 @@ export const ProductList = () => {
   }, [page])
 
   return (
-    <div>
+    <>
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -151,6 +151,6 @@ export const ProductList = () => {
           ))}
         </>
       )}
-    </div>
+    </>
   )
 }
