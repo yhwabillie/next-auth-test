@@ -17,6 +17,12 @@ input[type='file'] {
   border: 0;
 }
 
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
 .scroll-area::-webkit-scrollbar {
   width: 15px;
 }

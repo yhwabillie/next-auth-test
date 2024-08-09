@@ -2,15 +2,17 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { TooltipTypes } from '@/lib/components/Header'
+import { Session } from 'next-auth'
 
 interface UserNavItemProps {
+  sessionUser?: Session['user']
   children: React.ReactNode
   label: string
   path: string
   type: TooltipTypes
 }
 
-export const UserNavItem = ({ children, label, path, type }: UserNavItemProps) => {
+export const UserNavItem = ({ sessionUser, children, label, path, type }: UserNavItemProps) => {
   const [activeTooltip, setActiveTooltip] = useState(TooltipTypes.NONE)
   const showTooltip = (type: TooltipTypes) => setActiveTooltip(type)
   const closeTooltip = () => setActiveTooltip(TooltipTypes.NONE)
@@ -23,6 +25,12 @@ export const UserNavItem = ({ children, label, path, type }: UserNavItemProps) =
         onMouseLeave={() => closeTooltip()}
         className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
       >
+        {sessionUser && sessionUser.cartlist_length! > 0 && (
+          <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
+            {sessionUser?.cartlist_length}
+          </span>
+        )}
+
         {children}
       </Link>
       {activeTooltip === type && (

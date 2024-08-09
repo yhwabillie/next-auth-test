@@ -1,6 +1,32 @@
 import { create } from 'zustand'
 import { AgreementSchemaType } from './zodSchema'
 
+//
+
+type DefaultState = {
+  defaultState: boolean
+  setDefaultState: (data: boolean) => void
+}
+
+//주소 리스트 empty 여부
+export const useDefaultAddressStore = create<DefaultState>((set) => ({
+  defaultState: false,
+  setDefaultState: (data: boolean) => set({ defaultState: data }),
+}))
+
+//주소 수정 폼 모달
+interface AddressFormState {
+  showForm: boolean
+  showFormComponent: () => void
+  hideForm: () => void
+}
+
+export const useAddressFormStore = create<AddressFormState>((set) => ({
+  showForm: false,
+  showFormComponent: () => set({ showForm: true }), // 폼을 표시하는 함수
+  hideForm: () => set({ showForm: false }), // 폼을 숨기는 함수
+}))
+
 //주소검색 모달
 interface AddressState {
   postcode: string

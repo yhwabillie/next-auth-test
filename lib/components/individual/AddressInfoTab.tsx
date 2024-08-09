@@ -5,14 +5,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import DaumPostcodeEmbed from 'react-daum-postcode'
+import { IoIosArrowDown } from 'react-icons/io'
 import { useForm } from 'react-hook-form'
 import { Button } from '../Button'
-import { useAddressStore, useModalStore } from '@/lib/zustandStore'
+import { useAddressFormStore, useAddressStore, useDefaultAddressStore, useModalStore } from '@/lib/zustandStore'
 import { toast } from 'sonner'
 import { AddressUpdateForm } from './AddressUpdateForm'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyAddress } from './EmptyAddress'
 import { AddressAddForm } from './AddressAddForm'
+import { FaCaretDown, FaPlus } from 'react-icons/fa'
 
 export const AddressInfoTab = () => {
   const { data: session, update, status } = useSession()
@@ -25,6 +27,9 @@ export const AddressInfoTab = () => {
   const [showForm, setShowForm] = useState(false)
   const [showUpdateForm, setshowUpdateForm] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
+  const { showFormComponent } = useAddressFormStore()
+  const { modalState, setModalState } = useModalStore()
+  const { setDefaultState } = useDefaultAddressStore()
 
   const {
     register,
@@ -47,6 +52,7 @@ export const AddressInfoTab = () => {
 
       setData(fetchedCartList)
       setIsEmpty(fetchedCartList.length === 0)
+      setDefaultState(fetchedCartList.length === 0)
     } catch (error) {
     } finally {
       setLoading(false)
@@ -104,15 +110,12 @@ export const AddressInfoTab = () => {
     } catch (error) {}
   }
 
+  const handleFindPostcode = () => setIsPostcodeOpen(true)
   const handleClickShowForm = () => setShowForm(true)
 
   const handleClickHideForm = () => {
     setShowForm(false)
     reset()
-  }
-
-  const handleFindPostcode = () => {
-    setIsPostcodeOpen(true)
   }
 
   useEffect(() => {
@@ -124,71 +127,151 @@ export const AddressInfoTab = () => {
 
   if (loading) return <TabContentSkeleton />
 
+  const default_address = data.filter((item) => item.isDefault === true)
+  const etc_address = data.filter((item) => item.isDefault === false)
+
+  function formatPhoneNumber(phoneNumber: number) {
+    // 숫자만 추출
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '')
+
+    // 길이에 따라 포맷팅
+    let match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/)
+
+    if (match) {
+      return `${match[1]}-${match[2]}-${match[3]}`
+    }
+
+    return phoneNumber // 유효하지 않으면 원래 값 반환
+  }
+
   return (
     <>
-      {data.length === 0 && <EmptyAddress handleClick={{ handleShowForm: handleClickShowForm }} />}
-
-      {showForm && (
-        <AddressAddForm
-          setValue={{ method: setValue }}
-          register={{ method: register }}
-          onSubmit={{ handleSubmitData: handleSubmit(handleSubmitAddress) }}
-          onClickHandlers={{ handleShowForm: handleClickHideForm, handleShowModal: handleFindPostcode }}
+      {isEmpty ? (
+        <EmptyAddress
+          handleClick={{
+            handleShowForm: () => {
+              showFormComponent()
+              setModalState(true)
+            },
+          }}
         />
+      ) : (
+        <>
+          <button
+            onClick={showFormComponent}
+            className="mb-2 ml-auto flex w-[200px] items-center justify-center gap-2 rounded-lg bg-blue-400 p-4 text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-500"
+          >
+            <FaPlus className="text-lg" />
+            <span className="text-sm font-semibold">배송지 신규입력</span>
+          </button>
+
+          <section className="mb-16 last:mb-0">
+            <div className="">
+              <h5 className="mb-3 block w-fit rounded-md bg-gray-100 p-2 text-xs font-bold text-gray-500">기본 배송지</h5>
+
+              {default_address.length === 0 && (
+                <p className="mb-10 text-center text-gray-500">
+                  <span className="mb-2 block">입력된 기본 배송정보가 없습니다</span>
+                  <strong className="block text-2xl">🚚 기본 배송지를 추가해주세요.</strong>
+                </p>
+              )}
+
+              <ul className="mb-10 rounded-lg bg-blue-200/70 p-5 drop-shadow-sm">
+                {default_address.map((item, index) => (
+                  <li key={index} className="relative">
+                    <strong className="mb-1 block">{`${item.addressName} (${item.recipientName})`}</strong>
+                    <p className="mb-2 font-medium text-gray-500">{formatPhoneNumber(item.phoneNumber)}</p>
+                    <p className="mb-4 tracking-tighter">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</p>
+                    <div className="relative mb-4 w-fit">
+                      <IoIosArrowDown className="absolute right-2 top-[50%] z-0 translate-y-[-50%] text-xl" />
+                      <select disabled className="w-[300px] rounded-md border border-gray-400 px-4 py-3 text-sm disabled:bg-gray-100">
+                        <option className="text-gray-500">{item.deliveryNote}</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setshowUpdateForm(true)
+
+                          const target = data.filter((datItem) => datItem.idx === item.idx)
+                          updateData(target[0])
+                        }}
+                        className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
+                      >
+                        수정
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAddress(item.idx)}
+                        className="block w-[60px] rounded-md border border-gray-400 bg-pink-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="mb-3 block w-fit rounded-md bg-gray-100 p-2 text-xs font-bold text-gray-500">기타 배송지</h5>
+
+              {etc_address.length === 0 && (
+                <p className="mb-10 rounded-lg bg-gray-100 px-10 py-14 text-center text-gray-500">
+                  <span className="mb-2 block">입력된 기타 배송정보가 없습니다</span>
+                  <strong className="block text-2xl">🚚 기타 배송지를 추가해주세요.</strong>
+                </p>
+              )}
+
+              <ul>
+                {etc_address.map((item, index) => (
+                  <li key={index} className="relative mb-5 rounded-lg bg-blue-200/30 p-5 drop-shadow-sm">
+                    <strong className="mb-1 block">{`${item.addressName} (${item.recipientName})`}</strong>
+                    <p className="mb-2 font-medium text-gray-500">{formatPhoneNumber(item.phoneNumber)}</p>
+                    <p className="mb-4 tracking-tighter">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</p>
+                    <div className="relative mb-4 w-fit">
+                      <IoIosArrowDown className="absolute right-2 top-[50%] z-0 translate-y-[-50%] text-xl" />
+                      <select disabled className="w-[300px] rounded-md border border-gray-400 px-4 py-3 text-sm disabled:bg-gray-100">
+                        <option className="text-gray-500">{item.deliveryNote}</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setshowUpdateForm(true)
+
+                          const target = data.filter((datItem) => datItem.idx === item.idx)
+                          updateData(target[0])
+                        }}
+                        className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
+                      >
+                        수정
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAddress(item.idx)}
+                        className="block w-[60px] rounded-md border border-gray-400 bg-pink-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </>
       )}
 
-      {data.map((item, index) => (
-        <div key={index} className="mb-16 last:mb-0">
-          <fieldset key={index} className="mb-5">
-            <h5 className="mb-4 border-b-2 border-blue-500 pb-2 text-lg font-semibold">{item.isDefault ? '기본 배송지' : `기타 배송지 ${index}`}</h5>
-            <div className="mb-2 py-2">
-              <legend>배송지 이름</legend>
-              <input type="text" value={item.addressName} className="border border-black p-2" readOnly />
-            </div>
-            <div className="mb-2 py-2">
-              <legend>수령자</legend>
-              <input type="text" value={item.recipientName} className="border border-black p-2" readOnly />
-            </div>
-            <div className="mb-2 py-2">
-              <legend>연락처</legend>
-              <input type="text" value={item.phoneNumber} className="border border-black p-2" readOnly />
-            </div>
-            <div className="py-2">
-              <legend>주소</legend>
-              <input type="text" value={item.addressLine1} className="mb-2 w-full border border-black p-2" readOnly />
-              <input type="text" value={item.addressLine2} className="w-full border border-black p-2" readOnly />
-            </div>
-          </fieldset>
-          <ul className="flex flex-row gap-4">
-            <li>
-              <button
-                type="button"
-                onClick={() => {
-                  setshowUpdateForm(true)
-
-                  const target = data.filter((datItem) => datItem.idx === item.idx)
-                  updateData(target[0])
-                }}
-                className="w-[100px] bg-blue-400 p-4"
-              >
-                수정하기
-              </button>
-            </li>
-            <li>
-              <button type="button" onClick={() => handleRemoveAddress(item.idx)} className="w-[100px] bg-pink-400 p-4">
-                삭제하기
-              </button>
-            </li>
-            {!item.isDefault && (
-              <li>
-                <button type="button" onClick={() => handleClickSetDefault(item.idx)} className="w-[200px] bg-green-400 p-4">
-                  기본배송지로 선택
-                </button>
-              </li>
-            )}
-          </ul>
-        </div>
-      ))}
+      {/* {showForm && (
+        <AddressAddForm
+          formRegister={{ method: register }}
+          onSubmitForm={{ function: handleSubmit(handleSubmitAddress) }}
+          onActions={{ onHideForm: handleClickHideForm, onShowPostcodeModal: handleFindPostcode }}
+        />
+      )} */}
 
       {showUpdateForm && (
         <AddressUpdateForm

@@ -4,6 +4,7 @@ import { Header } from '@/lib/components/Header'
 import { Toaster } from 'sonner'
 import './globals.css'
 import { FramerMotionProvider } from '@/lib/FramerMotionProvider'
+import { ModalProvider } from '@/lib/components/ModalProvider'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',
@@ -18,9 +19,11 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
   return (
     <html lang="ko">
       <AuthProvider>
-        <Toaster position="top-center" theme="light" richColors closeButton />
-        <Header />
-        <FramerMotionProvider>{children}</FramerMotionProvider>
+        <ModalProvider>
+          <Toaster position="top-center" theme="light" richColors closeButton />
+          <Header />
+          <FramerMotionProvider>{children}</FramerMotionProvider>
+        </ModalProvider>
       </AuthProvider>
     </html>
   )

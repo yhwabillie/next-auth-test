@@ -53,7 +53,7 @@ export const Header = () => {
 
           <div className="flex items-center gap-3">
             {isIndivisual && (
-              <UserNavItem label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP}>
+              <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP}>
                 <FaShoppingCart className="text-lg text-white" />
               </UserNavItem>
             )}
