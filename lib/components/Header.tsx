@@ -25,7 +25,7 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-10 h-[80px] bg-blue-400/50 backdrop-blur-md">
-      <div className="mx-auto flex h-full w-[768px] items-center justify-between px-5">
+      <div className="mx-auto flex h-full w-[1200px] items-center justify-between px-5">
         <nav className="flex flex-row gap-3">
           <ul className="flex flex-row gap-3">
             <li>
