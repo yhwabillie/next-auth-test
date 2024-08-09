@@ -1,7 +1,8 @@
 'use client'
 import { SessionProvider } from 'next-auth/react'
-import { useModalStore } from '../zustandStore'
+import { useAddressStore, useModalStore } from '../zustandStore'
 import clsx from 'clsx'
+import { PostCodeModal } from './individual/PostCodeModal'
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -9,6 +10,7 @@ interface ProvidersProps {
 
 export const AuthProvider = ({ children }: ProvidersProps) => {
   const { modalState } = useModalStore()
+  const { isPostcodeOpen } = useAddressStore()
 
   return (
     <SessionProvider>
@@ -18,6 +20,8 @@ export const AuthProvider = ({ children }: ProvidersProps) => {
         })}
       >
         {children}
+
+        {isPostcodeOpen && <PostCodeModal />}
       </body>
     </SessionProvider>
   )

@@ -7,24 +7,33 @@ import { useEffect, useState } from 'react'
 import DaumPostcodeEmbed from 'react-daum-postcode'
 import { useForm } from 'react-hook-form'
 import { Button } from '../Button'
-import { useModalStore } from '@/lib/zustandStore'
+import { useAddressStore, useModalStore } from '@/lib/zustandStore'
 import { toast } from 'sonner'
 import { AddressUpdateForm } from './AddressUpdateForm'
-import Skeleton from 'react-loading-skeleton'
+import { TabContentSkeleton } from './TabContentSkeleton'
+import { EmptyAddress } from './EmptyAddress'
+import { AddressAddForm } from './AddressAddForm'
 
 export const AddressInfoTab = () => {
   const { data: session, update, status } = useSession()
   const [data, setData] = useState<any[]>([])
-  const [updateData, setUpdateData] = useState<any[]>([])
+  // const [updateData, setUpdateData] = useState<any[]>([])
 
+  const { setIsPostcodeOpen, updateData, postcode, addressLine1 } = useAddressStore()
   const [loading, setLoading] = useState(true)
   const userIdx = session?.user?.idx
   const [showForm, setShowForm] = useState(false)
   const [showUpdateForm, setshowUpdateForm] = useState(false)
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
-  const { setModalState } = useModalStore((state) => state)
-  const { register, setValue, handleSubmit, reset } = useForm<AddressFormSchemaType>({
+
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AddressFormSchema),
   })
@@ -42,38 +51,6 @@ export const AddressInfoTab = () => {
     } finally {
       setLoading(false)
     }
-  }
-
-  /**
-   * 주소 API
-   */
-
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address
-    let extraAddress = ''
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname
-      }
-      if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : ''
-    }
-
-    setValue('postcode', data.zonecode)
-    setValue('addressLine1', fullAddress)
-
-    // updateData 상태 업데이트
-    setUpdateData((prevData) => ({
-      ...prevData,
-      postcode: data.zonecode,
-      addressLine1: fullAddress,
-    }))
-
-    setModalState(false)
-    setIsPostcodeOpen(false)
   }
 
   /**
@@ -98,10 +75,10 @@ export const AddressInfoTab = () => {
    * 신규 배송지 추가
    */
   const handleSubmitAddress = async (data: any) => {
+    console.log(data, '///')
     try {
       const response = await createNewAddress(userIdx!, data, isEmpty)
       console.log(response)
-
       fetchData()
       reset()
       setShowForm(false)
@@ -127,133 +104,37 @@ export const AddressInfoTab = () => {
     } catch (error) {}
   }
 
+  const handleClickShowForm = () => setShowForm(true)
+
+  const handleClickHideForm = () => {
+    setShowForm(false)
+    reset()
+  }
+
+  const handleFindPostcode = () => {
+    setIsPostcodeOpen(true)
+  }
+
   useEffect(() => {
     fetchData()
-  }, [])
 
-  if (loading)
-    return (
-      <div>
-        <Skeleton width={300} height={50} className="mb-2" />
-        <Skeleton width={500} height={30} count={2} />
-      </div>
-    )
+    setValue('postcode', postcode)
+    setValue('addressLine1', addressLine1)
+  }, [postcode, addressLine1])
+
+  if (loading) return <TabContentSkeleton />
 
   return (
     <>
-      <div className="rounded-md bg-gray-100 p-10">
-        <p className="mb-10 text-center text-gray-500">
-          <span className="mb-2 block">입력된 배송정보가 없습니다</span>
-          <strong className="block text-2xl">🚚 배송지를 추가해주세요.</strong>
-        </p>
-        <button
-          className="mx-auto block w-[300px] rounded-lg bg-blue-400 px-10 py-4 font-semibold text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-500"
-          onClick={() => setShowForm(true)}
-        >
-          배송지 추가하기
-        </button>
-      </div>
+      {data.length === 0 && <EmptyAddress handleClick={{ handleShowForm: handleClickShowForm }} />}
 
       {showForm && (
-        <>
-          <form onSubmit={handleSubmit(handleSubmitAddress)}>
-            <fieldset className="border-b border-gray-300">
-              <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">배송지 등록</h5>
-
-              <div className="mb-2 py-4">
-                <legend>배송지 이름</legend>
-                <input
-                  {...register('addressName')}
-                  id="addressName"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="배송지 이름을 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>수령인 이름</legend>
-                <input
-                  {...register('recipientName')}
-                  id="recipientName"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="수령인 이름을 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>연락처</legend>
-                <input
-                  {...register('phoneNumber')}
-                  id="phoneNumber"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="연락처를 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>주소</legend>
-                <div className="flex flex-col gap-3">
-                  <div>
-                    <input
-                      {...register('postcode')}
-                      id="postcode"
-                      type="text"
-                      className="mr-2 w-[100px] border border-black p-2 focus:outline-none"
-                      readOnly
-                    />
-                    <input
-                      {...register('addressLine1')}
-                      id="addressLine1"
-                      type="text"
-                      className="mr-2 w-[400px] border border-black p-2 focus:outline-none"
-                      readOnly
-                    />
-                    <button
-                      onClick={() => {
-                        setModalState(true)
-                        setIsPostcodeOpen(true)
-                      }}
-                      type="button"
-                      className="bg-blue-400 p-2"
-                    >
-                      주소찾기
-                    </button>
-                  </div>
-                  <input
-                    {...register('addressLine2')}
-                    id="addressLine2"
-                    type="text"
-                    className="w-[400px] border border-black p-2"
-                    placeholder="나머지 주소를 입력해주세요"
-                  />
-                </div>
-              </div>
-              <div className="mb-2 py-4">
-                <legend>배송 요청 사항</legend>
-                <select {...register('deliveryNote')} id="deliveryNote" className="w-[300px] border border-black p-2">
-                  <option value={'문 앞에 부탁드립니다'}>문 앞에 부탁드립니다.</option>
-                  <option value={'부재시 연락 부탁드립니다'}>부재시 연락 부탁드립니다.</option>
-                  <option value={'배송 전 미리 연락해주세요'}>배송 전 미리 연락해주세요.</option>
-                </select>
-              </div>
-            </fieldset>
-            <div>
-              <button className="w-full bg-blue-400 p-4">신규 배송지 추가</button>
-            </div>
-          </form>
-          <button
-            className="bg-green-400 p-2"
-            onClick={() => {
-              setShowForm(false)
-              reset()
-            }}
-          >
-            취소
-          </button>
-        </>
+        <AddressAddForm
+          setValue={{ method: setValue }}
+          register={{ method: register }}
+          onSubmit={{ handleSubmitData: handleSubmit(handleSubmitAddress) }}
+          onClickHandlers={{ handleShowForm: handleClickHideForm, handleShowModal: handleFindPostcode }}
+        />
       )}
 
       {data.map((item, index) => (
@@ -286,7 +167,7 @@ export const AddressInfoTab = () => {
                   setshowUpdateForm(true)
 
                   const target = data.filter((datItem) => datItem.idx === item.idx)
-                  setUpdateData(target[0])
+                  updateData(target[0])
                 }}
                 className="w-[100px] bg-blue-400 p-4"
               >
@@ -312,34 +193,15 @@ export const AddressInfoTab = () => {
       {showUpdateForm && (
         <AddressUpdateForm
           updateData={updateData}
-          setUpdateData={setUpdateData}
+          setUpdateData={updateData}
           handleClose={() => {
             setshowUpdateForm(false)
-            setUpdateData([])
+            updateData([])
           }}
           setIsPostcodeOpen={setIsPostcodeOpen}
           userIdx={userIdx}
           fetchData={fetchData}
         />
-      )}
-
-      {isPostcodeOpen && (
-        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-          <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
-            <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">주소 검색</h2>
-            <div className="mb-4 h-full">
-              <DaumPostcodeEmbed className="h-full" onComplete={handleComplete} autoClose={false} />
-            </div>
-
-            <Button
-              label="닫기"
-              clickEvent={() => {
-                setModalState(false)
-                setIsPostcodeOpen(false)
-              }}
-            />
-          </section>
-        </div>
       )}
     </>
   )
