@@ -3,6 +3,7 @@ import { z } from 'zod'
 const postcodeRegex = /^[0-9]{5}$/
 
 export const AddressFormSchema = z.object({
+  idx: z.string().optional(),
   addressName: z.string().min(1, 'address_name 필요'),
   recipientName: z.string().min(1, 'recipient_name 필요'),
   phoneNumber: z.string().regex(/^010\d{8}$/, {

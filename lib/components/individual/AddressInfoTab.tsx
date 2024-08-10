@@ -1,131 +1,31 @@
 'use client'
-import { createNewAddress, fetchAddressList, hasDefaultAddress, removeAddress, setDefaultAddress } from '@/app/actions/address/actions'
-import { AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
-import DaumPostcodeEmbed from 'react-daum-postcode'
+import { useEffect } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
-import { useForm } from 'react-hook-form'
-import { Button } from '../Button'
-import { useAddressFormStore, useAddressStore, useDefaultAddressStore, useModalStore } from '@/lib/zustandStore'
-import { toast } from 'sonner'
-import { AddressUpdateForm } from './AddressUpdateForm'
+import { useAddressDataStore } from '@/lib/zustandStore'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyAddress } from './EmptyAddress'
-import { AddressAddForm } from './AddressAddForm'
-import { FaCaretDown, FaPlus } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 
 export const AddressInfoTab = () => {
-  const { data: session, update, status } = useSession()
-  const [data, setData] = useState<any[]>([])
-  // const [updateData, setUpdateData] = useState<any[]>([])
-
-  const { setIsPostcodeOpen, updateData, postcode, addressLine1 } = useAddressStore()
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession()
   const userIdx = session?.user?.idx
-  const [showForm, setShowForm] = useState(false)
-  const [showUpdateForm, setshowUpdateForm] = useState(false)
-  const [isEmpty, setIsEmpty] = useState(false)
-  const { showFormComponent } = useAddressFormStore()
-  const { modalState, setModalState } = useModalStore()
-  const { setDefaultState } = useDefaultAddressStore()
-
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    reset,
-    getValues,
-    formState: { errors },
-  } = useForm<AddressFormSchemaType>({
-    mode: 'onChange',
-    resolver: zodResolver(AddressFormSchema),
-  })
+  const { fetchData, showModal, setEditAddress, handleRemoveAddress, setUserIdx, loading, data, isEmpty } = useAddressDataStore()
 
   /**
-   * 사용자 배송지 리스트 fetch
+   * 클릭한 주소 수정 폼 열기
    */
-  const fetchData = async () => {
-    try {
-      const fetchedCartList = await fetchAddressList(userIdx!)
+  const handleEditAddressClick = (item: any) => {
+    const target = data.filter((dataItem) => dataItem.idx === item.idx)
 
-      setData(fetchedCartList)
-      setIsEmpty(fetchedCartList.length === 0)
-      setDefaultState(fetchedCartList.length === 0)
-    } catch (error) {
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  /**
-   * 클릭한 주소 삭제
-   */
-  const handleRemoveAddress = async (addressIdx: string) => {
-    try {
-      const response = await removeAddress(addressIdx, userIdx!)
-
-      if (!response) {
-        toast.error('주소 삭제에 실패했습니다.')
-      }
-
-      fetchData()
-      toast.success('주소를 삭제했습니다.')
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  /**
-   * 신규 배송지 추가
-   */
-  const handleSubmitAddress = async (data: any) => {
-    console.log(data, '///')
-    try {
-      const response = await createNewAddress(userIdx!, data, isEmpty)
-      console.log(response)
-      fetchData()
-      reset()
-      setShowForm(false)
-      toast.success('배송지가 추가되었습니다.')
-    } catch (error) {
-    } finally {
-    }
-  }
-
-  /**
-   * 클릭한 배송지를 기본 배송지로 변경
-   */
-  const handleClickSetDefault = async (addressIdx: string) => {
-    try {
-      const response = await setDefaultAddress(userIdx!, addressIdx)
-
-      if (!response?.success) {
-        toast.error('주소 삭제에 실패했습니다.')
-      }
-
-      fetchData()
-      toast.success('기본 배송지가 변경되었습니다.')
-    } catch (error) {}
-  }
-
-  const handleFindPostcode = () => setIsPostcodeOpen(true)
-  const handleClickShowForm = () => setShowForm(true)
-
-  const handleClickHideForm = () => {
-    setShowForm(false)
-    reset()
+    setEditAddress(target[0])
+    showModal('editAddress')
   }
 
   useEffect(() => {
+    setUserIdx(userIdx!)
     fetchData()
-
-    setValue('postcode', postcode)
-    setValue('addressLine1', addressLine1)
-  }, [postcode, addressLine1])
-
-  if (loading) return <TabContentSkeleton />
+  }, [])
 
   const default_address = data.filter((item) => item.isDefault === true)
   const etc_address = data.filter((item) => item.isDefault === false)
@@ -144,21 +44,16 @@ export const AddressInfoTab = () => {
     return phoneNumber // 유효하지 않으면 원래 값 반환
   }
 
+  if (loading) return <TabContentSkeleton />
+
   return (
     <>
       {isEmpty ? (
-        <EmptyAddress
-          handleClick={{
-            handleShowForm: () => {
-              showFormComponent()
-              setModalState(true)
-            },
-          }}
-        />
+        <EmptyAddress />
       ) : (
         <>
           <button
-            onClick={showFormComponent}
+            onClick={() => showModal('addNewAddress')}
             className="mb-2 ml-auto flex w-[200px] items-center justify-center gap-2 rounded-lg bg-blue-400 p-4 text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-500"
           >
             <FaPlus className="text-lg" />
@@ -191,12 +86,7 @@ export const AddressInfoTab = () => {
                     <div className="flex flex-row gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setshowUpdateForm(true)
-
-                          const target = data.filter((datItem) => datItem.idx === item.idx)
-                          updateData(target[0])
-                        }}
+                        onClick={() => handleEditAddressClick(item)}
                         className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
                       >
                         수정
@@ -239,12 +129,7 @@ export const AddressInfoTab = () => {
                     <div className="flex flex-row gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setshowUpdateForm(true)
-
-                          const target = data.filter((datItem) => datItem.idx === item.idx)
-                          updateData(target[0])
-                        }}
+                        onClick={() => handleEditAddressClick(item)}
                         className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
                       >
                         수정
@@ -263,28 +148,6 @@ export const AddressInfoTab = () => {
             </div>
           </section>
         </>
-      )}
-
-      {/* {showForm && (
-        <AddressAddForm
-          formRegister={{ method: register }}
-          onSubmitForm={{ function: handleSubmit(handleSubmitAddress) }}
-          onActions={{ onHideForm: handleClickHideForm, onShowPostcodeModal: handleFindPostcode }}
-        />
-      )} */}
-
-      {showUpdateForm && (
-        <AddressUpdateForm
-          updateData={updateData}
-          setUpdateData={updateData}
-          handleClose={() => {
-            setshowUpdateForm(false)
-            updateData([])
-          }}
-          setIsPostcodeOpen={setIsPostcodeOpen}
-          userIdx={userIdx}
-          fetchData={fetchData}
-        />
       )}
     </>
   )

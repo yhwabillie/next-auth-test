@@ -1,49 +1,117 @@
 import { create } from 'zustand'
-import { AgreementSchemaType } from './zodSchema'
+import { AddressFormSchemaType, AgreementSchemaType } from './zodSchema'
+import { createNewAddress, fetchAddressList, removeAddress } from '@/app/actions/address/actions'
+import { toast } from 'sonner'
 
-//
-
-type DefaultState = {
-  defaultState: boolean
-  setDefaultState: (data: boolean) => void
-}
-
-//주소 리스트 empty 여부
-export const useDefaultAddressStore = create<DefaultState>((set) => ({
-  defaultState: false,
-  setDefaultState: (data: boolean) => set({ defaultState: data }),
-}))
-
-//주소 수정 폼 모달
-interface AddressFormState {
-  showForm: boolean
-  showFormComponent: () => void
-  hideForm: () => void
-}
-
-export const useAddressFormStore = create<AddressFormState>((set) => ({
-  showForm: false,
-  showFormComponent: () => set({ showForm: true }), // 폼을 표시하는 함수
-  hideForm: () => set({ showForm: false }), // 폼을 숨기는 함수
-}))
-
-//주소검색 모달
-interface AddressState {
-  postcode: string
-  addressLine1: string
+//모달 열기/닫기
+type ModalState = {
   modalState: boolean
-  isPostcodeOpen: boolean
-  updateData: (data: any) => void
-  setModalState: (state: boolean) => void
-  setIsPostcodeOpen: (state: boolean) => void
+  setModalState: (data: boolean) => void
 }
 
-export const useAddressStore = create<AddressState>((set) => ({
-  postcode: '',
-  addressLine1: '',
+export const useModalStore = create<ModalState>((set) => ({
   modalState: false,
-  isPostcodeOpen: false,
-  updateData: (data) => {
+  setModalState: (data: boolean) => set({ modalState: data }),
+}))
+
+//배송주소 컨트롤
+interface AddressDataStore {
+  modals: {
+    addNewAddress: boolean
+    editAddress: boolean
+    postcode: boolean
+  }
+  new_address: AddressFormSchemaType
+  edit_address: AddressFormSchemaType
+  fetchData: () => Promise<void>
+  updatePostcode: (data: any) => void
+  setNewAddress: (data: AddressFormSchemaType) => void
+  setEditAddress: (data: AddressFormSchemaType) => void
+  userIdx: string
+  data: any[]
+  loading: boolean
+  isEmpty: boolean
+  defaultState: boolean
+  setUserIdx: (userIdx: string) => void
+  handleRemoveAddress: (addressIdx: string) => Promise<void>
+  onSubmitNewAddress: (data: AddressFormSchemaType) => Promise<void>
+  showModal: (modalName: keyof AddressDataStore['modals']) => void
+  hideModal: (modalName: keyof AddressDataStore['modals']) => void
+}
+
+export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
+  modals: {
+    addNewAddress: false,
+    editAddress: false,
+    postcode: false,
+  },
+
+  new_address: {
+    addressName: '',
+    recipientName: '',
+    phoneNumber: '',
+    postcode: '',
+    addressLine1: '',
+    addressLine2: '',
+    deliveryNote: '',
+  },
+  edit_address: {
+    addressName: '',
+    recipientName: '',
+    phoneNumber: '',
+    postcode: '',
+    addressLine1: '',
+    addressLine2: '',
+    deliveryNote: '',
+  },
+  userIdx: '',
+  data: [],
+  loading: false,
+  isEmpty: false,
+  defaultState: false,
+  showModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: true,
+      },
+    })),
+  hideModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: false,
+      },
+    })),
+  setUserIdx: (userIdx: string) => set({ userIdx }),
+  fetchData: async () => {
+    const userIdx = get().userIdx
+
+    if (userIdx) {
+      set({ loading: true }) // 로딩 시작
+
+      try {
+        const fetchedCartList = await fetchAddressList(userIdx)
+
+        if (!fetchedCartList) {
+          console.log('fetch error')
+        }
+
+        set({
+          data: fetchedCartList,
+          isEmpty: fetchedCartList.length === 0,
+          defaultState: fetchedCartList.length === 0,
+        })
+      } catch (error) {
+        console.log(error)
+      } finally {
+        set({ loading: false })
+      }
+    }
+  },
+  setNewAddress: (state) => set(() => ({ new_address: state })),
+  setEditAddress: (state) => set(() => ({ edit_address: state })),
+  updatePostcode: (data: any) => {
     let fullAddress = data.address
     let extraAddress = ''
 
@@ -57,24 +125,57 @@ export const useAddressStore = create<AddressState>((set) => ({
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : ''
     }
 
-    set(() => ({
-      postcode: data.zonecode,
-      addressLine1: fullAddress,
+    set((current) => ({
+      edit_address: {
+        ...current.edit_address,
+        postcode: data.zonecode,
+        addressLine1: fullAddress,
+      },
+      new_address: {
+        ...current.edit_address,
+        postcode: data.zonecode,
+        addressLine1: fullAddress,
+      },
     }))
   },
-  setModalState: (state) => set(() => ({ modalState: state })),
-  setIsPostcodeOpen: (state) => set(() => ({ isPostcodeOpen: state })),
-}))
+  handleRemoveAddress: async (addressIdx: string) => {
+    const userIdx = get().userIdx
+    try {
+      const response = await removeAddress(addressIdx, userIdx)
 
-//모달 열기/닫기
-type ModalState = {
-  modalState: boolean
-  setModalState: (data: boolean) => void
-}
+      if (!response) {
+        toast.error('주소 삭제에 실패했습니다.')
+        return
+      }
 
-export const useModalStore = create<ModalState>((set) => ({
-  modalState: false,
-  setModalState: (data: boolean) => set({ modalState: data }),
+      await get().fetchData() // 데이터를 다시 가져오기
+      toast.success('주소를 삭제했습니다.')
+    } catch (error) {
+      console.error('Error removing address:', error)
+      toast.error('주소 삭제 중 오류가 발생했습니다.')
+    }
+  },
+  onSubmitNewAddress: async (data: AddressFormSchemaType) => {
+    const { userIdx, defaultState, updatePostcode, hideModal } = get()
+
+    try {
+      const response = await createNewAddress(userIdx, data, defaultState)
+
+      if (!response) {
+        toast.error('배송지 추가에 실패했습니다.')
+        return
+      }
+
+      await get().fetchData() // 데이터 다시 가져오기
+      updatePostcode('') // 우편번호 초기화
+      hideModal('addNewAddress') // 모달 숨기기
+
+      toast.success('배송지가 추가되었습니다.')
+    } catch (error) {
+      console.error('Error adding new address:', error)
+      toast.error('배송지 추가에 실패했습니다.')
+    }
+  },
 }))
 
 type AgreementState = {

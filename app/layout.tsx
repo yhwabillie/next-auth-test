@@ -19,11 +19,10 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
   return (
     <html lang="ko">
       <AuthProvider>
-        <ModalProvider>
-          <Toaster position="top-center" theme="light" richColors closeButton />
-          <Header />
-          <FramerMotionProvider>{children}</FramerMotionProvider>
-        </ModalProvider>
+        <Toaster position="top-center" theme="light" richColors closeButton />
+        <Header />
+        <FramerMotionProvider>{children}</FramerMotionProvider>
+        <ModalProvider />
       </AuthProvider>
     </html>
   )

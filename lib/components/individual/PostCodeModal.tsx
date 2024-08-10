@@ -1,14 +1,14 @@
 'use client'
 import DaumPostcodeEmbed from 'react-daum-postcode'
+import { useAddressDataStore } from '@/lib/zustandStore'
 import { Button } from '../Button'
-import { useAddressStore } from '@/lib/zustandStore'
 
 export const PostCodeModal = () => {
-  const { updateData, setIsPostcodeOpen } = useAddressStore()
+  const { updatePostcode, hideModal } = useAddressDataStore()
 
   const handleComplete = (data: any) => {
-    updateData(data)
-    setIsPostcodeOpen(false)
+    updatePostcode(data)
+    hideModal('postcode')
   }
 
   return (
@@ -19,12 +19,7 @@ export const PostCodeModal = () => {
           <DaumPostcodeEmbed className="h-full" onComplete={handleComplete} autoClose={false} />
         </div>
 
-        <Button
-          label="닫기!"
-          clickEvent={() => {
-            setIsPostcodeOpen(false)
-          }}
-        />
+        <Button label="닫기!" clickEvent={() => hideModal('postcode')} />
       </section>
     </div>
   )

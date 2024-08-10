@@ -13,7 +13,6 @@ import { HookFormInput } from './HookFormInput'
 import { HookFormCheckBox } from './HookFormCheckBox'
 import { useRouter } from 'next/navigation'
 import { useModalStore } from '../zustandStore'
-import { AgreementType } from '@prisma/client'
 import dayjs from 'dayjs'
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {

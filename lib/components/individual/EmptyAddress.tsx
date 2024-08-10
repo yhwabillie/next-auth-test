@@ -1,13 +1,11 @@
 'use client'
+import { useAddressDataStore } from '@/lib/zustandStore'
 import React from 'react'
 
-interface EmptyAddressProps {
-  handleClick: {
-    handleShowForm: () => void
-  }
-}
+export const EmptyAddress = () => {
+  //새로한 거
+  const { showModal } = useAddressDataStore()
 
-export const EmptyAddress: React.FC<EmptyAddressProps> = ({ handleClick }) => {
   return (
     <div className="rounded-md bg-gray-100 p-10">
       <p className="mb-10 text-center text-gray-500">
@@ -16,7 +14,9 @@ export const EmptyAddress: React.FC<EmptyAddressProps> = ({ handleClick }) => {
       </p>
       <button
         className="mx-auto block w-[300px] rounded-lg bg-blue-400 px-10 py-4 font-semibold text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-500"
-        onClick={handleClick.handleShowForm}
+        onClick={() => {
+          showModal('addNewAddress')
+        }}
       >
         배송지 추가하기
       </button>

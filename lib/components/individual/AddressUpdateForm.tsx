@@ -1,46 +1,62 @@
 'use client'
 import { updateAddress } from '@/app/actions/address/actions'
 import { AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
+import { useAddressDataStore } from '@/lib/zustandStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { ChangeEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-export const AddressUpdateForm = (props: any) => {
+export const AddressUpdateForm = () => {
+  const { data: session } = useSession()
+  const userIdx = session?.user?.idx
+  const { edit_address, showModal, hideModal, setUserIdx, fetchData, setEditAddress } = useAddressDataStore()
+
   const {
     register,
     setValue,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AddressFormSchema),
+    defaultValues: {
+      addressName: edit_address.addressName,
+      recipientName: edit_address.recipientName,
+      phoneNumber: edit_address.phoneNumber,
+      postcode: edit_address.postcode,
+      addressLine1: edit_address.addressLine1,
+      addressLine2: edit_address.addressLine2,
+      deliveryNote: edit_address.deliveryNote,
+    },
   })
 
   const handleSubmitAddress = async (data: any) => {
     console.log('submit=====>', data)
 
     try {
-      const response = await updateAddress(props.userIdx!, props.updateData.idx, data)
+      const response = await updateAddress(userIdx!, edit_address?.idx!, data)
 
       if (!response?.success) {
         toast.error('수정 실패')
       }
 
-      props.fetchData()
-      props.handleClose()
-      toast.success('수정 성공')
+      hideModal('editAddress')
+
+      setUserIdx(userIdx!)
+      await fetchData()
+      toast.success('배송지가 수정되었습니다.')
     } catch (error) {}
   }
 
   useEffect(() => {
-    setValue('addressLine1', props.updateData.addressLine1)
-    setValue('postcode', props.updateData.postcode)
-  }, [props.updateData])
+    setValue('postcode', edit_address.postcode)
+    setValue('addressLine1', edit_address.addressLine1)
+  }, [edit_address])
 
   return (
-    <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
+    <div className="fixed left-0 top-0 z-20 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
       <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
         <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
         <div className="mb-4 h-full">
@@ -51,9 +67,8 @@ export const AddressUpdateForm = (props: any) => {
                 <input
                   {...register('addressName')}
                   id="addressName"
-                  value={props.updateData.addressName}
-                  onChange={(event: any) => {
-                    props.setUpdateData({ ...props.updateData, addressName: event.target.value })
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    setEditAddress({ ...edit_address, addressName: event.target.value })
                   }}
                   className="border border-black p-2"
                   type="text"
@@ -65,9 +80,8 @@ export const AddressUpdateForm = (props: any) => {
                 <legend>수령인 이름</legend>
                 <input
                   {...register('recipientName')}
-                  value={props.updateData.recipientName}
-                  onChange={(event: any) => {
-                    props.setUpdateData({ ...props.updateData, recipientName: event.target.value })
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    setEditAddress({ ...edit_address, recipientName: event.target.value })
                   }}
                   id="recipientName"
                   className="border border-black p-2"
@@ -80,10 +94,9 @@ export const AddressUpdateForm = (props: any) => {
                 <legend>연락처</legend>
                 <input
                   {...register('phoneNumber')}
-                  onChange={(event: any) => {
-                    props.setUpdateData({ ...props.updateData, phoneNumber: event.target.value })
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    setEditAddress({ ...edit_address, phoneNumber: event.target.value })
                   }}
-                  value={props.updateData.phoneNumber}
                   id="phoneNumber"
                   className="border border-black p-2"
                   type="text"
@@ -97,10 +110,7 @@ export const AddressUpdateForm = (props: any) => {
                   <div>
                     <input
                       {...register('postcode')}
-                      onChange={(event: any) => {
-                        props.setUpdateData({ ...props.updateData, postcode: event.target.value })
-                      }}
-                      defaultValue={props.updateData.postcode}
+                      value={edit_address.postcode}
                       id="postcode"
                       type="text"
                       className="mr-2 w-[100px] border border-black p-2 focus:outline-none"
@@ -108,25 +118,21 @@ export const AddressUpdateForm = (props: any) => {
                     />
                     <input
                       {...register('addressLine1')}
-                      onChange={(event: any) => {
-                        props.setUpdateData({ ...props.updateData, addressLine1: event.target.value })
-                      }}
-                      defaultValue={props.updateData.addressLine1}
+                      value={edit_address.addressLine1}
                       id="addressLine1"
                       type="text"
                       className="mr-2 w-[400px] border border-black p-2 focus:outline-none"
                       readOnly
                     />
-                    <button type="button" onClick={() => props.setIsPostcodeOpen(true)} className="bg-blue-400 p-2">
+                    <button type="button" onClick={() => showModal('postcode')} className="bg-blue-400 p-2">
                       주소찾기
                     </button>
                   </div>
                   <input
                     {...register('addressLine2')}
-                    onChange={(event: any) => {
-                      props.setUpdateData({ ...props.updateData, addressLine2: event.target.value })
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      setEditAddress({ ...edit_address, addressLine2: event.target.value })
                     }}
-                    value={props.updateData.addressLine2}
                     id="addressLine2"
                     type="text"
                     className="w-[400px] border border-black p-2"
@@ -138,10 +144,9 @@ export const AddressUpdateForm = (props: any) => {
                 <legend>배송 요청 사항</legend>
                 <select
                   {...register('deliveryNote')}
-                  onChange={(event: any) => {
-                    props.setUpdateData({ ...props.updateData, deliveryNote: event.target.value })
+                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+                    setEditAddress({ ...edit_address, deliveryNote: event.target.value })
                   }}
-                  value={props.updateData.deliveryNote}
                   id="deliveryNote"
                   className="w-[300px] border border-black p-2"
                 >
@@ -152,7 +157,13 @@ export const AddressUpdateForm = (props: any) => {
               </div>
             </fieldset>
             <div className="flex flex-row gap-2">
-              <button type="button" onClick={props.handleClose} className="w-[50%] bg-gray-500 p-2 text-white">
+              <button
+                type="button"
+                onClick={() => {
+                  hideModal('editAddress')
+                }}
+                className="w-[50%] bg-gray-500 p-2 text-white"
+              >
                 취소
               </button>
               <button type="submit" className="w-[50%] bg-blue-500 p-2 text-white">
