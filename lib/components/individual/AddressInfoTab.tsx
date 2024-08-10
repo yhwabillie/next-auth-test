@@ -6,6 +6,8 @@ import { useAddressDataStore } from '@/lib/zustandStore'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyAddress } from './EmptyAddress'
 import { FaPlus } from 'react-icons/fa'
+import { setDefaultAddress } from '@/app/actions/address/actions'
+import { toast } from 'sonner'
 
 export const AddressInfoTab = () => {
   const { data: session } = useSession()
@@ -26,6 +28,22 @@ export const AddressInfoTab = () => {
     setUserIdx(userIdx!)
     fetchData()
   }, [])
+
+  /**
+   * 클릭한 배송지를 기본 배송지로 변경
+   */
+  const handleClickSetDefault = async (addressIdx: string) => {
+    try {
+      const response = await setDefaultAddress(userIdx!, addressIdx)
+
+      if (!response?.success) {
+        toast.error('주소 삭제에 실패했습니다.')
+      }
+
+      fetchData()
+      toast.success('기본 배송지가 변경되었습니다.')
+    } catch (error) {}
+  }
 
   const default_address = data.filter((item) => item.isDefault === true)
   const etc_address = data.filter((item) => item.isDefault === false)
@@ -116,7 +134,7 @@ export const AddressInfoTab = () => {
 
               <ul>
                 {etc_address.map((item, index) => (
-                  <li key={index} className="relative mb-5 rounded-lg bg-blue-200/30 p-5 drop-shadow-sm">
+                  <li key={index} className="relative mb-5 rounded-lg bg-blue-200/30 p-5 drop-shadow-sm last:mb-0">
                     <strong className="mb-1 block">{`${item.addressName} (${item.recipientName})`}</strong>
                     <p className="mb-2 font-medium text-gray-500">{formatPhoneNumber(item.phoneNumber)}</p>
                     <p className="mb-4 tracking-tighter">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</p>
@@ -140,6 +158,13 @@ export const AddressInfoTab = () => {
                         className="block w-[60px] rounded-md border border-gray-400 bg-pink-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
                       >
                         삭제
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleClickSetDefault(item.idx)}
+                        className="block w-[120px] rounded-md border border-gray-400 bg-gray-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
+                      >
+                        기본배송지로 선택
                       </button>
                     </div>
                   </li>

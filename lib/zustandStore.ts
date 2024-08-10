@@ -1,18 +1,7 @@
 import { create } from 'zustand'
 import { AddressFormSchemaType, AgreementSchemaType } from './zodSchema'
-import { createNewAddress, fetchAddressList, removeAddress } from '@/app/actions/address/actions'
+import { createNewAddress, fetchAddressList, removeAddress, updateAddress } from '@/app/actions/address/actions'
 import { toast } from 'sonner'
-
-//모달 열기/닫기
-type ModalState = {
-  modalState: boolean
-  setModalState: (data: boolean) => void
-}
-
-export const useModalStore = create<ModalState>((set) => ({
-  modalState: false,
-  setModalState: (data: boolean) => set({ modalState: data }),
-}))
 
 //배송주소 컨트롤
 interface AddressDataStore {
@@ -35,8 +24,10 @@ interface AddressDataStore {
   setUserIdx: (userIdx: string) => void
   handleRemoveAddress: (addressIdx: string) => Promise<void>
   onSubmitNewAddress: (data: AddressFormSchemaType) => Promise<void>
+  onSubmitUpdateAddress: (data: AddressFormSchemaType) => Promise<void>
   showModal: (modalName: keyof AddressDataStore['modals']) => void
   hideModal: (modalName: keyof AddressDataStore['modals']) => void
+  resetForm: () => void // 폼 초기화 함수 추가
 }
 
 export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
@@ -176,8 +167,55 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
       toast.error('배송지 추가에 실패했습니다.')
     }
   },
+  resetForm: () => {
+    // 폼을 초기화하는 로직
+    set(() => ({
+      edit_address: {
+        addressName: '',
+        recipientName: '',
+        phoneNumber: '',
+        postcode: '',
+        addressLine1: '',
+        addressLine2: '',
+        deliveryNote: '',
+      },
+    }))
+  },
+  onSubmitUpdateAddress: async (data: AddressFormSchemaType) => {
+    const { userIdx, edit_address, fetchData, hideModal, resetForm } = get()
+
+    try {
+      const response = await updateAddress(userIdx, edit_address?.idx!, data)
+
+      if (!response?.success) {
+        toast.error('수정 실패')
+        return
+      }
+
+      await fetchData() // 데이터를 다시 가져오기
+
+      hideModal('editAddress') // 모달 숨기기
+      resetForm() // 폼 초기화
+      toast.success('배송지가 수정되었습니다.')
+    } catch (error) {
+      console.error('Error updating address:', error)
+      toast.error('배송지 수정 중 오류가 발생했습니다.')
+    }
+  },
 }))
 
+//모달 열기/닫기
+type ModalState = {
+  modalState: boolean
+  setModalState: (data: boolean) => void
+}
+
+export const useModalStore = create<ModalState>((set) => ({
+  modalState: false,
+  setModalState: (data: boolean) => set({ modalState: data }),
+}))
+
+//동의 컨트롤
 type AgreementState = {
   agreements: AgreementSchemaType
   setAgreement: (data: AgreementSchemaType) => void

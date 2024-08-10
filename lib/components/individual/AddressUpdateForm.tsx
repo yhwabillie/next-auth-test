@@ -11,12 +11,13 @@ import { toast } from 'sonner'
 export const AddressUpdateForm = () => {
   const { data: session } = useSession()
   const userIdx = session?.user?.idx
-  const { edit_address, showModal, hideModal, setUserIdx, fetchData, setEditAddress } = useAddressDataStore()
+  const { edit_address, showModal, hideModal, setUserIdx, fetchData, setEditAddress, updatePostcode, onSubmitUpdateAddress } = useAddressDataStore()
 
   const {
     register,
-    setValue,
     handleSubmit,
+    setValue,
+    resetField,
     formState: { errors },
   } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
@@ -32,27 +33,11 @@ export const AddressUpdateForm = () => {
     },
   })
 
-  const handleSubmitAddress = async (data: any) => {
-    console.log('submit=====>', data)
-
-    try {
-      const response = await updateAddress(userIdx!, edit_address?.idx!, data)
-
-      if (!response?.success) {
-        toast.error('수정 실패')
-      }
-
-      hideModal('editAddress')
-
-      setUserIdx(userIdx!)
-      await fetchData()
-      toast.success('배송지가 수정되었습니다.')
-    } catch (error) {}
-  }
-
   useEffect(() => {
-    setValue('postcode', edit_address.postcode)
-    setValue('addressLine1', edit_address.addressLine1)
+    if (edit_address) {
+      setValue('postcode', edit_address.postcode)
+      setValue('addressLine1', edit_address.addressLine1)
+    }
   }, [edit_address])
 
   return (
@@ -60,7 +45,7 @@ export const AddressUpdateForm = () => {
       <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
         <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
         <div className="mb-4 h-full">
-          <form onSubmit={handleSubmit(handleSubmitAddress)}>
+          <form onSubmit={handleSubmit(onSubmitUpdateAddress)}>
             <fieldset className="border-b border-gray-300">
               <div className="mb-2 py-4">
                 <legend>배송지 이름</legend>

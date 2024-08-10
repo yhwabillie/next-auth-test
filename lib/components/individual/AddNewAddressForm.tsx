@@ -6,13 +6,13 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 export const AddNewAddressForm = () => {
-  const { showModal, hideModal, new_address, onSubmitNewAddress } = useAddressDataStore()
+  const { showModal, hideModal, new_address, edit_address, onSubmitNewAddress, updatePostcode } = useAddressDataStore()
 
   //새로한 거
   const {
     register,
-    setValue,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
@@ -21,12 +21,22 @@ export const AddNewAddressForm = () => {
 
   const handleSubmitNewAddress = (data: AddressFormSchemaType) => {
     onSubmitNewAddress(data)
+
+    setValue('postcode', edit_address.postcode)
+    setValue('addressLine1', edit_address.addressLine1)
   }
 
   useEffect(() => {
-    setValue('postcode', new_address.postcode)
-    setValue('addressLine1', new_address.addressLine1)
-  }, [new_address])
+    console.log('new address')
+
+    if (new_address) {
+      setValue('postcode', new_address.postcode)
+      setValue('addressLine1', new_address.addressLine1)
+    }
+
+    setValue('postcode', edit_address.postcode)
+    setValue('addressLine1', edit_address.addressLine1)
+  }, [new_address, edit_address])
 
   return (
     <div className="fixed left-0 top-0 z-20 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/70">
