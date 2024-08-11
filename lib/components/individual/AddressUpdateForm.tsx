@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 export const AddressUpdateForm = () => {
   const { data: session } = useSession()
   const userIdx = session?.user?.idx
-  const { edit_address, showModal, hideModal, setUserIdx, fetchData, setEditAddress, updatePostcode, onSubmitUpdateAddress } = useAddressDataStore()
+  const { edit_address, showModal, hideModal, updatePostcode, setEditAddress, onSubmitUpdateAddress } = useAddressDataStore()
 
   const {
     register,
@@ -33,11 +33,14 @@ export const AddressUpdateForm = () => {
     },
   })
 
+  const handleSubmitUpdateAddress = (data: AddressFormSchemaType) => {
+    onSubmitUpdateAddress(data)
+    updatePostcode('')
+  }
+
   useEffect(() => {
-    if (edit_address) {
-      setValue('postcode', edit_address.postcode)
-      setValue('addressLine1', edit_address.addressLine1)
-    }
+    setValue('postcode', edit_address.postcode)
+    setValue('addressLine1', edit_address.addressLine1)
   }, [edit_address])
 
   return (
@@ -45,7 +48,7 @@ export const AddressUpdateForm = () => {
       <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
         <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
         <div className="mb-4 h-full">
-          <form onSubmit={handleSubmit(onSubmitUpdateAddress)}>
+          <form onSubmit={handleSubmit(handleSubmitUpdateAddress)}>
             <fieldset className="border-b border-gray-300">
               <div className="mb-2 py-4">
                 <legend>배송지 이름</legend>

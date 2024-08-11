@@ -73,10 +73,10 @@ export const createNewAddress = async (
     recipientName: string
     phoneNumber: string
     addressName: string
-    addressLine1: string
+    new_postcode: string
+    new_addressLine1: string
     addressLine2: string
     deliveryNote: string
-    postcode: string
   },
   isDefault: boolean,
 ) => {
@@ -101,8 +101,8 @@ export const createNewAddress = async (
         recipientName: addressData.recipientName,
         phoneNumber: addressData.phoneNumber,
         addressName: addressData.addressName,
-        postcode: addressData.postcode,
-        addressLine1: addressData.addressLine1,
+        postcode: addressData.new_postcode,
+        addressLine1: addressData.new_addressLine1,
         addressLine2: addressData.addressLine2,
         isDefault,
         deliveryNote: addressData.deliveryNote,

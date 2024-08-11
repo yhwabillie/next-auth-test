@@ -128,7 +128,7 @@ export const AddressInfoTab = () => {
               {etc_address.length === 0 && (
                 <p className="mb-10 rounded-lg bg-gray-100 px-10 py-14 text-center text-gray-500">
                   <span className="mb-2 block">입력된 기타 배송정보가 없습니다</span>
-                  <strong className="block text-2xl">🚚 기타 배송지를 추가해주세요.</strong>
+                  <strong className="block text-2xl">🚚 배송지를 추가해주세요.</strong>
                 </p>
               )}
 

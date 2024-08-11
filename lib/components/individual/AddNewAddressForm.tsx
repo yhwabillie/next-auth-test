@@ -1,5 +1,5 @@
 'use client'
-import { AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
+import { AddNewAddressFormSchema, AddNewAddressFormSchemaType, AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
 import { useAddressDataStore } from '@/lib/zustandStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
@@ -14,29 +14,20 @@ export const AddNewAddressForm = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<AddressFormSchemaType>({
+  } = useForm<AddNewAddressFormSchemaType>({
     mode: 'onChange',
-    resolver: zodResolver(AddressFormSchema),
+    resolver: zodResolver(AddNewAddressFormSchema),
   })
 
-  const handleSubmitNewAddress = (data: AddressFormSchemaType) => {
+  const handleSubmitNewAddress = (data: AddNewAddressFormSchemaType) => {
     onSubmitNewAddress(data)
-
-    setValue('postcode', edit_address.postcode)
-    setValue('addressLine1', edit_address.addressLine1)
+    updatePostcode('')
   }
 
   useEffect(() => {
-    console.log('new address')
-
-    if (new_address) {
-      setValue('postcode', new_address.postcode)
-      setValue('addressLine1', new_address.addressLine1)
-    }
-
-    setValue('postcode', edit_address.postcode)
-    setValue('addressLine1', edit_address.addressLine1)
-  }, [new_address, edit_address])
+    setValue('new_postcode', new_address.new_postcode)
+    setValue('new_addressLine1', new_address.new_addressLine1)
+  }, [new_address])
 
   return (
     <div className="fixed left-0 top-0 z-20 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/70">
@@ -83,16 +74,16 @@ export const AddNewAddressForm = () => {
                 <div className="flex flex-col gap-3">
                   <div>
                     <input
-                      {...register('postcode')}
-                      id="postcode"
+                      {...register('new_postcode')}
+                      id="new_postcode"
                       type="text"
                       className="mr-2 w-[100px] border border-black p-2 focus:outline-none"
                       placeholder="우편번호"
                       readOnly
                     />
                     <input
-                      {...register('addressLine1')}
-                      id="addressLine1"
+                      {...register('new_addressLine1')}
+                      id="new_addressLine1"
                       type="text"
                       className="mr-2 w-[400px] border border-black p-2 focus:outline-none"
                       placeholder="주소"

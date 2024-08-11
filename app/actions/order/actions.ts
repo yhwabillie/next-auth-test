@@ -4,6 +4,59 @@ import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 
 /**
+ * 선택 주문 배송지 업데이트
+ */
+export const updateOrderAddress = async (orderIdx: string, newAddressIdx: string) => {
+  const session = await getServerSession(authOptions)
+
+  if (!session || !session.user) {
+    throw new Error('You must be logged in to create an order')
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: {
+        idx: orderIdx,
+      },
+    })
+
+    if (!order) {
+      throw new Error('업데이트하려는 주문 데이터 없음')
+    }
+
+    const address = await prisma.address.findUnique({
+      where: {
+        idx: newAddressIdx,
+      },
+    })
+
+    if (!address) {
+      throw new Error('업데이트하려는 주소 데이터 없음')
+    }
+
+    const response = await prisma.order.update({
+      where: {
+        idx: orderIdx,
+      },
+      data: {
+        addressIdx: newAddressIdx,
+      },
+      include: {
+        address: true,
+      },
+    })
+
+    if (!response) {
+      throw new Error('업데이트하려는 주문 없음')
+    }
+
+    return response
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+/**
  * 선택 주문 삭제
  */
 export const removeOrder = async (orderIdx: string) => {
@@ -62,6 +115,7 @@ export const fetchOrderlist = async () => {
         payment: true,
         address: {
           select: {
+            idx: true,
             addressName: true,
             addressLine1: true,
             addressLine2: true,

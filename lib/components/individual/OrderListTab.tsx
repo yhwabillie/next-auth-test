@@ -1,27 +1,34 @@
 'use client'
 import { fetchOrderlist, removeOrder } from '@/app/actions/order/actions'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
+import { useAddressDataStore, useOrderDataStore } from '@/lib/zustandStore'
+import { useSession } from 'next-auth/react'
+import Skeleton from 'react-loading-skeleton'
+import { TabContentSkeleton } from './TabContentSkeleton'
 
 export const OrderListTab = () => {
-  const [data, setData] = useState<any>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  // const [data, setData] = useState<any>([])
+  // const [loading, setLoading] = useState<boolean>(true)
+  const { data: session } = useSession()
+  const userIdx = session?.user?.idx
+  const { setAddressIdx } = useAddressDataStore()
+  const { showModal, fetchData, data, setUserIdx, loading, setOrderIdx } = useOrderDataStore()
 
   const fetchOrderlistData = async () => {
-    try {
-      const orderlist = await fetchOrderlist()
-
-      if (!orderlist) {
-        toast.error('주문 데이터가 없습니다')
-      }
-
-      setData(orderlist)
-    } catch (error) {
-      toast.error('주문 데이터 fetch 실패')
-    } finally {
-      setLoading(false)
-    }
+    // fetchData()
+    // try {
+    //   const orderlist = await fetchOrderlist()
+    //   if (!orderlist) {
+    //     toast.error('주문 데이터가 없습니다')
+    //   }
+    //   setData(orderlist)
+    // } catch (error) {
+    //   toast.error('주문 데이터 fetch 실패')
+    // } finally {
+    //   setLoading(false)
+    // }
   }
 
   const removeOrderData = async (orderIdx: string) => {
@@ -40,17 +47,18 @@ export const OrderListTab = () => {
   }
 
   useEffect(() => {
-    fetchOrderlistData()
+    setUserIdx(userIdx!)
+    fetchData()
   }, [])
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <TabContentSkeleton />
 
   return (
     <div>
       <h5 className="sr-only">주문배송 탭</h5>
       <ul className="mb-10 flex flex-row gap-4">
         <li className="flex flex-col items-center">
-          <strong>주문완료</strong>
+          <strong>결제완료</strong>
           <span>{data.length}</span>
         </li>
         <li className="flex flex-col items-center">
@@ -68,7 +76,7 @@ export const OrderListTab = () => {
         <ul className="flex flex-col gap-10">
           {data.map((item: any, index: number) => (
             <li className="bg-gray-100 p-5" key={index}>
-              <span className="inline-block w-fit bg-green-300 p-2 text-sm">{item.status === 'pending' && '주문완료'}</span>
+              <span className="inline-block w-fit bg-green-300 p-2 text-sm">{item.status === 'pending' && '결제완료'}</span>
               <span className="inline-block w-fit bg-blue-300 p-2 text-sm">{item.payment === 'CREDIT_CARD' ? '신용카드' : '실시간 계좌이체'}</span>
 
               {/* <span className="inline-block w-fit bg-pink-300 p-2 text-sm">무료배송</span> */}
@@ -95,6 +103,17 @@ export const OrderListTab = () => {
               </ul>
               <div className="mb-2">
                 <strong>배송지</strong>
+                <button
+                  onClick={() => {
+                    setAddressIdx(item.address.idx)
+                    setOrderIdx(item.idx)
+
+                    showModal('changeAddress')
+                  }}
+                  className="rounded-md bg-pink-300 p-2 text-sm"
+                >
+                  배송지변경
+                </button>
                 <p>{`${item.address.recipientName} (${item.address.addressName})`}</p>
                 <p>{item.address.phoneNumber}</p>
                 <p>{`(${item.address.postcode}) ${item.address.addressLine1} ${item.address.addressLine2}`}</p>
@@ -104,16 +123,16 @@ export const OrderListTab = () => {
                 <strong>결제정보</strong>
                 <div>
                   <p>주문금액</p>
-                  <p>{`총 ${item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price, 0) >= 30000 ? item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price, 0) : item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price, 0) + 3000}원`}</p>
+                  <p>{`총 ${item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price * item.quantity, 0) >= 30000 ? item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price * item.quantity, 0) : item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price * item.quantity, 0) + 3000}원`}</p>
                 </div>
                 <div>
                   <div>
                     <p>상품금액</p>
-                    <p>{item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price, 0)}원</p>
+                    <p>{item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price * item.quantity, 0)}원</p>
                   </div>
                   <div>
                     <p>배송비</p>
-                    <p>{item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price, 0) >= 30000 ? 0 : 3000}원</p>
+                    <p>{item.orderItems.reduce((sum: any, item: any) => sum + item.unit_price * item.quantity, 0) >= 30000 ? 0 : 3000}원</p>
                   </div>
                 </div>
               </div>

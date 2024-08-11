@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-const postcodeRegex = /^[0-9]{5}$/
-
+//배송지 주소 관련
 export const AddressFormSchema = z.object({
   idx: z.string().optional(),
   addressName: z.string().min(1, 'address_name 필요'),
@@ -9,7 +8,7 @@ export const AddressFormSchema = z.object({
   phoneNumber: z.string().regex(/^010\d{8}$/, {
     message: 'Invalid phone number format',
   }),
-  postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
+  postcode: z.string().regex(/^[0-9]{5}$/, 'Invalid postcode'),
   addressLine1: z.string().min(1, 'addressLine1 필요'),
   addressLine2: z.string().min(1, 'addressLine2 필요'),
   deliveryNote: z.string().min(1, 'delivery_note 필요'),
@@ -17,46 +16,20 @@ export const AddressFormSchema = z.object({
 
 export type AddressFormSchemaType = z.infer<typeof AddressFormSchema>
 
-export const ETCAddressSchema = z.object({
-  etc1_address_name: z.string().min(1, 'address_name 필요'),
-  etc1_recipient_name: z.string().min(1, 'recipient_name 필요'),
-  etc1_phone_number: z.string().regex(/^010\d{8}$/, {
-    message: 'Invalid phone number format',
-  }),
-  etc1_postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
-  etc1_addressLine1: z.string().min(1, 'addressLine1 필요'),
-  etc1_addressLine2: z.string().min(1, 'addressLine2 필요'),
-  etc1_delivery_note: z.string().min(1, 'delivery_note 필요'),
-})
-
-export type ETCAddressSchemaType = z.infer<typeof ETCAddressSchema>
-
-export const AddressSchema = z.object({
-  address_name: z.string().min(1, 'address_name 필요'),
-  recipient_name: z.string().min(1, 'recipient_name 필요'),
-  phone_number: z.string().regex(/^010\d{8}$/, {
-    message: 'Invalid phone number format',
-  }),
-  postcode: z.string().regex(postcodeRegex, 'Invalid postcode'),
-  addressLine1: z.string().min(1, 'addressLine1 필요'),
-  addressLine2: z.string().min(1, 'addressLine2 필요'),
-  delivery_note: z.string().min(1, 'delivery_note 필요'),
-})
-
-export type AddressSchemaType = z.infer<typeof AddressSchema>
-
-export const OrderSchema = z.object({
+export const AddNewAddressFormSchema = z.object({
+  idx: z.string().optional(),
+  addressName: z.string().min(1, 'address_name 필요'),
+  recipientName: z.string().min(1, 'recipient_name 필요'),
   phoneNumber: z.string().regex(/^010\d{8}$/, {
     message: 'Invalid phone number format',
   }),
-  payment: z.enum(['CREDIT_CARD', 'BANK_TRANSFER']),
-  addressIdx: z.string(),
+  new_postcode: z.string().regex(/^[0-9]{5}$/, 'Invalid postcode'),
+  new_addressLine1: z.string().min(1, 'addressLine1 필요'),
+  addressLine2: z.string().min(1, 'addressLine2 필요'),
+  deliveryNote: z.string().min(1, 'delivery_note 필요'),
 })
 
-// 스키마 결합
-export const CombinedSchema = z.union([AddressSchema, ETCAddressSchema])
-
-export type OrderSchemaType = z.infer<typeof OrderSchema>
+export type AddNewAddressFormSchemaType = z.infer<typeof AddNewAddressFormSchema>
 
 export const UserNameSchema = () => {
   return z.string().regex(/^[ㄱ-ㅎ가-힣]{2,8}$/g, '2자-8자 사이의 한글로 작성하세요 (공백, 특수문자 X)')
@@ -70,6 +43,16 @@ export const PasswordSchema = () => {
       '8자-15자, 영문자 & 숫자 & 특수문자의 조합으로 작성해주세요. (공백 제외)',
     )
 }
+
+export const OrderSchema = z.object({
+  phoneNumber: z.string().regex(/^010\d{8}$/, {
+    message: 'Invalid phone number format',
+  }),
+  payment: z.enum(['CREDIT_CARD', 'BANK_TRANSFER']),
+  addressIdx: z.string(),
+})
+
+export type OrderSchemaType = z.infer<typeof OrderSchema>
 
 export const ResetPwSchema = z
   .object({
