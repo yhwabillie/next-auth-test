@@ -4,10 +4,10 @@ import { useEffect } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 import { useAddressDataStore } from '@/lib/zustandStore'
 import { TabContentSkeleton } from './TabContentSkeleton'
-import { EmptyAddress } from './EmptyAddress'
 import { FaPlus } from 'react-icons/fa'
 import { setDefaultAddress } from '@/app/actions/address/actions'
 import { toast } from 'sonner'
+import { EmptyTab } from './EmptyTab'
 
 export const AddressInfoTab = () => {
   const { data: session } = useSession()
@@ -67,7 +67,13 @@ export const AddressInfoTab = () => {
   return (
     <>
       {isEmpty ? (
-        <EmptyAddress />
+        <EmptyTab
+          sub_title="입력된 배송정보가 없습니다"
+          title="🚚 배송지를 추가해주세요."
+          type="btn"
+          label="배송지 추가하기"
+          clickEvent={() => showModal('addNewAddress')}
+        />
       ) : (
         <>
           <button

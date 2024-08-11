@@ -1,5 +1,4 @@
 'use client'
-
 import { addToCartlist, fetchCartList, removeFromCartlist } from '@/app/actions/cartlist/actions'
 import { fetchWishlist, removeFromWishlist, addToWishlist } from '@/app/actions/wishlist/actions'
 import clsx from 'clsx'
@@ -7,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { EmptyTab } from './EmptyTab'
 
 export const WishListTab = () => {
   const { data: session, update } = useSession()
@@ -84,32 +84,38 @@ export const WishListTab = () => {
     fetchCartData()
   }, [userIdx])
 
+  const isEmpty = data.length === 0
+
   return (
-    <div>
-      <div>
-        <h5>위시리스트 내역</h5>
-        {loading && <div>Loading...</div>}
-        {data.map(({ product }: any, index: number) => (
-          <div key={index}>
-            <strong>{product.name}</strong>
-            <img src={product.imageUrl} alt={product.name} />
-            <div>
-              <button onClick={() => deleteFromWishList(product.idx)} className="bg-blue-600/50 p-3">
-                위시 해제
-              </button>
-              <button
-                onClick={() => toggleCartlist(product.idx)}
-                className={clsx('wishlist-button  p-5', {
-                  'bg-pink-600': isProductInCartlist(product.idx),
-                  'bg-pink-600/50': !isProductInCartlist(product.idx),
-                })}
-              >
-                장바구니
-              </button>
+    <>
+      {isEmpty ? (
+        <EmptyTab sub_title="위시리스트가 비었습니다" title="🤩 사고싶은 제품을 추가해주세요." type="link" label="위시리스트 채우러가기" />
+      ) : (
+        <div>
+          <h5>위시리스트 내역</h5>
+          {loading && <div>Loading...</div>}
+          {data.map(({ product }: any, index: number) => (
+            <div key={index}>
+              <strong>{product.name}</strong>
+              <img src={product.imageUrl} alt={product.name} />
+              <div>
+                <button onClick={() => deleteFromWishList(product.idx)} className="bg-blue-600/50 p-3">
+                  위시 해제
+                </button>
+                <button
+                  onClick={() => toggleCartlist(product.idx)}
+                  className={clsx('wishlist-button  p-5', {
+                    'bg-pink-600': isProductInCartlist(product.idx),
+                    'bg-pink-600/50': !isProductInCartlist(product.idx),
+                  })}
+                >
+                  장바구니
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
