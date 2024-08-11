@@ -4,8 +4,8 @@ import Link from 'next/link'
 interface EmptyTabProps {
   sub_title: string
   title: string
-  label: string
-  type: 'btn' | 'link'
+  label?: string
+  type?: 'btn' | 'link'
   clickEvent?: () => void
 }
 

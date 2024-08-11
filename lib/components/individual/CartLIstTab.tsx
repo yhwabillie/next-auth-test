@@ -11,6 +11,7 @@ import { fetchAddressList } from '@/app/actions/address/actions'
 import { addNewOrder } from '@/app/actions/order/actions'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
+import { tabMenuActiveStore, useAddressDataStore } from '@/lib/zustandStore'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -24,6 +25,8 @@ export const CartListTab = () => {
   const [loading, setLoading] = useState(true)
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [selectedTab, setSelectedTab] = useState<any>()
+  const { showModal } = useAddressDataStore()
+  const { setActiveTab } = tabMenuActiveStore()
 
   const {
     register,
@@ -178,6 +181,8 @@ export const CartListTab = () => {
 
   if (loading) return <TabContentSkeleton />
 
+  const isEmptyAddress = address.length === 0
+
   return (
     <>
       {isEmpty ? (
@@ -250,45 +255,58 @@ export const CartListTab = () => {
 
             <fieldset className="mb-10 border-b border-gray-300">
               <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">배송지 정보</h5>
-              <ul className="flex flex-col gap-2 pb-2">
-                <li className="flex flex-row gap-4">
-                  <span>배송지 선택</span>
 
-                  {address.map((item, index) => (
-                    <input
-                      key={index}
-                      {...register('addressIdx')}
-                      value={item.idx}
-                      type="radio"
-                      onChange={handleTabChange}
-                      defaultChecked={index === 0}
-                    />
-                  ))}
-                </li>
-              </ul>
+              {isEmptyAddress ? (
+                <EmptyTab
+                  sub_title="입력된 배송정보가 없습니다"
+                  title="🚚 배송지를 추가해주세요."
+                  type="btn"
+                  label="배송정보 입력하러 가기"
+                  clickEvent={() => setActiveTab(1)}
+                />
+              ) : (
+                <>
+                  <ul className="flex flex-col gap-2 pb-2">
+                    <li className="flex flex-row gap-4">
+                      <span>배송지 선택</span>
 
-              {address.map(
-                (item, index) =>
-                  selectedTab === item.idx && (
-                    <ul key={index}>
-                      <li>
-                        <span>받는이</span>
-                        <span>{item.recipientName}</span>
-                      </li>
-                      <li>
-                        <span>연락처</span>
-                        <input {...register('phoneNumber')} type="text" value={item.phoneNumber} />
-                      </li>
-                      <li>
-                        <span>배송지</span>
-                        <span>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</span>
-                      </li>
-                      <li>
-                        <span>배송 요청사항</span>
-                        <span>{item.deliveryNote}</span>
-                      </li>
-                    </ul>
-                  ),
+                      {address.map((item, index) => (
+                        <input
+                          key={index}
+                          {...register('addressIdx')}
+                          value={item.idx}
+                          type="radio"
+                          onChange={handleTabChange}
+                          defaultChecked={index === 0}
+                        />
+                      ))}
+                    </li>
+                  </ul>
+
+                  {address.map(
+                    (item, index) =>
+                      selectedTab === item.idx && (
+                        <ul key={index}>
+                          <li>
+                            <span>받는이</span>
+                            <span>{item.recipientName}</span>
+                          </li>
+                          <li>
+                            <span>연락처</span>
+                            <input {...register('phoneNumber')} type="text" value={item.phoneNumber} />
+                          </li>
+                          <li>
+                            <span>배송지</span>
+                            <span>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</span>
+                          </li>
+                          <li>
+                            <span>배송 요청사항</span>
+                            <span>{item.deliveryNote}</span>
+                          </li>
+                        </ul>
+                      ),
+                  )}
+                </>
               )}
             </fieldset>
 

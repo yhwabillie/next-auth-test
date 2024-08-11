@@ -7,14 +7,14 @@ import { FaShoppingCart } from 'react-icons/fa'
 import { FaStar } from 'react-icons/fa'
 import { MdLocalShipping } from 'react-icons/md'
 import { TbShoppingBagCheck } from 'react-icons/tb'
+import { tabMenuActiveStore } from '@/lib/zustandStore'
 
 interface TabMenuProps {
   tabArr: TabItemType[]
 }
 
 export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
-  const [activeTab, setActiveTab] = useState<number>(tabArr[2].id)
-  const handleTabClick = (id: number) => setActiveTab(id)
+  const { activeTabId, setActiveTab } = tabMenuActiveStore()
 
   return (
     <>
@@ -22,10 +22,10 @@ export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
         {tabArr.map((item, index) => (
           <li
             key={index}
-            onClick={() => handleTabClick(item.id)}
+            onClick={() => setActiveTab(item.id)}
             className={clsx('flex w-[25%] cursor-pointer justify-center rounded-md px-5 py-3 text-center transition-all duration-300 last:mr-0', {
-              'bg-white font-bold text-gray-700': activeTab === item.id,
-              'border-transparent text-gray-500': activeTab !== item.id,
+              'bg-white font-bold text-gray-700': item.id === activeTabId,
+              'border-transparent text-gray-500': item.id !== activeTabId,
             })}
           >
             <button className="flex flex-row items-center justify-center gap-2">
@@ -41,7 +41,7 @@ export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
       <AnimatePresence mode="wait">
         {tabArr.map(
           (tab) =>
-            activeTab === tab.id && (
+            activeTabId === tab.id && (
               <motion.div
                 key={tab.id}
                 initial={{ opacity: 0, x: -80 }}

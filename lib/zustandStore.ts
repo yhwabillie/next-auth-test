@@ -4,6 +4,17 @@ import { createNewAddress, fetchAddressList, removeAddress, updateAddress } from
 import { toast } from 'sonner'
 import { fetchOrderlist, updateOrderAddress } from '@/app/actions/order/actions'
 
+//탭메뉴 컨트롤
+interface tabMenuActiveStore {
+  activeTabId: number
+  setActiveTab: (id: number) => void
+}
+
+export const tabMenuActiveStore = create<tabMenuActiveStore>((set) => ({
+  activeTabId: 3, // 초기 활성화된 탭 ID (예: 배송정보)
+  setActiveTab: (id) => set({ activeTabId: id }),
+}))
+
 //상태 모달 컨트롤
 interface alertModalStore {
   modals: {
