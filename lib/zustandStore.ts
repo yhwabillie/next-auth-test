@@ -4,6 +4,37 @@ import { createNewAddress, fetchAddressList, removeAddress, updateAddress } from
 import { toast } from 'sonner'
 import { fetchOrderlist, updateOrderAddress } from '@/app/actions/order/actions'
 
+//상태 모달 컨트롤
+interface alertModalStore {
+  modals: {
+    error: boolean
+    info: boolean
+  }
+  showModal: (modalName: keyof AddressDataStore['modals']) => void
+  hideModal: (modalName: keyof AddressDataStore['modals']) => void
+}
+
+export const useAlertModalStore = create<alertModalStore>((set) => ({
+  modals: {
+    error: false,
+    info: false,
+  },
+  showModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: true,
+      },
+    })),
+  hideModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: true,
+      },
+    })),
+}))
+
 //결제완료 주문 리스트 컨트롤
 interface OrderDataStore {
   modals: {
@@ -62,8 +93,7 @@ export const useOrderDataStore = create<OrderDataStore>((set, get) => ({
     }
   },
   updateData: async () => {
-    const { orderIdx, newAddressIdx, fetchData, hideModal } = get()
-    const userIdx = get().userIdx
+    const { userIdx, orderIdx, newAddressIdx, fetchData, hideModal } = get()
 
     if (userIdx) {
       set({ loading: true }) // 로딩 시작
@@ -71,11 +101,13 @@ export const useOrderDataStore = create<OrderDataStore>((set, get) => ({
       try {
         const response = await updateOrderAddress(orderIdx, newAddressIdx)
 
-        console.log('client===>', response)
-
-        await fetchData()
+        if (!response) {
+          console.log('updated error')
+        }
 
         hideModal('changeAddress')
+
+        await fetchData()
       } catch (error) {
       } finally {
         set({ loading: false })
@@ -105,6 +137,7 @@ interface AddressDataStore {
     editAddress: boolean
     postcode: boolean
     changeAddress: boolean
+    alert: boolean
   }
   addressIdx: string
   new_address: AddNewAddressFormSchemaType
@@ -134,6 +167,7 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
     editAddress: false,
     postcode: false,
     changeAddress: false,
+    alert: false,
   },
   addressIdx: '',
   new_address: {
@@ -230,7 +264,8 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
     }))
   },
   handleRemoveAddress: async (addressIdx: string) => {
-    const userIdx = get().userIdx
+    const { userIdx, showModal } = get()
+
     try {
       const response = await removeAddress(addressIdx, userIdx)
 
@@ -242,8 +277,7 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
       await get().fetchData() // 데이터를 다시 가져오기
       toast.success('주소를 삭제했습니다.')
     } catch (error) {
-      console.error('Error removing address:', error)
-      toast.error('주소 삭제 중 오류가 발생했습니다.')
+      showModal('alert')
     }
   },
   onSubmitNewAddress: async (data: AddNewAddressFormSchemaType) => {
