@@ -23,6 +23,11 @@ select {
   appearance: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 .scroll-area::-webkit-scrollbar {
   width: 15px;
 }

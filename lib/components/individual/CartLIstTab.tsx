@@ -2,7 +2,7 @@
 import { fetchCartList, removeFromCartlist } from '@/app/actions/cartlist/actions'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { FaCheck } from 'react-icons/fa'
+import { FaCheck, FaMinus, FaPlus, FaRegMinusSquare, FaRegPlusSquare } from 'react-icons/fa'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { OrderSchema, OrderSchemaType } from '@/lib/zodSchema'
@@ -12,6 +12,9 @@ import { addNewOrder } from '@/app/actions/order/actions'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
 import { tabMenuActiveStore, useAddressDataStore } from '@/lib/zustandStore'
+import { FaTrashCan } from 'react-icons/fa6'
+import { IoMdClose } from 'react-icons/io'
+import clsx from 'clsx'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -189,182 +192,252 @@ export const CartListTab = () => {
         <EmptyTab sub_title="장바구니가 비었습니다" title="🛒 제품을 추가해주세요." type="link" label="장바구니 채우러가기" />
       ) : (
         <>
-          <h4 className="mb-10 text-2xl font-bold">상품 결제하기</h4>
-          <form onSubmit={handleSubmit(handleSubmitOrder)}>
-            <fieldset className="mb-10 border-b border-gray-300">
-              <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">장바구니</h5>
-              <ul className="flex flex-col gap-5 px-2 py-4">
-                {data.map((item, index) => (
-                  <li key={index} className="flex flex-row items-center gap-3">
-                    <label htmlFor={item.idx} className="flex h-5 w-5 items-center justify-center bg-gray-400/30">
-                      <input
-                        id={item.idx}
-                        type="checkbox"
-                        checked={checkedItems[item.idx] || false}
-                        onChange={() => handleCheckboxChange(item.idx)}
-                      />
-                      {checkedItems[item.idx] && <FaCheck className="cursor-pointer text-blue-600" />}
-                    </label>
-                    <img className="h-10 w-10" src={item.imageUrl} alt={item.name} />
-                    <strong>{item.name}</strong>
-                    <div>
-                      <p className="text-sm font-semibold text-red-500">{transferToPercent(item.discount_rate)}</p>
-                      {item.discount_rate !== 0 && <p className="text-xs line-through">{`${item.original_price.toLocaleString('KR')}원`}</p>}
-                      <strong className="text-lg">{calculatePrice(item.original_price, item.discount_rate)}</strong>
-                    </div>
-
-                    <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={item.quantity}
-                      onChange={(e) => {
-                        setData((prevItems) =>
-                          prevItems.map((cartItem) =>
-                            cartItem.idx === item.idx ? { ...cartItem, quantity: parseInt(e.target.value, 10) } : cartItem,
-                          ),
-                        )
-                      }}
-                    />
-
-                    <button type="button" onClick={() => removeCartItem(item.idx)} className="bg-gray-300 p-2">
-                      삭제
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </fieldset>
-
-            <fieldset className="mb-10 border-b border-gray-300">
-              <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">주문자 정보</h5>
-              <ul className="flex flex-col gap-2 pb-2">
-                <li>
-                  <span className="inline-block w-[200px]">회원구분</span>
-                  <span>{session?.user?.user_type === 'indivisual' ? '일반회원' : '어드민'}</span>
-                </li>
-                <li>
-                  <span className="inline-block w-[200px]">이름</span>
-                  <span>{session?.user?.name}</span>
-                </li>
-                <li>
-                  <span className="inline-block w-[200px]">이메일</span>
-                  <span>{session?.user?.email}</span>
-                </li>
-              </ul>
-            </fieldset>
-
-            <fieldset className="mb-10 border-b border-gray-300">
-              <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">배송지 정보</h5>
-
-              {isEmptyAddress ? (
-                <EmptyTab
-                  sub_title="입력된 배송정보가 없습니다"
-                  title="🚚 배송지를 추가해주세요."
-                  type="btn"
-                  label="배송정보 입력하러 가기"
-                  clickEvent={() => setActiveTab(1)}
-                />
-              ) : (
-                <>
-                  <ul className="flex flex-col gap-2 pb-2">
-                    <li className="flex flex-row gap-4">
-                      <span>배송지 선택</span>
-
-                      {address.map((item, index) => (
-                        <input
-                          key={index}
-                          {...register('addressIdx')}
-                          value={item.idx}
-                          type="radio"
-                          onChange={handleTabChange}
-                          defaultChecked={index === 0}
+          <h5 className="mb-5 block rounded-lg bg-blue-50 px-4 py-3 text-xl font-semibold text-black">💸 상품 결제하기</h5>
+          <ul className="px-2">
+            <form onSubmit={handleSubmit(handleSubmitOrder)}>
+              <fieldset>
+                <h5 className="mb-2 block text-lg font-semibold">장바구니</h5>
+                <ul className="mb-10 flex flex-col gap-5">
+                  {data.map((item, index) => (
+                    <li
+                      key={index}
+                      className={clsx('flex flex-row justify-between rounded-lg border p-3 last:mb-0', {
+                        'border-blue-300 bg-blue-100': checkedItems[item.idx],
+                        'border-gray-300 bg-gray-100': !checkedItems[item.idx],
+                      })}
+                    >
+                      <div className="flex flex-row">
+                        <label htmlFor={item.idx} className="mr-3 flex h-8 w-8 items-center justify-center rounded-md bg-gray-400/20 drop-shadow-md">
+                          <input
+                            id={item.idx}
+                            type="checkbox"
+                            checked={checkedItems[item.idx] || false}
+                            onChange={() => handleCheckboxChange(item.idx)}
+                          />
+                          {checkedItems[item.idx] && <FaCheck className="cursor-pointer text-lg text-blue-600" />}
+                        </label>
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="mr-5 block h-28 w-28 rounded-lg border border-gray-400/30 drop-shadow-lg"
                         />
-                      ))}
-                    </li>
-                  </ul>
+                        <div className="flex flex-col justify-center">
+                          <p className="mb-1 block w-fit rounded-md bg-blue-600 px-2 py-1 text-sm text-white drop-shadow-md">{item.category}</p>
+                          <strong className="text-md block font-medium text-gray-600">{item.name}</strong>
 
-                  {address.map(
-                    (item, index) =>
-                      selectedTab === item.idx && (
-                        <ul key={index}>
-                          <li>
-                            <span>받는이</span>
-                            <span>{item.recipientName}</span>
-                          </li>
-                          <li>
-                            <span>연락처</span>
-                            <input {...register('phoneNumber')} type="text" value={item.phoneNumber} />
-                          </li>
-                          <li>
-                            <span>배송지</span>
-                            <span>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</span>
-                          </li>
-                          <li>
-                            <span>배송 요청사항</span>
-                            <span>{item.deliveryNote}</span>
-                          </li>
-                        </ul>
-                      ),
-                  )}
-                </>
-              )}
-            </fieldset>
+                          {item.discount_rate === 0 ? (
+                            <p className="text-lg font-bold text-gray-800">{item.original_price.toLocaleString('ko-KR')}원</p>
+                          ) : (
+                            <div className="justify-content flex flex-row items-center gap-2">
+                              <p className="text-lg font-bold text-red-600">{item.discount_rate * 100}%</p>
+                              <p className="text-md text-gray-400 line-through">{item.original_price.toLocaleString('ko-KR')}원</p>
+                              <p className="text-lg font-bold text-gray-800">
+                                {(item.original_price - item.original_price * item.discount_rate).toLocaleString('ko-KR')}원
+                              </p>
+                            </div>
+                          )}
 
-            <fieldset className="mb-5 border-b border-gray-300">
-              <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">결제 정보</h5>
-              <ul className="flex flex-col gap-5">
-                <li className="flex flex-row items-center gap-10 bg-gray-200">
-                  <span>결제수단</span>
-                  <ul className="flex flex-row items-center gap-5">
-                    <li>
-                      <label>
-                        <input {...register('payment')} type="radio" value="CREDIT_CARD" name="payment" defaultChecked />
-                        <span>신용카드</span>
-                      </label>
+                          <div className="mt-2 flex w-fit flex-row items-center border border-gray-400/50">
+                            <div
+                              onClick={() => {
+                                setData((prevItems) =>
+                                  prevItems.map((cartItem) =>
+                                    cartItem.idx === item.idx && item.quantity > 1 ? { ...cartItem, quantity: item.quantity - 1 } : cartItem,
+                                  ),
+                                )
+                              }}
+                              className="flex h-8 w-8 cursor-pointer items-center justify-center bg-gray-200"
+                            >
+                              <FaMinus className="text-xs" />
+                            </div>
+                            <input
+                              type="number"
+                              min={1}
+                              max={10}
+                              value={item.quantity}
+                              onChange={(e) => {
+                                setData((prevItems) =>
+                                  prevItems.map((cartItem) =>
+                                    cartItem.idx === item.idx ? { ...cartItem, quantity: parseInt(e.target.value, 10) } : cartItem,
+                                  ),
+                                )
+                              }}
+                              className="h-8 w-8 text-center text-xs font-semibold"
+                            />
+                            <div
+                              onClick={() => {
+                                setData((prevItems) =>
+                                  prevItems.map((cartItem) =>
+                                    cartItem.idx === item.idx && item.quantity < 10 ? { ...cartItem, quantity: item.quantity + 1 } : cartItem,
+                                  ),
+                                )
+                              }}
+                              className="flex h-8 w-8 cursor-pointer items-center justify-center bg-gray-200"
+                            >
+                              <FaPlus className="text-xs" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="justify-top flex flex-col gap-2">
+                        <button
+                          onClick={() => removeCartItem(item.idx)}
+                          className="flex items-center gap-2 rounded-md bg-gray-500 p-1 text-sm font-semibold text-white drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-600"
+                        >
+                          <IoMdClose className="text-xl" />
+                        </button>
+                      </div>
                     </li>
-                    <li>
-                      <label>
-                        <input {...register('payment')} type="radio" value="BANK_TRANSFER" name="payment" />
-                        <span>실시간 계좌이체</span>
-                      </label>
-                    </li>
-                  </ul>
-                </li>
-                <li className="flex flex-row items-center gap-10">
-                  <span>구매금액</span>
-                  <ul>
-                    <li className="mb-2">
-                      <span>주문상품 : </span>
-                      <span>{`${totalQuantity}개`}</span>
-                    </li>
-                    {checkedItemDetails.map((item) => (
-                      <li key={item.idx} className="mb-2 flex items-center justify-between gap-x-5 text-gray-600/50">
-                        <p className="flex gap-4">
-                          <strong>{item.name}</strong>
-                          <span>{item.quantity}개</span>
-                        </p>
-                        <span>{`${((item.original_price - item.original_price * item.discount_rate) * item.quantity).toLocaleString('ko-KR')}원`}</span>
+
+                    // <li key={index} className="flex flex-row items-center gap-3  bg-blue-100">
+
+                    //   <img className="h-10 w-10" src={item.imageUrl} alt={item.name} />
+                    //   <strong>{item.name}</strong>
+                    //   <div>
+                    //     <p className="text-sm font-semibold text-red-500">{transferToPercent(item.discount_rate)}</p>
+                    //     {item.discount_rate !== 0 && <p className="text-xs line-through">{`${item.original_price.toLocaleString('KR')}원`}</p>}
+                    //     <strong className="text-lg">{calculatePrice(item.original_price, item.discount_rate)}</strong>
+                    //   </div>
+
+                    //   <button type="button" onClick={() => removeCartItem(item.idx)} className="bg-gray-300 p-2">
+                    //     삭제
+                    //   </button>
+                    // </li>
+                  ))}
+                </ul>
+              </fieldset>
+
+              <fieldset className="mb-10 border-b border-gray-300">
+                <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">주문자 정보</h5>
+                <ul className="flex flex-col gap-2 pb-2">
+                  <li>
+                    <span className="inline-block w-[200px]">회원구분</span>
+                    <span>{session?.user?.user_type === 'indivisual' ? '일반회원' : '어드민'}</span>
+                  </li>
+                  <li>
+                    <span className="inline-block w-[200px]">이름</span>
+                    <span>{session?.user?.name}</span>
+                  </li>
+                  <li>
+                    <span className="inline-block w-[200px]">이메일</span>
+                    <span>{session?.user?.email}</span>
+                  </li>
+                </ul>
+              </fieldset>
+
+              <fieldset className="mb-10 border-b border-gray-300">
+                <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">배송지 정보</h5>
+
+                {isEmptyAddress ? (
+                  <EmptyTab
+                    sub_title="입력된 배송정보가 없습니다"
+                    title="🚚 배송지를 추가해주세요."
+                    type="btn"
+                    label="배송정보 입력하러 가기"
+                    clickEvent={() => setActiveTab(1)}
+                  />
+                ) : (
+                  <>
+                    <ul className="flex flex-col gap-2 pb-2">
+                      <li className="flex flex-row gap-4">
+                        <span>배송지 선택</span>
+
+                        {address.map((item, index) => (
+                          <input
+                            key={index}
+                            {...register('addressIdx')}
+                            value={item.idx}
+                            type="radio"
+                            onChange={handleTabChange}
+                            defaultChecked={index === 0}
+                          />
+                        ))}
                       </li>
-                    ))}
+                    </ul>
 
-                    <li className="mt-4 text-sm">{isShippingCost}</li>
+                    {address.map(
+                      (item, index) =>
+                        selectedTab === item.idx && (
+                          <ul key={index}>
+                            <li>
+                              <span>받는이</span>
+                              <span>{item.recipientName}</span>
+                            </li>
+                            <li>
+                              <span>연락처</span>
+                              <input {...register('phoneNumber')} type="text" value={item.phoneNumber} />
+                            </li>
+                            <li>
+                              <span>배송지</span>
+                              <span>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</span>
+                            </li>
+                            <li>
+                              <span>배송 요청사항</span>
+                              <span>{item.deliveryNote}</span>
+                            </li>
+                          </ul>
+                        ),
+                    )}
+                  </>
+                )}
+              </fieldset>
 
-                    <li className="mt-4 flex flex-row items-center justify-between border-t border-blue-600 py-4">
-                      <span className="text-md text-red-600">최종 결제금액</span>
+              <fieldset className="mb-5 border-b border-gray-300">
+                <h5 className="mb-2 border-b-2 border-blue-500 pb-2 text-lg font-semibold">결제 정보</h5>
+                <ul className="flex flex-col gap-5">
+                  <li className="flex flex-row items-center gap-10 bg-gray-200">
+                    <span>결제수단</span>
+                    <ul className="flex flex-row items-center gap-5">
+                      <li>
+                        <label>
+                          <input {...register('payment')} type="radio" value="CREDIT_CARD" name="payment" defaultChecked />
+                          <span>신용카드</span>
+                        </label>
+                      </li>
+                      <li>
+                        <label>
+                          <input {...register('payment')} type="radio" value="BANK_TRANSFER" name="payment" />
+                          <span>실시간 계좌이체</span>
+                        </label>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className="flex flex-row items-center gap-10">
+                    <span>구매금액</span>
+                    <ul>
+                      <li className="mb-2">
+                        <span>주문상품 : </span>
+                        <span>{`${totalQuantity}개`}</span>
+                      </li>
+                      {checkedItemDetails.map((item) => (
+                        <li key={item.idx} className="mb-2 flex items-center justify-between gap-x-5 text-gray-600/50">
+                          <p className="flex gap-4">
+                            <strong>{item.name}</strong>
+                            <span>{item.quantity}개</span>
+                          </p>
+                          <span>{`${((item.original_price - item.original_price * item.discount_rate) * item.quantity).toLocaleString('ko-KR')}원`}</span>
+                        </li>
+                      ))}
 
-                      <input id="total_amount" type="number" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} readOnly />
+                      <li className="mt-4 text-sm">{isShippingCost}</li>
 
-                      <span className="text-2xl font-bold text-red-600">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원`}</span>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </fieldset>
+                      <li className="mt-4 flex flex-row items-center justify-between border-t border-blue-600 py-4">
+                        <span className="text-md text-red-600">최종 결제금액</span>
 
-            <div className="text-md mb-4 bg-gray-200 py-5 text-center">주문 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
+                        <input id="total_amount" type="number" value={totalPrice >= 30000 ? totalPrice : totalPrice + 3000} readOnly />
 
-            <button className="w-full bg-red-500 py-5 text-center text-lg font-bold text-white hover:bg-red-500/50">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원 결제하기`}</button>
-          </form>
+                        <span className="text-2xl font-bold text-red-600">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원`}</span>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </fieldset>
+
+              <div className="text-md mb-4 bg-gray-200 py-5 text-center">주문 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
+
+              <button className="w-full bg-red-500 py-5 text-center text-lg font-bold text-white hover:bg-red-500/50">{`${(totalPrice >= 30000 ? totalPrice : totalPrice + 3000).toLocaleString('ko-KR')}원 결제하기`}</button>
+            </form>
+          </ul>
         </>
       )}
     </>

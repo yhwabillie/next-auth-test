@@ -94,16 +94,14 @@ export const WishListTab = () => {
 
   if (loading) return <TabContentSkeleton />
 
-  console.log(data)
-
   return (
     <>
       {isEmpty ? (
         <EmptyTab sub_title="위시리스트가 비었습니다" title="🤩 사고싶은 제품을 추가해주세요." type="link" label="위시리스트 채우러가기" />
       ) : (
         <>
-          <h5 className="mb-2 block text-xl font-semibold text-black">위시리스트 상품</h5>
-          <ul>
+          <h5 className="mb-2 block px-2 text-xl font-semibold text-black">위시리스트 상품</h5>
+          <ul className="px-2">
             {data.map(({ product }: any, index: number) => (
               <li key={index} className="mb-5 flex flex-row justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0">
                 <div className="flex flex-row">
@@ -119,8 +117,9 @@ export const WishListTab = () => {
                     {product.discount_rate === 0 ? (
                       <p className="text-lg font-bold text-gray-800">{product.original_price.toLocaleString('ko-KR')}원</p>
                     ) : (
-                      <div className="justify-content flex flex-col">
-                        <p className="text-xs text-gray-500 line-through">{product.original_price.toLocaleString('ko-KR')}원</p>
+                      <div className="justify-content flex flex-row items-center gap-2">
+                        <p className="text-lg font-bold text-red-600">{product.discount_rate * 100}%</p>
+                        <p className="text-md text-gray-400 line-through">{product.original_price.toLocaleString('ko-KR')}원</p>
                         <p className="text-lg font-bold text-gray-800">
                           {(product.original_price - product.original_price * product.discount_rate).toLocaleString('ko-KR')}원
                         </p>
@@ -131,7 +130,7 @@ export const WishListTab = () => {
                 <div className="flex flex-col justify-center gap-2">
                   <button
                     onClick={() => deleteFromWishList(product.idx)}
-                    className="flex items-center gap-2 rounded-lg bg-gray-400/50 px-10 py-3 text-sm font-semibold drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-400 hover:text-white"
+                    className="flex items-center gap-2 rounded-lg bg-gray-500 px-10 py-3 text-sm font-semibold text-white drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-600"
                   >
                     <FaTrashCan />
                     <span>위시 삭제</span>
@@ -142,24 +141,14 @@ export const WishListTab = () => {
                     className={clsx(
                       'flex items-center gap-2 rounded-lg px-10 py-3 text-sm font-semibold drop-shadow-lg transition-all duration-150 ease-in-out ',
                       {
-                        'bg-gray-400/50 hover:bg-gray-400 hover:text-white': !isProductInCartlist(product.idx),
-                        'bg-pink-400 hover:bg-pink-500 hover:text-white': isProductInCartlist(product.idx),
+                        'bg-gray-400/50 hover:bg-gray-400 hover:text-white': isProductInCartlist(product.idx),
+                        'bg-red-500 text-white hover:bg-red-600': !isProductInCartlist(product.idx),
                       },
                     )}
                   >
-                    {isProductInCartlist(product.idx) ? <TbShoppingBagPlus className="text-xl" /> : <TbShoppingBagMinus className="text-xl" />}
+                    {isProductInCartlist(product.idx) ? <TbShoppingBagMinus className="text-xl" /> : <TbShoppingBagPlus className="text-xl" />}
                     <span>장바구니</span>
                   </button>
-
-                  {/* <button
-                    onClick={() => toggleCartlist(product.idx)}
-                    className={clsx('wishlist-button  p-3', {
-                      'bg-pink-600': isProductInCartlist(product.idx),
-                      'bg-pink-600/50': !isProductInCartlist(product.idx),
-                    })}
-                  >
-                    <span>장바구니</span>
-                  </button> */}
                 </div>
               </li>
             ))}
