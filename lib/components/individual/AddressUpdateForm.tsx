@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { IoIosArrowDown } from 'react-icons/io'
 
 export const AddressUpdateForm = () => {
-  const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress } = useAddressDataStore()
+  const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress, updatePostcode } = useAddressDataStore()
 
   const { register, handleSubmit, setValue } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
@@ -157,7 +157,10 @@ export const AddressUpdateForm = () => {
           <div className="flex w-full flex-row justify-center gap-2 pt-5">
             <button
               type="button"
-              onClick={() => hideModal('editAddress')}
+              onClick={() => {
+                updatePostcode({})
+                hideModal('editAddress')
+              }}
               className="w-[50%] rounded-md bg-gray-200 p-3 font-semibold text-gray-700 drop-shadow-sm hover:bg-gray-300 "
             >
               취소

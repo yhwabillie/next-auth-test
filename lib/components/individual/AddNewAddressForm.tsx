@@ -2,13 +2,12 @@
 import { AddNewAddressFormSchema, AddNewAddressFormSchemaType, AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
 import { useAddressDataStore } from '@/lib/zustandStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { IoIosArrowDown } from 'react-icons/io'
 
 export const AddNewAddressForm = () => {
-  const { showModal, hideModal, new_address, edit_address, onSubmitNewAddress, updatePostcode } = useAddressDataStore()
-
-  //새로한 거
+  const { showModal, hideModal, new_address, handleSubmitNewAddress, updatePostcode } = useAddressDataStore()
   const {
     register,
     handleSubmit,
@@ -19,119 +18,134 @@ export const AddNewAddressForm = () => {
     resolver: zodResolver(AddNewAddressFormSchema),
   })
 
-  const handleSubmitNewAddress = (data: AddNewAddressFormSchemaType) => {
-    onSubmitNewAddress(data)
-    updatePostcode('')
-  }
-
   useEffect(() => {
     setValue('new_postcode', new_address.new_postcode)
     setValue('new_addressLine1', new_address.new_addressLine1)
   }, [new_address])
 
   return (
-    <div className="fixed left-0 top-0 z-20 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/70">
-      <form onSubmit={handleSubmit(handleSubmitNewAddress)}>
-        <section className="box-border flex h-auto w-[600px] flex-col rounded-2xl bg-white p-10 shadow-lg">
-          <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 추가하기</h2>
-          <div className="scroll-area mb-4 min-h-[300px] overflow-auto rounded-xl border border-gray-300 pl-3 drop-shadow-md">
-            <fieldset className="border-b border-gray-300">
-              <div className="mb-2 py-4">
-                <legend>배송지 이름</legend>
-                <input
-                  {...register('addressName')}
-                  id="addressName"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="배송지 이름을 작성해주세요"
-                />
-              </div>
+    <div className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center overflow-y-auto bg-black bg-opacity-50">
+      <div className="mb-auto mt-auto">
+        <form
+          onSubmit={handleSubmit(handleSubmitNewAddress)}
+          className="relative mx-[20px] my-[50px] h-fit w-[600px] rounded-2xl bg-white p-10 shadow-lg"
+        >
+          <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
+          <fieldset className="h-auto min-h-[600px] overflow-y-auto">
+            <label htmlFor="addressName" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">배송지 이름</span>
+              <input
+                {...register('addressName')}
+                id="addressName"
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="배송지 이름을 작성해주세요"
+                autoFocus={true}
+              />
+            </label>
 
-              <div className="mb-2 py-4">
-                <legend>수령인 이름</legend>
-                <input
-                  {...register('recipientName')}
-                  id="recipientName"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="수령인 이름을 작성해주세요"
-                />
-              </div>
+            <label htmlFor="recipientName" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">수령인 이름</span>
+              <input
+                {...register('recipientName')}
+                id="recipientName"
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="수령인 이름을 작성해주세요"
+              />
+            </label>
 
-              <div className="mb-2 py-4">
-                <legend>연락처</legend>
-                <input
-                  {...register('phoneNumber')}
-                  id="phoneNumber"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="연락처를 작성해주세요"
-                />
-              </div>
+            <label htmlFor="phoneNumber" className="relative mb-8 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">연락처</span>
+              <input
+                {...register('phoneNumber')}
+                id="phoneNumber"
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="연락처를 작성해주세요"
+              />
+            </label>
 
-              <div className="mb-2 py-4">
-                <legend>주소</legend>
-                <div className="flex flex-col gap-3">
-                  <div>
-                    <input
-                      {...register('new_postcode')}
-                      id="new_postcode"
-                      type="text"
-                      className="mr-2 w-[100px] border border-black p-2 focus:outline-none"
-                      placeholder="우편번호"
-                      readOnly
-                    />
-                    <input
-                      {...register('new_addressLine1')}
-                      id="new_addressLine1"
-                      type="text"
-                      className="mr-2 w-[400px] border border-black p-2 focus:outline-none"
-                      placeholder="주소"
-                      readOnly
-                    />
-                    <button onClick={() => showModal('postcode')} type="button" className="bg-blue-400 p-2">
-                      주소찾기
-                    </button>
-                  </div>
+            <div className="mb-8">
+              <div className="mb-3 flex flex-row items-center gap-2">
+                <label htmlFor="new_postcode" className="relative block w-[140px] drop-shadow-md">
+                  <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">우편번호</span>
                   <input
-                    {...register('addressLine2')}
-                    id="addressLine2"
+                    {...register('new_postcode')}
+                    id="new_postcode"
                     type="text"
-                    className="w-[400px] border border-black p-2"
-                    placeholder="나머지 주소를 입력해주세요"
+                    className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                    placeholder="우편번호"
+                    readOnly
                   />
-                </div>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => showModal('postcode')}
+                  className="box-border h-[63px] w-[100px] rounded-md bg-blue-400 text-sm font-semibold text-white drop-shadow-md hover:bg-blue-500"
+                >
+                  주소 찾기
+                </button>
               </div>
-              <div className="mb-2 py-4">
-                <legend>배송 요청 사항</legend>
-                <select {...register('deliveryNote')} id="deliveryNote" className="w-[300px] border border-black p-2">
-                  <option value={'문 앞에 부탁드립니다'}>문 앞에 부탁드립니다.</option>
-                  <option value={'부재시 연락 부탁드립니다'}>부재시 연락 부탁드립니다.</option>
-                  <option value={'배송 전 미리 연락해주세요'}>배송 전 미리 연락해주세요.</option>
-                </select>
-              </div>
-            </fieldset>
-          </div>
 
-          <div className="flex flex-row gap-2">
+              <label htmlFor="new_addressLine1" className="relative mb-3 block w-full drop-shadow-md">
+                <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">주소</span>
+                <input
+                  {...register('new_addressLine1')}
+                  id="new_addressLine1"
+                  type="text"
+                  className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                  placeholder="주소"
+                  readOnly
+                />
+              </label>
+
+              <label htmlFor="addressLine2" className="relative block w-full drop-shadow-md">
+                <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">상세주소</span>
+                <input
+                  {...register('addressLine2')}
+                  id="addressLine2"
+                  type="text"
+                  className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                  placeholder="상세주소"
+                />
+              </label>
+            </div>
+
+            <label htmlFor="deliveryNote" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">배송요청사항</span>
+
+              <select
+                {...register('deliveryNote')}
+                id="deliveryNote"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+              >
+                <option value={'문 앞에 부탁드립니다'}>문 앞에 부탁드립니다.</option>
+                <option value={'부재시 연락 부탁드립니다'}>부재시 연락 부탁드립니다.</option>
+                <option value={'배송 전 미리 연락해주세요'}>배송 전 미리 연락해주세요.</option>
+              </select>
+
+              <IoIosArrowDown className="absolute right-[15px] top-[20px] text-2xl text-blue-500" />
+            </label>
+          </fieldset>
+
+          <div className="flex w-full flex-row justify-center gap-2 pt-5">
             <button
               type="button"
               onClick={() => {
+                updatePostcode({})
                 hideModal('addNewAddress')
               }}
-              className="bg-3 text-md w-[50%] rounded-md bg-gray-400 px-3 py-4 font-semibold text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-gray-600"
+              className="w-[50%] rounded-md bg-gray-200 p-3 font-semibold text-gray-700 drop-shadow-sm hover:bg-gray-300 "
             >
               취소
             </button>
-            <button
-              type="submit"
-              className="bg-3 text-md w-[50%] rounded-md bg-blue-400 px-3 py-4 font-semibold text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-600"
-            >
+            <button type="submit" className="w-[50%] rounded-md bg-blue-400 p-3 font-semibold text-white  drop-shadow-sm hover:bg-blue-500">
               저장
             </button>
           </div>
-        </section>
-      </form>
+        </form>
+      </div>
     </div>
   )
 }
