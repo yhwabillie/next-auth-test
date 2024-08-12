@@ -8,6 +8,7 @@ import { FaStar } from 'react-icons/fa'
 import { MdLocalShipping } from 'react-icons/md'
 import { TbShoppingBagCheck } from 'react-icons/tb'
 import { tabMenuActiveStore } from '@/lib/zustandStore'
+import { Session } from 'next-auth'
 
 interface TabMenuProps {
   tabArr: TabItemType[]

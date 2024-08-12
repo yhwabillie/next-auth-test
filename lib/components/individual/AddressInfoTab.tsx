@@ -1,66 +1,28 @@
 'use client'
-import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 import { useAddressDataStore } from '@/lib/zustandStore'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { FaPlus } from 'react-icons/fa'
-import { setDefaultAddress } from '@/app/actions/address/actions'
-import { toast } from 'sonner'
 import { EmptyTab } from './EmptyTab'
+import { formatPhoneNumber } from '@/lib/utils'
+import { Session } from 'next-auth'
 
-export const AddressInfoTab = () => {
-  const { data: session } = useSession()
-  const userIdx = session?.user?.idx
-  const { fetchData, showModal, setEditAddress, handleRemoveAddress, setUserIdx, loading, data, isEmpty } = useAddressDataStore()
+interface AddressInfoTabProps {
+  session: Session
+}
 
-  /**
-   * 클릭한 주소 수정 폼 열기
-   */
-  const handleEditAddressClick = (item: any) => {
-    const target = data.filter((dataItem) => dataItem.idx === item.idx)
-
-    setEditAddress(target[0])
-    showModal('editAddress')
-  }
+export const AddressInfoTab = ({ session }: AddressInfoTabProps) => {
+  const userIdx = session.user?.idx
+  const { data, fetchData, handleOpenEditForm, handleSetDefaultAddress, showModal, handleRemoveAddress, setUserIdx, loading, isEmpty } =
+    useAddressDataStore()
+  const default_address = data.filter((item) => item.isDefault)
+  const etc_address = data.filter((item) => !item.isDefault)
 
   useEffect(() => {
     setUserIdx(userIdx!)
     fetchData()
   }, [])
-
-  /**
-   * 클릭한 배송지를 기본 배송지로 변경
-   */
-  const handleClickSetDefault = async (addressIdx: string) => {
-    try {
-      const response = await setDefaultAddress(userIdx!, addressIdx)
-
-      if (!response?.success) {
-        toast.error('주소 삭제에 실패했습니다.')
-      }
-
-      fetchData()
-      toast.success('기본 배송지가 변경되었습니다.')
-    } catch (error) {}
-  }
-
-  const default_address = data.filter((item) => item.isDefault === true)
-  const etc_address = data.filter((item) => item.isDefault === false)
-
-  function formatPhoneNumber(phoneNumber: number) {
-    // 숫자만 추출
-    const cleaned = ('' + phoneNumber).replace(/\D/g, '')
-
-    // 길이에 따라 포맷팅
-    let match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/)
-
-    if (match) {
-      return `${match[1]}-${match[2]}-${match[3]}`
-    }
-
-    return phoneNumber // 유효하지 않으면 원래 값 반환
-  }
 
   if (loading) return <TabContentSkeleton />
 
@@ -110,7 +72,7 @@ export const AddressInfoTab = () => {
                     <div className="flex flex-row gap-2">
                       <button
                         type="button"
-                        onClick={() => handleEditAddressClick(item)}
+                        onClick={() => handleOpenEditForm(item)}
                         className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
                       >
                         수정
@@ -153,7 +115,7 @@ export const AddressInfoTab = () => {
                     <div className="flex flex-row gap-2">
                       <button
                         type="button"
-                        onClick={() => handleEditAddressClick(item)}
+                        onClick={() => handleOpenEditForm(item)}
                         className="block w-[60px] rounded-md border border-gray-400 bg-green-100 p-2 text-xs font-bold text-gray-700 hover:bg-green-200"
                       >
                         수정
@@ -167,7 +129,7 @@ export const AddressInfoTab = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleClickSetDefault(item.idx)}
+                        onClick={() => handleSetDefaultAddress(item.idx)}
                         className="block w-[120px] rounded-md border border-gray-400 bg-gray-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
                       >
                         기본배송지로 선택

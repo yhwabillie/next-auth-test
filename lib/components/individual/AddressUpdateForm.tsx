@@ -1,23 +1,17 @@
 'use client'
-import { updateAddress } from '@/app/actions/address/actions'
 import { AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
 import { useAddressDataStore } from '@/lib/zustandStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSession } from 'next-auth/react'
 import { ChangeEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 
 export const AddressUpdateForm = () => {
-  const { data: session } = useSession()
-  const userIdx = session?.user?.idx
-  const { edit_address, showModal, hideModal, updatePostcode, setEditAddress, onSubmitUpdateAddress } = useAddressDataStore()
+  const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress } = useAddressDataStore()
 
   const {
     register,
     handleSubmit,
     setValue,
-    resetField,
     formState: { errors },
   } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
@@ -32,11 +26,6 @@ export const AddressUpdateForm = () => {
       deliveryNote: edit_address.deliveryNote,
     },
   })
-
-  const handleSubmitUpdateAddress = (data: AddressFormSchemaType) => {
-    onSubmitUpdateAddress(data)
-    updatePostcode('')
-  }
 
   useEffect(() => {
     setValue('postcode', edit_address.postcode)

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { AddNewAddressFormSchemaType, AddressFormSchemaType, AgreementSchemaType } from './zodSchema'
-import { createNewAddress, fetchAddressList, removeAddress, updateAddress } from '@/app/actions/address/actions'
+import { createNewAddress, fetchAddressList, removeAddress, setDefaultAddress, updateAddress } from '@/app/actions/address/actions'
 import { toast } from 'sonner'
 import { fetchOrderlist, updateOrderAddress } from '@/app/actions/order/actions'
 
@@ -142,6 +142,21 @@ export const useOrderDataStore = create<OrderDataStore>((set, get) => ({
 }))
 
 //배송주소 컨트롤
+export interface AddressItemType {
+  idx: string
+  userIdx: string
+  recipientName: string
+  phoneNumber: string
+  addressName: string
+  addressLine1: string
+  addressLine2: string
+  isDefault: boolean
+  deliveryNote: string
+  postcode: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 interface AddressDataStore {
   modals: {
     addNewAddress: boolean
@@ -158,7 +173,7 @@ interface AddressDataStore {
   setNewAddress: (data: AddNewAddressFormSchemaType) => void
   setEditAddress: (data: AddressFormSchemaType) => void
   userIdx: string
-  data: any[]
+  data: AddressItemType[]
   loading: boolean
   isEmpty: boolean
   defaultState: boolean
@@ -166,10 +181,12 @@ interface AddressDataStore {
   setAddressIdx: (userIdx: string) => void
   handleRemoveAddress: (addressIdx: string) => Promise<void>
   onSubmitNewAddress: (data: AddNewAddressFormSchemaType) => Promise<void>
-  onSubmitUpdateAddress: (data: AddressFormSchemaType) => Promise<void>
   showModal: (modalName: keyof AddressDataStore['modals']) => void
   hideModal: (modalName: keyof AddressDataStore['modals']) => void
   reset_edit_Form: () => void // 폼 초기화 함수 추가
+  handleSetDefaultAddress: (addressIdx: string) => Promise<void>
+  handleOpenEditForm: (targetAddress: AddressItemType) => Promise<void>
+  handleSubmitUpdateAddress: (data: AddressFormSchemaType) => Promise<void>
 }
 
 export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
@@ -248,6 +265,23 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
   setNewAddress: (state) => set(() => ({ new_address: state })),
   setEditAddress: (state) => set(() => ({ edit_address: state })),
   updatePostcode: (data: any) => {
+    if (!data || Object.keys(data).length === 0) {
+      // data가 비어 있는 경우 초기화
+      set((current) => ({
+        edit_address: {
+          ...current.edit_address,
+          postcode: '',
+          addressLine1: '',
+        },
+        new_address: {
+          ...current.new_address,
+          new_postcode: '',
+          new_addressLine1: '',
+        },
+      }))
+      return
+    }
+
     let fullAddress = data.address
     let extraAddress = ''
 
@@ -326,25 +360,91 @@ export const useAddressDataStore = create<AddressDataStore>((set, get) => ({
       },
     }))
   },
-  onSubmitUpdateAddress: async (data: AddressFormSchemaType) => {
-    const { userIdx, edit_address, fetchData, hideModal, reset_edit_Form } = get()
+
+  /**
+   * 배송지 수정 폼 제출 핸들러
+   *
+   * 사용자가 제출한 주소 데이터를 서버에 전송하여 배송지를 업데이트하고,
+   * 업데이트가 성공적으로 완료되면 UI를 갱신합니다.
+   *
+   * @param data - 사용자가 제출한 주소 데이터
+   */
+  handleSubmitUpdateAddress: async (data: AddressFormSchemaType) => {
+    const { userIdx, edit_address, updatePostcode, fetchData, hideModal, reset_edit_Form } = get()
 
     try {
-      const response = await updateAddress(userIdx, edit_address?.idx!, data)
+      if (!edit_address?.idx) return
+
+      const response = await updateAddress(userIdx, edit_address.idx, data)
 
       if (!response?.success) {
-        toast.error('수정 실패')
+        toast.error('배송지 수정에 실패했습니다.')
         return
       }
 
-      await fetchData() // 데이터를 다시 가져오기
+      await fetchData()
 
-      hideModal('editAddress') // 모달 숨기기
-      reset_edit_Form() // 수정 폼 초기화
+      // UI 업데이트
+      updatePostcode({})
+      reset_edit_Form()
+      hideModal('editAddress')
+
       toast.success('배송지가 수정되었습니다.')
     } catch (error) {
       console.error('Error updating address:', error)
       toast.error('배송지 수정 중 오류가 발생했습니다.')
+    }
+  },
+
+  /**
+   * 클릭한 주소 수정 폼 열기
+   *
+   * 주어진 주소 항목(targetAddress)의 idx를 기준으로,
+   * 데이터 목록(data)에서 동일한 idx를 가진 항목을 찾아
+   * 수정할 주소로 설정한 뒤, 'editAddress' 모달을 화면에 표시합니다.
+   *
+   * @param targetAddress - 사용자가 수정하려고 클릭한 주소 항목
+   */
+  handleOpenEditForm: async (targetAddress: AddressItemType) => {
+    const { userIdx, data, setEditAddress, showModal } = get()
+    const target = data.find((dataItem) => dataItem.idx === targetAddress.idx)
+
+    if (!target) {
+      toast.error('해당 주소 데이터를 찾을 수 없습니다.')
+      return
+    }
+
+    setEditAddress(target) //찾은 항목을 수정할 주소로 설정
+    showModal('editAddress') //'editAddress' 모달을 표시
+  },
+
+  /**
+   * 기본 배송지 설정 함수
+   *
+   * 주어진 주소 ID (addressIdx)를 사용하여 해당 주소를 기본 배송지로 설정합니다.
+   * 설정 작업 중 로딩 상태를 관리하고, 작업 완료 후 데이터 갱신과 사용자 피드백을 제공합니다.
+   *
+   * @param addressIdx - 기본 배송지로 설정할 주소의 ID
+   */
+  handleSetDefaultAddress: async (addressIdx: string) => {
+    const { userIdx, fetchData } = get()
+    set({ loading: true })
+
+    try {
+      const response = await setDefaultAddress(userIdx, addressIdx)
+
+      if (!response?.success) {
+        toast.error('기본 배송지 변경에 실패했습니다.')
+        return
+      }
+
+      fetchData()
+      toast.success('기본 배송지가 변경되었습니다.')
+    } catch (error) {
+      console.error('Error in setDefaultAddress:', error)
+      toast.error('배송지 설정을 변경하는 중 문제가 발생했습니다. 다시 시도해 주세요.')
+    } finally {
+      set({ loading: false })
     }
   },
 }))
