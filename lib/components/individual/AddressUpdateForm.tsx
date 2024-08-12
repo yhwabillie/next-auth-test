@@ -4,16 +4,12 @@ import { useAddressDataStore } from '@/lib/zustandStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChangeEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { IoIosArrowDown } from 'react-icons/io'
 
 export const AddressUpdateForm = () => {
   const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress } = useAddressDataStore()
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<AddressFormSchemaType>({
+  const { register, handleSubmit, setValue } = useForm<AddressFormSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AddressFormSchema),
     defaultValues: {
@@ -33,123 +29,145 @@ export const AddressUpdateForm = () => {
   }, [edit_address])
 
   return (
-    <div className="fixed left-0 top-0 z-20 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-      <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
-        <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
-        <div className="mb-4 h-full">
-          <form onSubmit={handleSubmit(handleSubmitUpdateAddress)}>
-            <fieldset className="border-b border-gray-300">
-              <div className="mb-2 py-4">
-                <legend>배송지 이름</legend>
-                <input
-                  {...register('addressName')}
-                  id="addressName"
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    setEditAddress({ ...edit_address, addressName: event.target.value })
-                  }}
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="배송지 이름을 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>수령인 이름</legend>
-                <input
-                  {...register('recipientName')}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    setEditAddress({ ...edit_address, recipientName: event.target.value })
-                  }}
-                  id="recipientName"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="수령인 이름을 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>연락처</legend>
-                <input
-                  {...register('phoneNumber')}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    setEditAddress({ ...edit_address, phoneNumber: event.target.value })
-                  }}
-                  id="phoneNumber"
-                  className="border border-black p-2"
-                  type="text"
-                  placeholder="연락처를 작성해주세요"
-                />
-              </div>
-
-              <div className="mb-2 py-4">
-                <legend>주소</legend>
-                <div className="flex flex-col gap-3">
-                  <div>
-                    <input
-                      {...register('postcode')}
-                      value={edit_address.postcode}
-                      id="postcode"
-                      type="text"
-                      className="mr-2 w-[100px] border border-black p-2 focus:outline-none"
-                      readOnly
-                    />
-                    <input
-                      {...register('addressLine1')}
-                      value={edit_address.addressLine1}
-                      id="addressLine1"
-                      type="text"
-                      className="mr-2 w-[400px] border border-black p-2 focus:outline-none"
-                      readOnly
-                    />
-                    <button type="button" onClick={() => showModal('postcode')} className="bg-blue-400 p-2">
-                      주소찾기
-                    </button>
-                  </div>
-                  <input
-                    {...register('addressLine2')}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      setEditAddress({ ...edit_address, addressLine2: event.target.value })
-                    }}
-                    id="addressLine2"
-                    type="text"
-                    className="w-[400px] border border-black p-2"
-                    placeholder="나머지 주소를 입력해주세요"
-                  />
-                </div>
-              </div>
-              <div className="mb-2 py-4">
-                <legend>배송 요청 사항</legend>
-                <select
-                  {...register('deliveryNote')}
-                  onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                    setEditAddress({ ...edit_address, deliveryNote: event.target.value })
-                  }}
-                  id="deliveryNote"
-                  className="w-[300px] border border-black p-2"
-                >
-                  <option value={'문 앞에 부탁드립니다'}>문 앞에 부탁드립니다.</option>
-                  <option value={'부재시 연락 부탁드립니다'}>부재시 연락 부탁드립니다.</option>
-                  <option value={'배송 전 미리 연락해주세요'}>배송 전 미리 연락해주세요.</option>
-                </select>
-              </div>
-            </fieldset>
-            <div className="flex flex-row gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  hideModal('editAddress')
+    <div className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center overflow-y-auto bg-black bg-opacity-50">
+      <div className="mb-auto mt-auto">
+        <form
+          onSubmit={handleSubmit(handleSubmitUpdateAddress)}
+          className="relative mx-[20px] my-[50px] h-fit w-[600px] rounded-2xl bg-white p-10 shadow-lg"
+        >
+          <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
+          <fieldset className="h-auto min-h-[600px] overflow-y-auto">
+            <label htmlFor="addressName" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">배송지 이름</span>
+              <input
+                {...register('addressName')}
+                id="addressName"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setEditAddress({ ...edit_address, addressName: event.target.value })
                 }}
-                className="w-[50%] bg-gray-500 p-2 text-white"
-              >
-                취소
-              </button>
-              <button type="submit" className="w-[50%] bg-blue-500 p-2 text-white">
-                저장
-              </button>
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="배송지 이름을 작성해주세요"
+              />
+            </label>
+
+            <label htmlFor="recipientName" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">수령인 이름</span>
+              <input
+                {...register('recipientName')}
+                id="recipientName"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setEditAddress({ ...edit_address, recipientName: event.target.value })
+                }}
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="수령인 이름을 작성해주세요"
+              />
+            </label>
+
+            <label htmlFor="phoneNumber" className="relative mb-8 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">연락처</span>
+              <input
+                {...register('phoneNumber')}
+                id="phoneNumber"
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setEditAddress({ ...edit_address, phoneNumber: event.target.value })
+                }}
+                type="text"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                placeholder="연락처를 작성해주세요"
+              />
+            </label>
+
+            <div className="mb-8">
+              <div className="mb-3 flex flex-row items-center gap-2">
+                <label htmlFor="postcode" className="relative block w-[140px] drop-shadow-md">
+                  <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">우편번호</span>
+                  <input
+                    {...register('postcode')}
+                    id="postcode"
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      setEditAddress({ ...edit_address, postcode: event.target.value })
+                    }}
+                    type="text"
+                    className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                    placeholder="우편번호"
+                    readOnly
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => showModal('postcode')}
+                  className="box-border h-[63px] w-[100px] rounded-md bg-blue-400 text-sm font-semibold text-white drop-shadow-md hover:bg-blue-500"
+                >
+                  주소 찾기
+                </button>
+              </div>
+
+              <label htmlFor="addressLine1" className="relative mb-3 block w-full drop-shadow-md">
+                <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">주소</span>
+                <input
+                  {...register('addressLine1')}
+                  id="addressLine1"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    setEditAddress({ ...edit_address, addressLine1: event.target.value })
+                  }}
+                  type="text"
+                  className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                  placeholder="주소"
+                  readOnly
+                />
+              </label>
+
+              <label htmlFor="addressLine2" className="relative block w-full drop-shadow-md">
+                <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">상세주소</span>
+                <input
+                  {...register('addressLine2')}
+                  id="addressLine2"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    setEditAddress({ ...edit_address, addressLine2: event.target.value })
+                  }}
+                  type="text"
+                  className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+                  placeholder="상세주소"
+                />
+              </label>
             </div>
-          </form>
-        </div>
-      </section>
+
+            <label htmlFor="deliveryNote" className="relative mb-3 block w-full drop-shadow-md">
+              <span className="absolute left-4 top-2 block text-sm font-medium text-blue-500">배송요청사항</span>
+
+              <select
+                {...register('deliveryNote')}
+                onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+                  setEditAddress({ ...edit_address, deliveryNote: event.target.value })
+                }}
+                id="deliveryNote"
+                className="leading-1 block w-full rounded-md border border-blue-400 px-[15px] pb-[10px] pt-[27px] font-normal text-gray-700 outline-0 placeholder:font-normal"
+              >
+                <option value={'문 앞에 부탁드립니다'}>문 앞에 부탁드립니다.</option>
+                <option value={'부재시 연락 부탁드립니다'}>부재시 연락 부탁드립니다.</option>
+                <option value={'배송 전 미리 연락해주세요'}>배송 전 미리 연락해주세요.</option>
+              </select>
+
+              <IoIosArrowDown className="absolute right-[15px] top-[20px] text-2xl text-blue-500" />
+            </label>
+          </fieldset>
+
+          <div className="flex w-full flex-row justify-center gap-2 pt-5">
+            <button
+              type="button"
+              onClick={() => hideModal('editAddress')}
+              className="w-[50%] rounded-md bg-gray-200 p-3 font-semibold text-gray-700 drop-shadow-sm hover:bg-gray-300 "
+            >
+              취소
+            </button>
+            <button type="submit" className="w-[50%] rounded-md bg-blue-400 p-3 font-semibold text-white  drop-shadow-sm hover:bg-blue-500">
+              저장
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }
