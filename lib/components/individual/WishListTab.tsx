@@ -1,22 +1,24 @@
 'use client'
 import { addToCartlist, fetchCartList, removeFromCartlist } from '@/app/actions/cartlist/actions'
-import { fetchWishlist, removeFromWishlist, addToWishlist } from '@/app/actions/wishlist/actions'
+import { fetchWishlist, removeFromWishlist } from '@/app/actions/wishlist/actions'
 import { FaTrashCan } from 'react-icons/fa6'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyTab } from './EmptyTab'
 import { TabContentSkeleton } from './TabContentSkeleton'
-import { FaShoppingBasket, FaShoppingCart } from 'react-icons/fa'
-import { MdOutlineAddShoppingCart } from 'react-icons/md'
-import { FaCheck } from 'react-icons/fa'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
+import { Session } from 'next-auth'
 
-export const WishListTab = () => {
-  const { data: session, update } = useSession()
+interface WishListTabProps {
+  session: Session
+}
+
+export const WishListTab = ({ session }: WishListTabProps) => {
+  const { update } = useSession()
   const [data, setData] = useState<any>([])
+  const isEmpty = data.length === 0
   const [cartlist, setCartlist] = useState<any>([])
   const [loading, setLoading] = useState(true)
   const userIdx = session?.user?.idx
@@ -89,8 +91,6 @@ export const WishListTab = () => {
     fetchData()
     fetchCartData()
   }, [userIdx])
-
-  const isEmpty = data.length === 0
 
   if (loading) return <TabContentSkeleton />
 

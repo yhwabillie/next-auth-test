@@ -3,18 +3,19 @@ import { fetchOrderlist, removeOrder } from '@/app/actions/order/actions'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { useAddressDataStore, useOrderDataStore } from '@/lib/zustandStore'
+import { useOrderDataStore } from '@/lib/zustandStore'
 import { useSession } from 'next-auth/react'
 import Skeleton from 'react-loading-skeleton'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
+import { useAddressStore } from '@/lib/stores/addressStore'
 
 export const OrderListTab = () => {
   // const [data, setData] = useState<any>([])
   // const [loading, setLoading] = useState<boolean>(true)
   const { data: session } = useSession()
   const userIdx = session?.user?.idx
-  const { setAddressIdx } = useAddressDataStore()
+  const { setAddressIdx } = useAddressStore()
   const { showModal, fetchData, data, setUserIdx, loading, setOrderIdx } = useOrderDataStore()
 
   const fetchOrderlistData = async () => {

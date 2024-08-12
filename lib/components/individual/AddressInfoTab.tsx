@@ -1,7 +1,7 @@
 'use client'
 import { useEffect } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
-import { useAddressDataStore } from '@/lib/zustandStore'
+import { useAddressStore } from '@/lib/stores/addressStore'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { FaPlus } from 'react-icons/fa'
 import { EmptyTab } from './EmptyTab'
@@ -15,7 +15,7 @@ interface AddressInfoTabProps {
 export const AddressInfoTab = ({ session }: AddressInfoTabProps) => {
   const userIdx = session.user?.idx
   const { data, fetchData, handleOpenEditForm, handleSetDefaultAddress, showModal, handleRemoveAddress, setUserIdx, loading, isEmpty } =
-    useAddressDataStore()
+    useAddressStore()
   const default_address = data.filter((item) => item.isDefault)
   const etc_address = data.filter((item) => !item.isDefault)
 

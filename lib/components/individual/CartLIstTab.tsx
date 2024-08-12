@@ -11,10 +11,11 @@ import { fetchAddressList } from '@/app/actions/address/actions'
 import { addNewOrder } from '@/app/actions/order/actions'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
-import { tabMenuActiveStore, useAddressDataStore } from '@/lib/zustandStore'
+import { tabMenuActiveStore } from '@/lib/zustandStore'
 import { FaTrashCan } from 'react-icons/fa6'
 import { IoMdClose } from 'react-icons/io'
 import clsx from 'clsx'
+import { useAddressStore } from '@/lib/stores/addressStore'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -28,7 +29,7 @@ export const CartListTab = () => {
   const [loading, setLoading] = useState(true)
   const [checkedItems, setCheckedItems] = useState<CheckedItem>({})
   const [selectedTab, setSelectedTab] = useState<any>()
-  const { showModal } = useAddressDataStore()
+  const { showModal } = useAddressStore()
   const { setActiveTab } = tabMenuActiveStore()
 
   const {

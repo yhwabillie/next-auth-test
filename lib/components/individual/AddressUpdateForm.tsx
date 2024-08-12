@@ -1,13 +1,13 @@
 'use client'
 import { AddressFormSchema, AddressFormSchemaType } from '@/lib/zodSchema'
-import { useAddressDataStore } from '@/lib/zustandStore'
+import { useAddressStore } from '@/lib/stores/addressStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChangeEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { IoIosArrowDown } from 'react-icons/io'
 
 export const AddressUpdateForm = () => {
-  const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress, updatePostcode } = useAddressDataStore()
+  const { edit_address, showModal, hideModal, handleSubmitUpdateAddress, setEditAddress, updatePostcode } = useAddressStore()
 
   const { register, handleSubmit, setValue } = useForm<AddressFormSchemaType>({
     mode: 'onChange',

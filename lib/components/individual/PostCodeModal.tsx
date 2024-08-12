@@ -1,10 +1,10 @@
 'use client'
 import DaumPostcodeEmbed from 'react-daum-postcode'
-import { useAddressDataStore } from '@/lib/zustandStore'
 import { Button } from '../Button'
+import { useAddressStore } from '@/lib/stores/addressStore'
 
 export const PostCodeModal = () => {
-  const { updatePostcode, hideModal } = useAddressDataStore()
+  const { updatePostcode, hideModal } = useAddressStore()
 
   const handleComplete = (data: any) => {
     updatePostcode(data)

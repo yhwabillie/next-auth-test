@@ -1,6 +1,7 @@
 'use client'
+import { useAddressStore } from '@/lib/stores/addressStore'
 import { SessionProvider } from 'next-auth/react'
-import { useAddressDataStore, useModalStore } from '../zustandStore'
+import { useModalStore } from '../zustandStore'
 import clsx from 'clsx'
 
 interface ProvidersProps {
@@ -9,7 +10,7 @@ interface ProvidersProps {
 
 export const AuthProvider = ({ children }: ProvidersProps) => {
   const { modalState } = useModalStore()
-  const { modals } = useAddressDataStore()
+  const { modals } = useAddressStore()
   const address_modal_state = Object.values(modals).some((item) => item === true)
 
   return (

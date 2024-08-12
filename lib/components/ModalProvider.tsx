@@ -1,5 +1,6 @@
 'use client'
-import { useAddressDataStore, useOrderDataStore } from '../zustandStore'
+import { useAddressStore } from '../stores/addressStore'
+import { useOrderDataStore } from '../zustandStore'
 import { AddNewAddressForm } from './individual/AddNewAddressForm'
 import { AddressUpdateForm } from './individual/AddressUpdateForm'
 import { AlertErrorModal } from './individual/alertErrorModal'
@@ -7,7 +8,7 @@ import { ChangeOrderAddress } from './individual/ChangeOrderAddress'
 import { PostCodeModal } from './individual/PostCodeModal'
 
 export const ModalProvider = () => {
-  const { modals: address_modals } = useAddressDataStore()
+  const { modals: address_modals } = useAddressStore()
   const { modals: order_modals } = useOrderDataStore()
 
   const alert_messages = {

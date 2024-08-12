@@ -1,14 +1,15 @@
 'use client'
-import { useAddressDataStore, useOrderDataStore } from '@/lib/zustandStore'
+import { useOrderDataStore } from '@/lib/zustandStore'
 import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 import { TabContentSkeleton } from './TabContentSkeleton'
+import { useAddressStore } from '@/lib/stores/addressStore'
 
 export const ChangeOrderAddress = () => {
   const { data: session } = useSession()
   const userIdx = session?.user?.idx
-  const { fetchData, setUserIdx, data, addressIdx } = useAddressDataStore()
+  const { fetchData, setUserIdx, data, addressIdx } = useAddressStore()
   const { updateData, setOrderIdx, setNewAddressIdx, orderIdx } = useOrderDataStore()
   const { register, handleSubmit, setValue } = useForm<FieldValues>()
   const { hideModal } = useOrderDataStore()

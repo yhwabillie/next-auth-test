@@ -1,13 +1,12 @@
 'use client'
-
-import { useAddressDataStore } from '@/lib/zustandStore'
+import { useAddressStore } from '@/lib/stores/addressStore'
 
 interface AlertErrorModalProps {
   message: string
 }
 
 export const AlertErrorModal = ({ message }: AlertErrorModalProps) => {
-  const { hideModal } = useAddressDataStore()
+  const { hideModal } = useAddressStore()
   return (
     <div className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
       <section className="box-border h-auto w-[500px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">

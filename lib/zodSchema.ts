@@ -18,14 +18,12 @@ export type AddressFormSchemaType = z.infer<typeof AddressFormSchema>
 
 export const AddNewAddressFormSchema = z.object({
   idx: z.string().optional(),
-  addressName: z.string().min(1, 'address_name 필요'),
-  recipientName: z.string().min(1, 'recipient_name 필요'),
-  phoneNumber: z.string().regex(/^010\d{8}$/, {
-    message: 'Invalid phone number format',
-  }),
-  new_postcode: z.string().regex(/^[0-9]{5}$/, 'Invalid postcode'),
-  new_addressLine1: z.string().min(1, 'addressLine1 필요'),
-  addressLine2: z.string().min(1, 'addressLine2 필요'),
+  addressName: z.string().min(1, '최소 1자이상 작성해주세요.'),
+  recipientName: z.string().min(1, '최소 1자이상 작성해주세요.'),
+  phoneNumber: z.string().regex(/^010\d{8}$/, '-없이 작성해주세요'),
+  new_postcode: z.string().regex(/^[0-9]{5}$/, '맞지 않는 우편번호 형식입니다.'),
+  new_addressLine1: z.string().min(1, '최소 1자이상 작성해주세요.'),
+  addressLine2: z.string().min(1, '최소 1자이상 작성해주세요.'),
   deliveryNote: z.string().min(1, 'delivery_note 필요'),
 })
 
