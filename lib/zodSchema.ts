@@ -5,9 +5,7 @@ export const AddressFormSchema = z.object({
   idx: z.string().optional(),
   addressName: z.string().min(1, 'address_name 필요'),
   recipientName: z.string().min(1, 'recipient_name 필요'),
-  phoneNumber: z.string().regex(/^010\d{8}$/, {
-    message: 'Invalid phone number format',
-  }),
+  phoneNumber: z.string().regex(/^010\d{8}$/, '-없이 작성해주세요'),
   postcode: z.string().regex(/^[0-9]{5}$/, 'Invalid postcode'),
   addressLine1: z.string().min(1, 'addressLine1 필요'),
   addressLine2: z.string().min(1, 'addressLine2 필요'),
