@@ -31,7 +31,7 @@ export const AddressUpdateForm = () => {
 
   //변경전 원본 데이터
   const [dataFromDB] = data.filter((item) => item.idx === addressIdx)
-  const { idx, isDefault, ...initialData } = dataFromDB
+  const { idx, isDefault, ...initialData } = dataFromDB || {}
 
   //변경전과 후가 같은지 체크
   const isChanged = JSON.stringify(initialData) !== JSON.stringify(watch())
