@@ -1,96 +1,32 @@
 'use client'
-import { addToCartlist, fetchCartList, removeFromCartlist } from '@/app/actions/cartlist/actions'
-import { fetchWishlist, removeFromWishlist } from '@/app/actions/wishlist/actions'
 import { FaTrashCan } from 'react-icons/fa6'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { useEffect } from 'react'
 import { EmptyTab } from './EmptyTab'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { Session } from 'next-auth'
+import { useWishlistStore } from '@/lib/stores/wishlistStore'
 
 interface WishListTabProps {
   session: Session
 }
 
 export const WishListTab = ({ session }: WishListTabProps) => {
-  const { update } = useSession()
-  const [data, setData] = useState<any>([])
-  const isEmpty = data.length === 0
-  const [cartlist, setCartlist] = useState<any>([])
-  const [loading, setLoading] = useState(true)
   const userIdx = session?.user?.idx
-
-  const fetchData = async () => {
-    try {
-      const wishlist = await fetchWishlist()
-      setData(wishlist)
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  /**
-   * 클릭한 상품을 위시리스트에 제거
-   */
-  const deleteFromWishList = async (productIdx: string) => {
-    try {
-      const response = await removeFromWishlist(userIdx!, productIdx)
-      setData((prev: any) => prev.filter(({ product }: any) => product.idx !== productIdx))
-    } catch (error) {
-      console.error('Failed to delete wishlist:', error)
-      toast.error('wishlist 제거에 실패했습니다, 다시 시도해주세요.')
-    }
-  }
-
-  /**
-   * wishlist DB 데이터 GET
-   */
-  const fetchCartData = async () => {
-    try {
-      const response = await fetchCartList(userIdx!)
-      setCartlist(response.map(({ product }) => product.idx))
-    } catch (error) {
-      console.error('Failed to fetch cartlist:', error)
-      toast.error('cartlist 데이터 fetch에 실패했습니다, 다시 시도해주세요.')
-    }
-  }
-
-  /**
-   * productIdx를 비교하여 쇼핑카트에 있는 상품인지 체크
-   */
-  const isProductInCartlist = (productIdx: string) => {
-    return cartlist.includes(productIdx)
-  }
-
-  /**
-   * toggle 클릭한 상품을 쇼핑카트에 추가/제거
-   */
-  const toggleCartlist = async (productIdx: string) => {
-    if (isProductInCartlist(productIdx)) {
-      try {
-        const response = await removeFromCartlist(userIdx!, productIdx)
-        update({ cartlist_length: response })
-        setCartlist((prev: any) => prev.filter((idx: any) => idx !== productIdx))
-      } catch (error) {}
-    } else {
-      try {
-        const response = await addToCartlist(userIdx!, productIdx)
-
-        update({ cartlist_length: response })
-        setCartlist((prev: any) => [...prev, productIdx])
-      } catch (error) {}
-    }
-  }
+  const { update } = useSession()
+  const { setUserIdx, fetchData, data, isEmpty, loading, handleToggleCartStatus, handleDeleteWishItem, setSessionUpdate } = useWishlistStore()
 
   useEffect(() => {
+    if (!userIdx) return
+    setUserIdx(userIdx)
+
     fetchData()
-    fetchCartData()
-  }, [userIdx])
+
+    if (!session) return
+    setSessionUpdate(update)
+  }, [userIdx, session, setSessionUpdate])
 
   if (loading) return <TabContentSkeleton />
 
@@ -102,7 +38,7 @@ export const WishListTab = ({ session }: WishListTabProps) => {
         <>
           <h5 className="mb-2 block px-2 text-xl font-semibold text-black">위시리스트 상품</h5>
           <ul className="px-2">
-            {data.map(({ product }: any, index: number) => (
+            {data.map(({ product }, index: number) => (
               <li key={index} className="mb-5 flex flex-row justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0">
                 <div className="flex flex-row">
                   <img
@@ -129,25 +65,35 @@ export const WishListTab = ({ session }: WishListTabProps) => {
                 </div>
                 <div className="flex flex-col justify-center gap-2">
                   <button
-                    onClick={() => deleteFromWishList(product.idx)}
-                    className="flex items-center gap-2 rounded-lg bg-gray-500 px-10 py-3 text-sm font-semibold text-white drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-600"
+                    onClick={() => handleDeleteWishItem(product.idx)}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-gray-500 px-10 py-3 text-sm font-semibold text-white drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-600"
                   >
                     <FaTrashCan />
                     <span>위시 삭제</span>
                   </button>
 
                   <button
-                    onClick={() => toggleCartlist(product.idx)}
+                    onClick={() => handleToggleCartStatus(product.idx)}
+                    disabled={loading}
                     className={clsx(
                       'flex items-center gap-2 rounded-lg px-10 py-3 text-sm font-semibold drop-shadow-lg transition-all duration-150 ease-in-out ',
                       {
-                        'bg-gray-400/50 hover:bg-gray-400 hover:text-white': isProductInCartlist(product.idx),
-                        'bg-red-500 text-white hover:bg-red-600': !isProductInCartlist(product.idx),
+                        'bg-gray-400/50 hover:bg-gray-400 hover:text-white': product.isInCart,
+                        'bg-red-500 text-white hover:bg-red-600': !product.isInCart,
                       },
                     )}
                   >
-                    {isProductInCartlist(product.idx) ? <TbShoppingBagMinus className="text-xl" /> : <TbShoppingBagPlus className="text-xl" />}
-                    <span>장바구니</span>
+                    {product.isInCart ? (
+                      <>
+                        <TbShoppingBagMinus className="text-xl" />
+                        <span>장바구니 빼기</span>
+                      </>
+                    ) : (
+                      <>
+                        <TbShoppingBagPlus className="text-xl" />
+                        <span>장바구니 넣기</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </li>

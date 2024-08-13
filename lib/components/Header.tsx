@@ -7,6 +7,7 @@ import { LinkBtn } from './LinkBtn'
 import { UserMenuDropdown } from './individual/UserMenuDropdown'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { useWishlistStore } from '../stores/wishlistStore'
 
 export enum TooltipTypes {
   NONE = 'NONE',

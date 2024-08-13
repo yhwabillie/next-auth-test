@@ -32,7 +32,7 @@ export interface NewAddressType {
  *
  * @param userIdx - 배송지 리스트를 조회할 사용자의 고유 ID
  * @returns {Promise<UserAddressType[]>} - 조회된 사용자 배송지 리스트
- * @throws {Error} - 주소 목록을 가져오는 중에 발생한 오류를 나타냅니다.
+ * @throws {Error}
  */
 export interface UserAddressType {
   idx: string
@@ -70,10 +70,8 @@ export const fetchAddressList = async (userIdx: string): Promise<UserAddressType
 
     return addressList
   } catch (error) {
-    // 에러 발생 시 로그에 기록, 요청 시간 포함
     console.error(`Failed to fetch address list for user ${userIdx} at ${new Date().toISOString()}:`, error)
     if (error instanceof Error) {
-      // 구체적인 에러 메시지를 포함하여 에러 던짐
       throw new Error('Failed to fetch address list: ' + error.message)
     }
     // 알 수 없는 에러 처리

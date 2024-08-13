@@ -277,6 +277,7 @@ export const CartListTab = () => {
                     </div>
                     <div className="justify-top flex flex-col gap-2">
                       <button
+                        type="button"
                         onClick={() => removeCartItem(item.idx)}
                         className="flex items-center gap-2 rounded-md bg-gray-500 p-1 text-sm font-semibold text-white drop-shadow-lg transition-all duration-150 ease-in-out hover:bg-gray-600"
                       >

@@ -9,9 +9,7 @@ export default async function Page() {
   const session = await getServerSession(authOptions)
 
   // 세션이 없거나 세션에 user.idx가 없는 경우 로그인 페이지로 리다이렉트
-  if (!session?.user?.idx) {
-    redirect('/signIn')
-  }
+  if (!session?.user?.idx) redirect('/signIn')
 
   return (
     <section aria-labelledby="page-heading">
