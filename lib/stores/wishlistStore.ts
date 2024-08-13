@@ -93,9 +93,9 @@ export const useWishlistStore = create<WishlistStore>((set, get) => ({
         await fetchData()
 
         if (response.toggleStatus) {
-          toast.success('장바구니에서 제거 했습니다.')
+          toast.success('장바구니에서 추가 했습니다.')
         } else {
-          toast.success('장바구니에 추가 했습니다.')
+          toast.success('장바구니에 제거 했습니다.')
         }
       } else {
         toast.error('장바구니 넣기에 실패했습니다. 다시 시도해주세요.')

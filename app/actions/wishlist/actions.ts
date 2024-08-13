@@ -2,16 +2,7 @@
 import authOptions from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
-
-interface ProductType {
-  idx: string
-  name: string
-  category: string
-  original_price: number
-  discount_rate: number
-  imageUrl: string
-  isInCart?: boolean
-}
+import { ProductType } from '../products/actions'
 
 export interface UserWishType {
   product: ProductType
@@ -168,12 +159,6 @@ export const toggleWishlistToCart = async (
 
 export const addToWishlist = async (userIdx: string, productIdx: string) => {
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user) {
-      throw new Error('User not authenticated')
-    }
-
     const wishlistItem = await prisma.wishlist.create({
       data: {
         userIdx: userIdx,

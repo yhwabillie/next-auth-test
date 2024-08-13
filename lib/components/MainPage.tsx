@@ -18,23 +18,23 @@ export const MainPage = () => {
   const [page, setPage] = useState(1)
   const observer = useRef<IntersectionObserver | null>(null)
 
-  const fetchData = async (page: number, query: string) => {
-    setLoading(true)
+  // const fetchData = async (page: number, query: string) => {
+  //   setLoading(true)
 
-    try {
-      const { products: newProducts, totalProducts } = query
-        ? await searchProducts({ query, page, pageSize })
-        : await fetchProducts({ page, pageSize })
+  //   try {
+  //     const { products: newProducts, totalProducts } = query
+  //       ? await searchProducts({ query, page, pageSize })
+  //       : await fetchProducts({ page, pageSize })
 
-      setData((prevProducts) => (page === 1 ? newProducts : [...prevProducts, ...newProducts]))
-      setHasMore(newProducts.length > 0 && data.length < totalProducts)
-    } catch (error) {
-      console.error('Failed to fetch products:', error) // 디버그용
-      toast.error('데이터 fetch에 실패했습니다, 다시 시도해주세요.') // 사용자 알림용
-    } finally {
-      setLoading(false)
-    }
-  }
+  //     setData((prevProducts) => (page === 1 ? newProducts : [...prevProducts, ...newProducts]))
+  //     setHasMore(newProducts.length > 0 && data.length < totalProducts)
+  //   } catch (error) {
+  //     console.error('Failed to fetch products:', error) // 디버그용
+  //     toast.error('데이터 fetch에 실패했습니다, 다시 시도해주세요.') // 사용자 알림용
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
 
   const debouncedSearch = useCallback(
     debounce((searchQuery: string) => {
@@ -69,15 +69,15 @@ export const MainPage = () => {
     [loading, hasMore],
   )
 
-  useEffect(() => {
-    if (!initialLoad) {
-      fetchData(page, query)
-    }
-  }, [page, query, initialLoad])
+  // useEffect(() => {
+  //   if (!initialLoad) {
+  //     fetchData(page, query)
+  //   }
+  // }, [page, query, initialLoad])
 
   return (
     <div className="py-10">
-      <fieldset className="mb-5 flex flex-row justify-center">
+      {/* <fieldset className="mb-5 flex flex-row justify-center">
         <input type="text" placeholder="Search products..." onChange={handleSearch} className="mb-4 rounded border px-3 py-2" />
       </fieldset>
       <div className="pb-20 pt-2 text-center">
@@ -123,7 +123,7 @@ export const MainPage = () => {
           </div>
         )}
       </div>
-      {loading && <p>Loading...</p>}
+      {loading && <p>Loading...</p>} */}
     </div>
   )
 }

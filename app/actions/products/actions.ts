@@ -2,22 +2,195 @@
 import prisma from '@/lib/prisma'
 
 interface FetchProductsParams {
+  userIdx: string
   page: number
   pageSize: number
 }
 
-export const fetchProducts = async ({ page, pageSize }: FetchProductsParams) => {
+export interface ProductType {
+  idx: string
+  name: string
+  category: string
+  original_price: number
+  discount_rate: number
+  imageUrl: string
+  isInCart?: boolean
+  isInWish?: boolean
+}
+
+/**
+ * 제품 목록을 페이지네이션을 고려하여 가져오는 함수.
+ *
+ * @param {FetchProductsParams} params - 페이지 번호(page)와 페이지 크기(pageSize)를 포함하는 객체.
+ * @param {number} params.page - 가져올 페이지의 번호 (1부터 시작).
+ * @param {number} params.pageSize - 한 페이지에 표시할 제품의 수.
+ *
+ * @returns {Promise<{ products: ProductType[]; totalProducts: number }>}
+ *  - products: 요청된 페이지에 해당하는 제품 목록 배열.
+ *  - totalProducts: 데이터베이스에 저장된 전체 제품 수.
+ *
+ * @throws {Error}
+ */
+export const fetchProducts = async ({
+  userIdx,
+  page,
+  pageSize,
+}: FetchProductsParams): Promise<{ products: ProductType[]; totalProducts: number }> => {
   const skip = (page - 1) * pageSize
   const take = pageSize
 
-  const [products, totalProducts] = await prisma.$transaction([
-    prisma.product.findMany({
-      skip,
-      take,
-      orderBy: { createdAt: 'desc' },
-    }),
-    prisma.product.count(),
-  ])
+  try {
+    const [products, totalProducts] = await prisma.$transaction([
+      prisma.product.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          idx: true,
+          name: true,
+          category: true,
+          original_price: true,
+          discount_rate: true,
+          imageUrl: true,
+        },
+      }),
 
-  return { products, totalProducts }
+      prisma.product.count(),
+    ])
+
+    // 각 제품 항목에 대해 장바구니와 위시리스트에 있는지 확인
+    const productsWithCartAndWishStatus = await Promise.all(
+      products.map(async (item) => {
+        const [isInCart, isInWish] = await Promise.all([
+          prisma.cartList.findUnique({
+            where: {
+              userIdx_productIdx: {
+                userIdx,
+                productIdx: item.idx,
+              },
+            },
+          }),
+          prisma.wishlist.findUnique({
+            where: {
+              userIdx_productIdx: {
+                userIdx,
+                productIdx: item.idx,
+              },
+            },
+          }),
+        ])
+
+        return {
+          ...item,
+          isInCart: !!isInCart,
+          isInWish: !!isInWish,
+        }
+      }),
+    )
+    return { products: productsWithCartAndWishStatus, totalProducts }
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    throw new Error('Failed to fetch products')
+  }
+}
+
+export const toggleWishStatus = async (userIdx: string, productIdx: string) => {
+  try {
+    // 위시리스트에서 제품이 있는지 확인
+    const targetProductItem = await prisma.wishlist.findUnique({
+      where: {
+        userIdx_productIdx: {
+          userIdx,
+          productIdx,
+        },
+      },
+    })
+
+    let toggleStatus: boolean
+
+    if (targetProductItem) {
+      //위시리스트에서 제품을 제거
+      await prisma.wishlist.delete({
+        where: {
+          userIdx_productIdx: {
+            userIdx,
+            productIdx,
+          },
+        },
+      })
+      toggleStatus = false // 위시리스트에서 제거됨
+    } else {
+      // 위시리스트에 제품을 추가
+      await prisma.wishlist.create({
+        data: {
+          userIdx,
+          productIdx,
+        },
+      })
+      toggleStatus = true // 위시리스트에 추가됨
+    }
+
+    return {
+      success: true,
+      toggleStatus,
+    }
+  } catch (error) {
+    console.error(`Failed to toggle product in wishlist for user ${userIdx}:`, error)
+    throw new Error('Failed to toggle product in wishlist')
+  }
+}
+
+export const toggleProductToCart = async (userIdx: string, productIdx: string) => {
+  try {
+    // 장바구니에서 제품이 있는지 확인
+    const targetProductItem = await prisma.cartList.findUnique({
+      where: {
+        userIdx_productIdx: {
+          userIdx,
+          productIdx,
+        },
+      },
+    })
+
+    let toggleStatus: boolean
+
+    if (targetProductItem) {
+      // 장바구니에서 제품을 제거
+      await prisma.cartList.delete({
+        where: {
+          userIdx_productIdx: {
+            userIdx,
+            productIdx,
+          },
+        },
+      })
+      toggleStatus = false // 장바구니에서 제거됨
+    } else {
+      // 장바구니에 제품을 추가
+      await prisma.cartList.create({
+        data: {
+          userIdx,
+          productIdx,
+          quantity: 1,
+        },
+      })
+      toggleStatus = true // 장바구니에 추가됨
+    }
+
+    // 장바구니의 총 제품 수 계산
+    const cartlistCount = await prisma.cartList.count({
+      where: {
+        userIdx,
+      },
+    })
+
+    return {
+      success: true,
+      cartlistCount,
+      toggleStatus,
+    }
+  } catch (error) {
+    console.error(`Failed to toggle product in cart for user ${userIdx}:`, error)
+    throw new Error('Failed to toggle product in cart')
+  }
 }
