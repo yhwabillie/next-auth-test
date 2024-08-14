@@ -6,9 +6,14 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
+import { Session } from 'next-auth'
 
-export const ProductList = () => {
-  const { data: session, update } = useSession()
+interface ProductListProps {
+  session: Session
+}
+
+export const ProductList = ({ session }: ProductListProps) => {
+  const { update } = useSession()
   const userIdx = session?.user?.idx
   const { fetchData, setUserIdx, data, loading, isEmpty, toggleWishStatus, setSessionUpdate, showModal, toggleCartStatus } = useProductsStore()
 
@@ -64,9 +69,9 @@ export const ProductList = () => {
                 <button
                   type="button"
                   onClick={() => handleClickAddWish(item)}
-                  className={clsx('p-3 text-white disabled:bg-gray-700', {
+                  className={clsx('p-3 disabled:bg-gray-700', {
                     'bg-blue-300 text-black': item.isInWish,
-                    'bg-blue-700 text-black': !item.isInWish,
+                    'bg-blue-700 text-white': !item.isInWish,
                   })}
                   disabled={loading}
                 >
@@ -75,8 +80,9 @@ export const ProductList = () => {
                 <button
                   type="button"
                   onClick={() => handleClickAddProduct(item)}
-                  className={clsx('bg-red-700 p-3 text-white disabled:bg-gray-700', {
+                  className={clsx('p-3 disabled:bg-gray-700', {
                     'bg-red-300 text-black': item.isInCart,
+                    'bg-red-700 text-white': !item.isInCart,
                   })}
                   disabled={loading}
                 >

@@ -21,7 +21,7 @@ export const UserShoppingTabs = ({ session }: UserShoppingTabsProps) => {
   const tabArr: TabItemType[] = [
     { id: 1, label: '배송정보', content: <AddressInfoTab session={session} /> },
     { id: 2, label: '위시리스트', content: <WishListTab session={session} /> },
-    { id: 3, label: '장바구니', content: <CartListTab /> },
+    { id: 3, label: '장바구니', content: <CartListTab session={session} /> },
     { id: 4, label: '주문/배송조회', content: <OrderListTab /> },
   ]
 

@@ -19,6 +19,7 @@ export const EmptyTab = ({ sub_title, title, label, type, clickEvent }: EmptyTab
 
       {type === 'btn' && (
         <button
+          type="button"
           className="mx-auto block w-[300px] rounded-lg bg-blue-400 px-10 py-4 font-semibold text-white drop-shadow-md transition-all duration-150 ease-in-out hover:bg-blue-500"
           onClick={clickEvent}
         >

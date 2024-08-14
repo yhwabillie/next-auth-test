@@ -1,21 +1,25 @@
 'use client'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TabItemType } from './UserShoppingTabs'
 import { FaShoppingCart } from 'react-icons/fa'
 import { FaStar } from 'react-icons/fa'
 import { MdLocalShipping } from 'react-icons/md'
 import { TbShoppingBagCheck } from 'react-icons/tb'
-import { tabMenuActiveStore } from '@/lib/zustandStore'
-import { Session } from 'next-auth'
+import { useCartlistStore } from '@/lib/stores/cartlistStore'
 
 interface TabMenuProps {
   tabArr: TabItemType[]
 }
 
 export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
-  const { activeTabId, setActiveTab } = tabMenuActiveStore()
+  const { activeTabId, setActiveTab } = useCartlistStore()
+
+  useEffect(() => {
+    //초기 활성화 탭 초기화
+    setActiveTab(3)
+  }, [])
 
   return (
     <>

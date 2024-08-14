@@ -40,7 +40,9 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
   fetchData: async (page: number, pageSize: number): Promise<void> => {
     const { userIdx } = get()
+
     set({ loading: true })
+
     try {
       const fetchedProducts = await fetchProducts({ userIdx, page, pageSize })
 

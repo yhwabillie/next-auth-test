@@ -20,6 +20,9 @@ export const ModalProvider = () => {
     products: {
       warning: '위시리스트와 장바구니 기능은 <br/> 로그인 후 사용할 수 있습니다.',
     },
+    cartlist: {
+      confirm: '아래 주문 내용을 한번 더 확인해주세요',
+    },
   }
 
   return (

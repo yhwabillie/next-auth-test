@@ -40,7 +40,7 @@ export const fetchProducts = async ({
   const take = pageSize
 
   try {
-    const [products, totalProducts] = await prisma.$transaction([
+    const [products, totalProducts] = await Promise.all([
       prisma.product.findMany({
         skip,
         take,
@@ -54,39 +54,32 @@ export const fetchProducts = async ({
           imageUrl: true,
         },
       }),
-
       prisma.product.count(),
     ])
 
-    // 각 제품 항목에 대해 장바구니와 위시리스트에 있는지 확인
-    const productsWithCartAndWishStatus = await Promise.all(
-      products.map(async (item) => {
-        const [isInCart, isInWish] = await Promise.all([
-          prisma.cartList.findUnique({
-            where: {
-              userIdx_productIdx: {
-                userIdx,
-                productIdx: item.idx,
-              },
-            },
-          }),
-          prisma.wishlist.findUnique({
-            where: {
-              userIdx_productIdx: {
-                userIdx,
-                productIdx: item.idx,
-              },
-            },
-          }),
-        ])
-
-        return {
-          ...item,
-          isInCart: !!isInCart,
-          isInWish: !!isInWish,
-        }
+    // 미리 장바구니와 위시리스트 항목을 가져옴
+    const [cartItems, wishItems] = await Promise.all([
+      prisma.cartList.findMany({
+        where: { userIdx },
+        select: { productIdx: true },
       }),
-    )
+      prisma.wishlist.findMany({
+        where: { userIdx },
+        select: { productIdx: true },
+      }),
+    ])
+
+    // Set을 사용하여 빠르게 장바구니와 위시리스트 상태 확인
+    const cartItemSet = new Set(cartItems.map((item) => item.productIdx))
+    const wishItemSet = new Set(wishItems.map((item) => item.productIdx))
+
+    // 제품 목록에 장바구니 및 위시리스트 상태 추가
+    const productsWithCartAndWishStatus = products.map((item) => ({
+      ...item,
+      isInCart: cartItemSet.has(item.idx),
+      isInWish: wishItemSet.has(item.idx),
+    }))
+
     return { products: productsWithCartAndWishStatus, totalProducts }
   } catch (error) {
     console.error('Error fetching products:', error)

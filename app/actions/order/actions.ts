@@ -163,20 +163,12 @@ export const fetchOrderlist = async () => {
  * @param inputOrder
  * @returns
  */
-export const addNewOrder = async (inputOrder: any) => {
+export const addNewOrder = async (userIdx: string, inputOrder: any) => {
+  console.log('backend ==> ', inputOrder)
   try {
-    const session = await getServerSession(authOptions)
-
-    if (!session || !session.user) {
-      throw new Error('You must be logged in to create an order')
-    }
-
-    console.log('세션 idx==>', session.user.idx)
-    console.log('받은 데이터', inputOrder)
-
     const newOrder = await prisma.order.create({
       data: {
-        userIdx: session.user.idx!,
+        userIdx,
         addressIdx: inputOrder.addressIdx,
         total_amount: inputOrder.total_amount,
         payment: inputOrder.payment,
