@@ -32,6 +32,13 @@ interface CartlistStore {
   setLoading: (loading: boolean) => void
   resetState: () => void
 
+  //modal status
+  modals: {
+    need_session: boolean
+  }
+  showModal: (modalName: keyof CartlistStore['modals']) => void
+  hideModal: (modalName: keyof CartlistStore['modals']) => void
+
   //activeTab control
   activeTabId: number
   setActiveTab: (id: number) => void
@@ -90,6 +97,25 @@ export const useCartlistStore = create<CartlistStore>((set, get) => ({
       isAddressEmpty: true,
     }),
   setLoading: (loading: boolean) => set({ loading }),
+
+  //modal types
+  modals: {
+    need_session: false,
+  },
+  showModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: true,
+      },
+    })),
+  hideModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: false,
+      },
+    })),
 
   //activeTab control
   activeTabId: 1,

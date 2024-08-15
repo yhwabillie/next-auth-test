@@ -1,15 +1,24 @@
-'use server'
 import authOptions from '@/lib/auth'
 import { SectionHeader } from '@/lib/components/individual/SectionHeader'
 import { UserShoppingTabs } from '@/lib/components/individual/UserShoppingTabs'
-import { getServerSession } from 'next-auth'
+import { getServerSession, Session } from 'next-auth'
 import { redirect } from 'next/navigation'
 
-export default async function Page() {
-  const session = await getServerSession(authOptions)
+// 페이지가 동적으로 생성되도록 설정
+export const dynamic = 'force-dynamic'
 
-  // 세션이 없거나 세션에 user.idx가 없는 경우 로그인 페이지로 리다이렉트
-  if (!session?.user?.idx) redirect('/signIn')
+export default async function Page() {
+  // getServerSession 자체 에러처리
+  const session: Session | null = await getServerSession(authOptions).catch((error) => {
+    console.error('Failed to get session:', error)
+    return redirect('/signIn')
+  })
+
+  // 세션이 없거나, 세션의 user.idx가 없는 경우 로그인 페이지로 리다이렉트
+  // 리다이렉트 후 코드 실행 중단
+  if (!session || !session.user?.idx) {
+    return redirect('/signIn')
+  }
 
   return (
     <section aria-labelledby="page-heading">

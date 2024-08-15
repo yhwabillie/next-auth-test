@@ -1,5 +1,6 @@
 'use client'
 import { useAddressStore } from '../stores/addressStore'
+import { useCartlistStore } from '../stores/cartlistStore'
 import { useProductsStore } from '../stores/productsStore'
 import { useOrderDataStore } from '../zustandStore'
 import { AddNewAddressForm } from './individual/AddNewAddressForm'
@@ -12,6 +13,7 @@ export const ModalProvider = () => {
   const { modals: order_modals } = useOrderDataStore()
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
   const { modals: product_modals, hideModal: product_hide } = useProductsStore()
+  const { modals: cart_modals, hideModal: cart_hide } = useCartlistStore()
 
   const alert_messages = {
     addressList: {
@@ -21,7 +23,7 @@ export const ModalProvider = () => {
       warning: '위시리스트와 장바구니 기능은 <br/> 로그인 후 사용할 수 있습니다.',
     },
     cartlist: {
-      confirm: '아래 주문 내용을 한번 더 확인해주세요',
+      need_session: '세션이 필요합니다.',
     },
   }
 
@@ -33,6 +35,9 @@ export const ModalProvider = () => {
       {order_modals.changeAddress && <ChangeOrderAddress />}
       {address_modals.alert && <AlertErrorModal handleClickClose={() => address_hide('alert')} message={alert_messages.addressList.warning} />}
       {product_modals.alert && <AlertErrorModal handleClickClose={() => product_hide('alert')} message={alert_messages.products.warning} />}
+      {cart_modals.need_session && (
+        <AlertErrorModal handleClickClose={() => cart_hide('need_session')} message={alert_messages.cartlist.need_session} />
+      )}
     </>
   )
 }

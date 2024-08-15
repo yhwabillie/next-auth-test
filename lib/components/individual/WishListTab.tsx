@@ -6,27 +6,21 @@ import { useEffect } from 'react'
 import { EmptyTab } from './EmptyTab'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
-import { Session } from 'next-auth'
 import { useWishlistStore } from '@/lib/stores/wishlistStore'
 
 interface WishListTabProps {
-  session: Session
+  userIdx: string
 }
 
-export const WishListTab = ({ session }: WishListTabProps) => {
-  const userIdx = session?.user?.idx
+export const WishListTab = ({ userIdx }: WishListTabProps) => {
   const { update } = useSession()
   const { setUserIdx, fetchData, data, isEmpty, loading, handleToggleCartStatus, handleDeleteWishItem, setSessionUpdate } = useWishlistStore()
 
   useEffect(() => {
-    if (!userIdx) return
     setUserIdx(userIdx)
-
     fetchData()
-
-    if (!session) return
     setSessionUpdate(update)
-  }, [userIdx, session, setSessionUpdate])
+  }, [userIdx, fetchData, setSessionUpdate, update])
 
   if (loading) return <TabContentSkeleton />
 

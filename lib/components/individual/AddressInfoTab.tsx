@@ -6,23 +6,21 @@ import { TabContentSkeleton } from './TabContentSkeleton'
 import { FaPlus } from 'react-icons/fa'
 import { EmptyTab } from './EmptyTab'
 import { formatPhoneNumber } from '@/lib/utils'
-import { Session } from 'next-auth'
 
 interface AddressInfoTabProps {
-  session: Session
+  userIdx: string
 }
 
-export const AddressInfoTab = ({ session }: AddressInfoTabProps) => {
-  const userIdx = session.user?.idx
+export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
   const { data, fetchData, handleOpenEditForm, handleSetDefaultAddress, showModal, handleRemoveAddress, setUserIdx, loading, isEmpty } =
     useAddressStore()
   const default_address = data.filter((item) => item.isDefault)
   const etc_address = data.filter((item) => !item.isDefault)
 
   useEffect(() => {
-    setUserIdx(userIdx!)
+    setUserIdx(userIdx)
     fetchData()
-  }, [])
+  }, [userIdx, fetchData])
 
   if (loading) return <TabContentSkeleton />
 

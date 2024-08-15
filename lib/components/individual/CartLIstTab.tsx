@@ -15,11 +15,11 @@ import { calculateDiscountedPrice, formatPhoneNumber } from '@/lib/utils'
 
 interface CartListTabProps {
   session: Session
+  userIdx: string
 }
 
-export const CartListTab = ({ session }: CartListTabProps) => {
+export const CartListTab = ({ session, userIdx }: CartListTabProps) => {
   const { update } = useSession()
-  const userIdx = session.user?.idx
   const {
     setSessionUpdate,
     setUserIdx,
@@ -63,13 +63,10 @@ export const CartListTab = ({ session }: CartListTabProps) => {
   }
 
   useEffect(() => {
-    if (!userIdx) return
-
     setUserIdx(userIdx)
     setSessionUpdate(update)
-
     fetchData()
-  }, [activeTabId])
+  }, [activeTabId, userIdx, setSessionUpdate, update, fetchData])
 
   if (loading) return <TabContentSkeleton />
 
