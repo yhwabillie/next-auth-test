@@ -296,7 +296,7 @@ export const CartListTab = ({ session }: CartListTabProps) => {
 
             <div className="text-md mb-2 rounded-lg bg-gray-200 py-5 text-center">주문 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
             <button
-              disabled={totalQuantity === 0}
+              disabled={totalQuantity === 0 || isAddressEmpty}
               className="w-full rounded-lg bg-red-500 py-5 text-center text-lg font-bold text-white drop-shadow-md hover:bg-red-600 disabled:bg-gray-400"
             >{`${totalPriceWithShippingCost.toLocaleString('ko-KR')}원 결제하기`}</button>
           </form>

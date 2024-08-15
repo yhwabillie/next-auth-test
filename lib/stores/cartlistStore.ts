@@ -3,7 +3,6 @@ import { CartItemType, fetchCartList, removeBulkFromCartlist, removeFromCartlist
 import { toast } from 'sonner'
 import { fetchAddressList, UserAddressType } from '@/app/actions/address/actions'
 import { addNewOrder } from '@/app/actions/order/actions'
-import { calculateDiscountedPrice } from '../utils'
 
 interface CheckedItemType {
   [key: string]: boolean
@@ -38,7 +37,7 @@ interface CartlistStore {
   setActiveTab: (id: number) => void
 
   //address activeTab control
-  addressActiveTabId: string
+  addressActiveTabId: string | null
   setAddressActiveTabId: (addressIdx: string) => void
 
   //checkItems control
@@ -126,6 +125,9 @@ export const useCartlistStore = create<CartlistStore>((set, get) => ({
         return acc
       }, {} as CheckedItemType)
 
+      // 주소가 존재하지 않을 때의 처리
+      const isAddressListEmpty = fetchedAddresslist.length === 0
+
       set({
         data: {
           cartList: fetchedCartlist,
@@ -133,8 +135,8 @@ export const useCartlistStore = create<CartlistStore>((set, get) => ({
         },
         checkedItems: initialCheckedState,
         isCartlistEmpty: fetchedCartlist.length === 0,
-        isAddressEmpty: fetchedAddresslist.length === 0,
-        addressActiveTabId: fetchedAddresslist[0].idx,
+        isAddressEmpty: isAddressListEmpty,
+        addressActiveTabId: isAddressListEmpty ? null : fetchedAddresslist[0].idx, // 주소가 없을 경우 null로 설정
       })
     } catch (error) {
       console.error(`Error fetching cartlist for user: ${userIdx}. Details:`, error)
