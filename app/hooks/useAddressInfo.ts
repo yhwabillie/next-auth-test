@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAddressStore } from '@/lib/stores/addressStore'
 
-export function useAddressInfo(userIdx: string) {
+export const useAddressInfo = (userIdx: string) => {
   const {
     fetchData,
     defaultAddress,

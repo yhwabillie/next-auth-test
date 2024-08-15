@@ -37,12 +37,12 @@ export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
       </button>
 
       <section className="mb-16 last:mb-0">
-        <div className="">
+        <div>
           <h5 className="mb-3 block w-fit rounded-md bg-gray-100 p-2 text-xs font-bold text-gray-500">기본 배송지</h5>
           <ul className="mb-10">
-            {defaultAddress.map((item, index) => (
+            {defaultAddress.map((item) => (
               <AddressItem
-                key={index}
+                key={item.idx}
                 {...item}
                 handleOpenEditForm={() => handleOpenEditForm(item)}
                 handleRemoveAddress={() => handleRemoveAddress(item.idx)}
@@ -54,27 +54,21 @@ export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
         <div>
           <h5 className="mb-3 block w-fit rounded-md bg-gray-100 p-2 text-xs font-bold text-gray-500">기타 배송지</h5>
 
-          {!EtcAddress.length && <EmptyTab title="입력된 기타 배송정보가 없습니다" sub_title="🚚 배송지를 추가해주세요." />}
-
-          <ul className="flex flex-col gap-5">
-            {EtcAddress.map((item, index) => (
-              <AddressItem
-                key={index}
-                {...item}
-                handleOpenEditForm={() => handleOpenEditForm(item)}
-                handleRemoveAddress={() => handleRemoveAddress(item.idx)}
-                setDefaultAddressBtn={
-                  <button
-                    type="button"
-                    onClick={() => handleSetDefaultAddress(item.idx)}
-                    className="block w-[120px] rounded-md border border-gray-400 bg-gray-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
-                  >
-                    기본배송지로 선택
-                  </button>
-                }
-              />
-            ))}
-          </ul>
+          {!EtcAddress.length ? (
+            <EmptyTab title="입력된 기타 배송정보가 없습니다" sub_title="🚚 배송지를 추가해주세요." />
+          ) : (
+            <ul className="flex flex-col gap-5">
+              {EtcAddress.map((item) => (
+                <AddressItem
+                  key={item.idx}
+                  {...item}
+                  handleOpenEditForm={() => handleOpenEditForm(item)}
+                  handleRemoveAddress={() => handleRemoveAddress(item.idx)}
+                  handleSetDefault={() => handleSetDefaultAddress(item.idx)}
+                />
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </>

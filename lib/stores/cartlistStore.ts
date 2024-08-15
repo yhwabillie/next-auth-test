@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { fetchAddressList, UserAddressType } from '@/app/actions/address/actions'
 import { addNewOrder } from '@/app/actions/order/actions'
 
-interface CheckedItemType {
+export interface CheckedItemType {
   [key: string]: boolean
 }
 

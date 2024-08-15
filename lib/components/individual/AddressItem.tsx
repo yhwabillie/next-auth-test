@@ -12,7 +12,7 @@ interface AddressItemProps {
   deliveryNote: string
   handleOpenEditForm: () => void
   handleRemoveAddress: () => void
-  setDefaultAddressBtn?: ReactNode
+  handleSetDefault?: () => void
 }
 
 export const AddressItem = React.memo(
@@ -26,7 +26,7 @@ export const AddressItem = React.memo(
     deliveryNote,
     handleOpenEditForm,
     handleRemoveAddress,
-    setDefaultAddressBtn,
+    handleSetDefault,
   }: AddressItemProps) => {
     return (
       <li className="relative rounded-lg bg-blue-200/70 p-5 drop-shadow-sm">
@@ -54,7 +54,15 @@ export const AddressItem = React.memo(
           >
             삭제
           </button>
-          {setDefaultAddressBtn}
+          {handleSetDefault && (
+            <button
+              type="button"
+              onClick={handleSetDefault}
+              className="block w-[120px] rounded-md border border-gray-400 bg-gray-100 p-2 text-xs font-bold text-gray-700 hover:bg-pink-200"
+            >
+              기본배송지로 선택
+            </button>
+          )}
         </div>
       </li>
     )
