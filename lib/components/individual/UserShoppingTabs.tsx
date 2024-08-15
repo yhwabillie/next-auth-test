@@ -36,7 +36,7 @@ export const UserShoppingTabs = ({ session }: UserShoppingTabsProps) => {
     { id: 1, label: '배송정보', content: <AddressInfoTab userIdx={userIdx} /> },
     { id: 2, label: '위시리스트', content: <WishListTab userIdx={userIdx} /> },
     { id: 3, label: '장바구니', content: <CartListTab session={session} userIdx={userIdx} /> },
-    { id: 4, label: '주문/배송조회', content: <OrderListTab /> },
+    { id: 4, label: '주문 상세정보', content: <OrderListTab userIdx={userIdx} /> },
   ]
 
   return (

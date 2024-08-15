@@ -12,17 +12,6 @@ interface ModalType {
   }
 }
 
-//탭메뉴 컨트롤
-interface tabMenuActiveStore {
-  activeTabId: number
-  setActiveTab: (id: number) => void
-}
-
-export const tabMenuActiveStore = create<tabMenuActiveStore>((set) => ({
-  activeTabId: 3, // 초기 활성화된 탭 ID (예: 배송정보)
-  setActiveTab: (id) => set({ activeTabId: id }),
-}))
-
 //상태 모달 컨트롤
 interface alertModalStore {
   modals: {
@@ -74,80 +63,80 @@ interface OrderDataStore {
   hideModal: (modalName: keyof ModalType['modals']) => void
 }
 
-export const useOrderDataStore = create<OrderDataStore>((set, get) => ({
-  modals: {
-    changeAddress: false,
-  },
-  userIdx: '',
-  orderIdx: '',
-  newAddressIdx: '',
-  loading: false,
-  data: [],
-  isEmpty: false,
-  setUserIdx: (userIdx: string) => set({ userIdx }),
-  setOrderIdx: (orderIdx: string) => set({ orderIdx }),
-  setNewAddressIdx: (newAddressIdx: string) => set({ newAddressIdx }),
-  fetchData: async () => {
-    const userIdx = get().userIdx
+// export const useOrderDataStore = create<OrderDataStore>((set, get) => ({
+//   modals: {
+//     changeAddress: false,
+//   },
+//   userIdx: '',
+//   orderIdx: '',
+//   newAddressIdx: '',
+//   loading: false,
+//   data: [],
+//   isEmpty: false,
+//   setUserIdx: (userIdx: string) => set({ userIdx }),
+//   setOrderIdx: (orderIdx: string) => set({ orderIdx }),
+//   setNewAddressIdx: (newAddressIdx: string) => set({ newAddressIdx }),
+//   fetchData: async () => {
+//     const userIdx = get().userIdx
 
-    if (userIdx) {
-      set({ loading: true }) // 로딩 시작
+//     if (userIdx) {
+//       set({ loading: true }) // 로딩 시작
 
-      try {
-        const fetchedOrderList = await fetchOrderlist()
+//       try {
+//         const fetchedOrderList = await fetchOrderlist()
 
-        if (!fetchedOrderList) {
-          console.log('fetch error')
-        }
+//         if (!fetchedOrderList) {
+//           console.log('fetch error')
+//         }
 
-        set({
-          data: fetchedOrderList,
-          isEmpty: fetchedOrderList.length === 0,
-        })
-      } catch (error) {
-        console.log(error)
-      } finally {
-        set({ loading: false })
-      }
-    }
-  },
-  updateData: async () => {
-    const { userIdx, orderIdx, newAddressIdx, fetchData, hideModal } = get()
+//         set({
+//           data: fetchedOrderList,
+//           isEmpty: fetchedOrderList.length === 0,
+//         })
+//       } catch (error) {
+//         console.log(error)
+//       } finally {
+//         set({ loading: false })
+//       }
+//     }
+//   },
+//   updateData: async () => {
+//     const { userIdx, orderIdx, newAddressIdx, fetchData, hideModal } = get()
 
-    if (userIdx) {
-      set({ loading: true }) // 로딩 시작
+//     if (userIdx) {
+//       set({ loading: true }) // 로딩 시작
 
-      try {
-        const response = await updateOrderAddress(orderIdx, newAddressIdx)
+//       try {
+//         const response = await updateOrderAddress(orderIdx, newAddressIdx)
 
-        if (!response) {
-          console.log('updated error')
-        }
+//         if (!response) {
+//           console.log('updated error')
+//         }
 
-        hideModal('changeAddress')
+//         hideModal('changeAddress')
 
-        await fetchData()
-      } catch (error) {
-      } finally {
-        set({ loading: false })
-      }
-    }
-  },
-  showModal: (modalName) =>
-    set((state) => ({
-      modals: {
-        ...state.modals,
-        [modalName]: true,
-      },
-    })),
-  hideModal: (modalName) =>
-    set((state) => ({
-      modals: {
-        ...state.modals,
-        [modalName]: false,
-      },
-    })),
-}))
+//         await fetchData()
+//       } catch (error) {
+//       } finally {
+//         set({ loading: false })
+//       }
+//     }
+//   },
+//   showModal: (modalName) =>
+//     set((state) => ({
+//       modals: {
+//         ...state.modals,
+//         [modalName]: true,
+//       },
+//     })),
+//   hideModal: (modalName) =>
+//     set((state) => ({
+//       modals: {
+//         ...state.modals,
+//         [modalName]: false,
+//       },
+//     })),
+// }))
 
 //모달 열기/닫기
 type ModalState = {

@@ -2,15 +2,15 @@
 import { useAddressStore } from '../stores/addressStore'
 import { useCartlistStore } from '../stores/cartlistStore'
 import { useProductsStore } from '../stores/productsStore'
-import { useOrderDataStore } from '../zustandStore'
+// import { useOrderDataStore } from '../zustandStore'
 import { AddNewAddressForm } from './individual/AddNewAddressForm'
 import { AddressUpdateForm } from './individual/AddressUpdateForm'
 import { AlertErrorModal } from './individual/alertErrorModal'
-import { ChangeOrderAddress } from './individual/ChangeOrderAddress'
+// import { ChangeOrderAddress } from './individual/ChangeOrderAddress'
 import { PostCodeModal } from './individual/PostCodeModal'
 
 export const ModalProvider = () => {
-  const { modals: order_modals } = useOrderDataStore()
+  // const { modals: order_modals } = useOrderDataStore()
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
   const { modals: product_modals, hideModal: product_hide } = useProductsStore()
   const { modals: cart_modals, hideModal: cart_hide } = useCartlistStore()
@@ -32,7 +32,7 @@ export const ModalProvider = () => {
       {address_modals.addNewAddress && <AddNewAddressForm />}
       {address_modals.editAddress && <AddressUpdateForm />}
       {address_modals.postcode && <PostCodeModal />}
-      {order_modals.changeAddress && <ChangeOrderAddress />}
+      {/* {order_modals.changeAddress && <ChangeOrderAddress />} */}
       {address_modals.alert && <AlertErrorModal handleClickClose={() => address_hide('alert')} message={alert_messages.addressList.warning} />}
       {product_modals.alert && <AlertErrorModal handleClickClose={() => product_hide('alert')} message={alert_messages.products.warning} />}
       {cart_modals.need_session && (
