@@ -13,6 +13,8 @@ interface AddressStore {
   //fetch data status
   fetchData: () => Promise<void>
   data: UserAddressType[]
+  defaultAddress: UserAddressType[]
+  EtcAddress: UserAddressType[]
   loading: boolean
   isEmpty: boolean
 
@@ -79,6 +81,8 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         data: fetchedCartList,
         isEmpty: fetchedCartList.length === 0,
         isDefaultAddress: fetchedCartList.length === 0,
+        defaultAddress: fetchedCartList.filter((item) => item.isDefault),
+        EtcAddress: fetchedCartList.filter((item) => !item.isDefault),
       })
     } catch (error) {
       console.error('Error fetching address list:', error)
@@ -87,6 +91,8 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
     }
   },
   data: [],
+  defaultAddress: [],
+  EtcAddress: [],
   loading: false,
   isEmpty: false,
 
