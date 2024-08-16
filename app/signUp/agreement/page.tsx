@@ -1,5 +1,5 @@
 'use server'
-import { AgreementForm } from '@/lib/components/AgreementForm'
+import { AgreementForm } from '@/lib/components/common/AgreementForm'
 
 export default async function Page() {
   return (

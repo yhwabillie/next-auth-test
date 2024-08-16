@@ -1,11 +1,11 @@
 'use client'
 import { useForm } from 'react-hook-form'
-import { AgreementSchema, AgreementSchemaType } from '../zodSchema'
+import { AgreementSchema, AgreementSchemaType } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useAgreementStore } from '../zustandStore'
-import { Button } from './Button'
-import { HookFormCheckBox } from './HookFormCheckBox'
+import { useAgreementStore } from '@/lib/zustandStore'
+import { Button } from '@/lib/components/common/modules/Button'
+import { HookFormCheckBox } from '@/lib/components/common/modules/HookFormCheckBox'
 import clsx from 'clsx'
 
 export const AgreementForm = () => {

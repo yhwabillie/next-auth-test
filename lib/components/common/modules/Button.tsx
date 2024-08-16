@@ -1,5 +1,5 @@
 'use client'
-import { BtnLoadingSpinner } from './BtnLoadingSpinner'
+import { BtnLoadingSpinner } from '@/lib/components/common/modules/BtnLoadingSpinner'
 
 interface IButtonProps {
   label: string

@@ -2,12 +2,11 @@
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { FaShoppingCart } from 'react-icons/fa'
-import { UserNavItem } from './individual/UserNavItem'
-import { LinkBtn } from './LinkBtn'
-import { UserMenuDropdown } from './individual/UserMenuDropdown'
+import { LinkBtn } from '@/lib/components/common/modules/LinkBtn'
+import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdown'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { useWishlistStore } from '../stores/wishlistStore'
+import { UserNavItem } from '../modules/UserNavItem'
 
 export enum TooltipTypes {
   NONE = 'NONE',

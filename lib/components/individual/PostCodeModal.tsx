@@ -1,6 +1,6 @@
 'use client'
 import DaumPostcodeEmbed from 'react-daum-postcode'
-import { Button } from '../Button'
+import { Button } from '@/lib/components/common/modules/Button'
 import { useAddressStore } from '@/lib/stores/addressStore'
 
 export const PostCodeModal = () => {

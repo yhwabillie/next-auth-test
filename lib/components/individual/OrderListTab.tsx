@@ -1,15 +1,14 @@
 'use client'
-import { useEffect } from 'react'
 import dayjs from 'dayjs'
 import { TabContentSkeleton } from './TabContentSkeleton'
 import { EmptyTab } from './EmptyTab'
-import { useOrderlistStore } from '@/lib/stores/orderlistStore'
 import { IoMdClose } from 'react-icons/io'
 import 'dayjs/locale/ko'
 import clsx from 'clsx'
 import { calculateDiscountedPrice, formatPhoneNumber } from '@/lib/utils'
 import { BsChatLeftText } from 'react-icons/bs'
 import { useAddressStore } from '@/lib/stores/addressStore'
+import { useOrderlistInfo } from '@/app/hooks'
 dayjs.locale('ko')
 
 interface OrderListTabProps {
@@ -18,24 +17,8 @@ interface OrderListTabProps {
 
 export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
   const { setAddressIdx } = useAddressStore()
-  const {
-    fetchData,
-    data,
-    setUserIdx,
-    setOrderIdx,
-    totalPriceWithShippingCost,
-    showModal,
-    loading,
-    setIsShippingCost,
-    handleRemoveOrderData,
-    isEmpty,
-    totalPrice,
-  } = useOrderlistStore()
-
-  useEffect(() => {
-    setUserIdx(userIdx)
-    fetchData()
-  }, [])
+  const { loading, isEmpty, data, handleRemoveOrderData, setIsShippingCost, showModal, setOrderIdx, totalPriceWithShippingCost, totalPrice } =
+    useOrderlistInfo(userIdx)
 
   if (loading) return <TabContentSkeleton />
   if (isEmpty) return <EmptyTab sub_title="구매하신 제품이 없습니다." title="💸 필요한 제품을 구매해보세요" type="link" label="쇼핑하러가기" />
@@ -51,10 +34,10 @@ export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
         {data.map((item) => (
           <li key={item.idx} className="relative rounded-lg bg-blue-400/15 p-8">
             <IoMdClose onClick={() => handleRemoveOrderData(item.idx)} className="absolute right-5 top-5 cursor-pointer text-2xl" />
-            <div className="flex items-center gap-2">
-              <strong className="mb-2 block text-lg text-blue-500">{item.status === 'pending' && '결제완료'}</strong>
+            <div className="mb-2 flex items-center gap-2">
+              <strong className="block text-lg text-blue-500">{item.status === 'pending' && '결제완료'}</strong>
               <span
-                className={clsx('mb-2 inline-block w-fit rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white drop-shadow-md', {
+                className={clsx('inline-block w-fit rounded-md bg-blue-500 px-[10px] py-[6px] text-xs font-medium text-white drop-shadow-md', {
                   'bg-pink-500': setIsShippingCost(item.idx),
                 })}
               >
@@ -122,9 +105,9 @@ export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
                 <li className="text-md mb-1 flex items-center gap-2">
                   <span className="font-semibold text-blue-500">{`${item.address.recipientName}(${item.address.addressName})`}</span>
                   {item.address.isDefault ? (
-                    <span className="rounded-[5px] bg-green-100 px-[10px] py-[8px] text-xs font-semibold text-green-600">기본배송지</span>
+                    <span className="rounded-[5px] bg-green-100 px-[10px] py-[6px] text-xs font-semibold text-green-600">기본배송지</span>
                   ) : (
-                    <span className="rounded-[5px] bg-blue-100 px-[10px] py-[8px] text-xs font-semibold text-blue-600">기타배송지</span>
+                    <span className="rounded-[5px] bg-blue-100 px-[10px] py-[6px] text-xs font-semibold text-blue-600">기타배송지</span>
                   )}
                 </li>
                 <li className="text-md mb-1 font-medium text-gray-600">{formatPhoneNumber(item.address.phoneNumber)}</li>

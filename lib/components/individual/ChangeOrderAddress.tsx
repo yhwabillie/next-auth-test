@@ -55,9 +55,9 @@ export const ChangeOrderAddress = () => {
                   <div className="mb-2 flex flex-row items-center gap-2">
                     <span className="font-semibold text-blue-500">{`${item.recipientName}(${item.addressName})`}</span>
                     {item.isDefault ? (
-                      <span className="rounded-[5px] bg-green-100 px-[10px] py-[8px] text-xs font-semibold text-green-600">기본배송지</span>
+                      <span className="rounded-[5px] bg-green-100 px-[10px] py-[6px] text-xs font-semibold text-green-600">기본배송지</span>
                     ) : (
-                      <span className="rounded-[5px] bg-blue-100 px-[10px] py-[8px] text-xs font-semibold text-blue-600">기타배송지</span>
+                      <span className="rounded-[5px] bg-blue-100 px-[10px] py-[6px] text-xs font-semibold text-blue-600">기타배송지</span>
                     )}
                   </div>
                   <p className="text-md mb-1 font-medium text-gray-600">{formatPhoneNumber(item.phoneNumber)}</p>
@@ -87,48 +87,6 @@ export const ChangeOrderAddress = () => {
           </div>
         </form>
       </div>
-      {/* <form
-        onSubmit={handleSubmit(handleSubmitAddress)}
-        className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg"
-      >
-        <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">배송지 변경</h2>
-        <div className="mb-4 h-full">
-          <ul>
-            {data.map((item, index) => (
-              <li key={index} className="mb-5 last:mb-0">
-                <label>
-                  {item.isDefault ? <div>기본배송지</div> : <div>{`기타배송지 ${index}`}</div>}
-                  <input
-                    {...register('update_address', { required: true })}
-                    value={item.idx}
-                    defaultChecked={item.idx === addressIdx}
-                    onChange={(event) => {
-                      const target = event.target.value
-                      console.log(target)
-                      setValue('update_address', target)
-                    }}
-                    type="radio"
-                    name="address"
-                  />
-                  <strong>{`${item.addressName}(${item.recipientName})`}</strong>
-                  <p>{item.phoneNumber}</p>
-                  <p>{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</p>
-                  <select disabled={true}>
-                    <option>{item.deliveryNote}</option>
-                  </select>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="flex flex-grow gap-3">
-          <button type="button" onClick={() => hideModal('changeAddress')}>
-            닫기
-          </button>
-          <button>배송지 변경</button>
-        </div>
-      </form> */}
     </div>
   )
 }

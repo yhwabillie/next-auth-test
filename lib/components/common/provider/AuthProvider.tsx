@@ -1,7 +1,7 @@
 'use client'
 import { useAddressStore } from '@/lib/stores/addressStore'
 import { SessionProvider } from 'next-auth/react'
-import { useModalStore } from '../zustandStore'
+import { useModalStore } from '@/lib/zustandStore'
 import clsx from 'clsx'
 
 interface ProvidersProps {

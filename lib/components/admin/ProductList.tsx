@@ -1,14 +1,14 @@
 'use client'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Button } from '@/lib/components//Button'
+import { Button } from '@/lib/components/common/modules/Button'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaCheck } from 'react-icons/fa'
 import { deleteSelectedProductsByIdx, fetchCategories, fetchProducts, UpdateProduct, updateProduct } from '@/app/actions/upload-product/actions'
 import { useProductStore } from '@/lib/zustandStore'
 import { toast } from 'sonner'
-import { LoadingSpinner } from '@/lib/components/LoadingSpinner'
+import { LoadingSpinner } from '@/lib/components/common/modules/LoadingSpinner'
 import { Product } from '@prisma/client'
 import * as XLSX from 'xlsx'
-import { ProductItemModal } from '@/lib/components/ProductItemModal'
+import { ProductItemModal } from '@/lib/components/admin/ProductItemModal'
 
 interface CheckedItem {
   [key: string]: boolean

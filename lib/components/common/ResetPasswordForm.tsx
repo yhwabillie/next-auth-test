@@ -2,12 +2,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { ResetPwSchema, ResetPwSchemaType } from '../zodSchema'
+import { ResetPwSchema, ResetPwSchemaType } from '@/lib/zodSchema'
 import { toast } from 'sonner'
-import { Button } from './Button'
-import { HookFormInput } from './HookFormInput'
+import { Button } from './modules/Button'
+import { HookFormInput } from '@/lib/components/common/modules/HookFormInput'
 
 export const ResetPasswordForm = () => {
   const searchParams = useSearchParams()

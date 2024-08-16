@@ -1,5 +1,5 @@
 'use client'
-import { TooltipTypes } from '@/lib/components/Header'
+import { TooltipTypes } from '@/lib/components/common/layout/Header'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'

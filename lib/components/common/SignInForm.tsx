@@ -2,11 +2,11 @@
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { HookFormInput } from './HookFormInput'
-import { SignInFormSchemaType, SignInSchema } from '../zodSchema'
+import { HookFormInput } from '@/lib/components/common/modules/HookFormInput'
+import { SignInFormSchemaType, SignInSchema } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { Button } from './Button'
+import { Button } from '@/lib/components/common/modules/Button'
 import { useEffect } from 'react'
 
 export const SignInForm = () => {

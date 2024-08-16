@@ -1,6 +1,5 @@
 'use server'
-import { PasswordResetRequestForm } from '@/lib/components/PasswordResetRequestForm'
-import Link from 'next/link'
+import { PasswordResetRequestForm } from '@/lib/components/common/PasswordResetRequestForm'
 
 export default async function Page() {
   return (

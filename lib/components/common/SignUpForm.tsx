@@ -1,19 +1,18 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { HookFormInput } from './HookFormInput'
+import { HookFormInput } from '@/lib/components/common/modules/HookFormInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChangeEvent, Suspense, useEffect, useState } from 'react'
-import { SignUpFormSchemaType, SignUpSchema } from '../zodSchema'
-import { toast, Toaster } from 'sonner'
+import { SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
+import { toast } from 'sonner'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
 import { confirmDuplicateData } from '@/app/actions/signUp/confirmData'
-import { useAgreementStore } from '../zustandStore'
+import { useAgreementStore } from '@/lib/zustandStore'
 import Image from 'next/image'
 import axios from 'axios'
-import { HookFormCheckBox } from './HookFormCheckBox'
-import { Button } from './Button'
-import { HookFormRadioItem } from './HookFormRadioItem'
+import { Button } from './modules/Button'
+import { HookFormRadioItem } from '@/lib/components/common/modules/HookFormRadioItem'
 require('dotenv').config()
 
 interface AgreementItemType {
@@ -25,7 +24,6 @@ export const SignUpForm = () => {
   const [profileImage, setProfileImage] = useState('')
   const [isConfirmID, setIsConfirmID] = useState(false)
   const [isConfirmEmail, setIsConfirmEmail] = useState(false)
-  const [isFormLoading, setIsFormLoading] = useState(false)
   const router = useRouter()
   const {
     register,

@@ -1,10 +1,7 @@
 'use client'
 import { Product } from '@/app/actions/upload-product/actions'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { debounce } from '../debounce'
-import { toast } from 'sonner'
-import { searchProducts } from '@/app/actions/search/actions'
-import { fetchProducts } from '@/app/actions/products/actions'
+// import { debounce } from '../debounce'
 
 export const MainPage = () => {
   const [data, setData] = useState<Product[]>([])
@@ -36,24 +33,24 @@ export const MainPage = () => {
   //   }
   // }
 
-  const debouncedSearch = useCallback(
-    debounce((searchQuery: string) => {
-      const trimmedQuery = searchQuery.trim()
-      setQuery(trimmedQuery)
-      setPage(1)
-      setInitialLoad(false) // 검색어 입력 시 초기 로드를 false로 설정
+  // const debouncedSearch = useCallback(
+  //   debounce((searchQuery: string) => {
+  //     const trimmedQuery = searchQuery.trim()
+  //     setQuery(trimmedQuery)
+  //     setPage(1)
+  //     setInitialLoad(false) // 검색어 입력 시 초기 로드를 false로 설정
 
-      if (trimmedQuery === '') {
-        setData([]) // 입력값이 빈 값이면 제품 리스트 초기화
-        setHasMore(false) // 추가 로드를 방지
-      }
-    }, 300), // 300ms 디바운스 시간
-    [],
-  )
+  //     if (trimmedQuery === '') {
+  //       setData([]) // 입력값이 빈 값이면 제품 리스트 초기화
+  //       setHasMore(false) // 추가 로드를 방지
+  //     }
+  //   }, 300), // 300ms 디바운스 시간
+  //   [],
+  // )
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSearch(e.target.value)
-  }
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   debouncedSearch(e.target.value)
+  // }
 
   const lastProductElementRef = useCallback(
     (node: HTMLDivElement | null) => {

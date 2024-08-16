@@ -4,3 +4,4 @@
 export { useAddressInfo } from './useAddressInfo'
 export { useWishlistInfo } from './useWishlistInfo'
 export { useCartlistInfo } from './useCartlistInfo'
+export { useOrderlistInfo } from './useOrderlistInfo'

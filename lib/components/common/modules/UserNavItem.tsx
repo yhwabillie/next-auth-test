@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
-import { TooltipTypes } from '@/lib/components/Header'
+import { TooltipTypes } from '@/lib/components/common/layout/Header'
 import { Session } from 'next-auth'
 
 interface UserNavItemProps {

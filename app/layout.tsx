@@ -1,10 +1,10 @@
-import { AuthProvider } from '@/lib/components/AuthProvider'
+import { AuthProvider } from '@/lib/components/common/provider/AuthProvider'
 import type { Metadata } from 'next'
-import { Header } from '@/lib/components/Header'
+import { Header } from '@/lib/components/common/layout/Header'
 import { Toaster } from 'sonner'
 import './globals.css'
-import { FramerMotionProvider } from '@/lib/FramerMotionProvider'
-import { ModalProvider } from '@/lib/components/ModalProvider'
+import { FramerMotionProvider } from '@/lib/components/common/FramerMotionProvider'
+import { ModalProvider } from '@/lib/components/common/provider/ModalProvider'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',

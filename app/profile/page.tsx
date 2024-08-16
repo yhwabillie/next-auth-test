@@ -1,5 +1,5 @@
 'use server'
-import { IProfileFetchData, ProfileForm } from '@/lib/components/ProfileForm'
+import { IProfileFetchData, ProfileForm } from '@/lib/components/common/ProfileForm'
 import dotenv from 'dotenv'
 import { fetchProfileData } from '../actions/profile/fetchProfile'
 import { headers } from 'next/headers'

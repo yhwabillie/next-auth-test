@@ -1,9 +1,9 @@
 'use client'
 import { createBulkProduct, Product } from '@/app/actions/upload-product/actions'
-import { useEffect, useState } from 'react'
-import { Button } from './Button'
+import { useState } from 'react'
+import { Button } from '@/lib/components/common/modules/Button'
 import { FieldValues, useForm } from 'react-hook-form'
-import { useProductStore } from '../zustandStore'
+import { useProductStore } from '@/lib/zustandStore'
 import * as XLSX from 'xlsx'
 
 export const ProductUploadForm = () => {

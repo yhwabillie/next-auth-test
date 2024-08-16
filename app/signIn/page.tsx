@@ -1,5 +1,5 @@
 'use server'
-import { SignInForm } from '@/lib/components/SignInForm'
+import { SignInForm } from '@/lib/components/common/SignInForm'
 import Link from 'next/link'
 
 export default async function Page() {

@@ -1,5 +1,5 @@
 'use server'
-import { ResetPasswordForm } from '@/lib/components/ResetPasswordForm'
+import { ResetPasswordForm } from '@/lib/components/common/ResetPasswordForm'
 import { Suspense } from 'react'
 
 export default async function Page() {

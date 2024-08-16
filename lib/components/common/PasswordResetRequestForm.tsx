@@ -1,11 +1,11 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { ConFirmEmailSchemaType, ConFirmEmailSchema } from '../zodSchema'
+import { ConFirmEmailSchemaType, ConFirmEmailSchema } from '../../zodSchema'
 import { toast } from 'sonner'
-import { useEffect, useState } from 'react'
-import { HookFormInput } from './HookFormInput'
-import { Button } from './Button'
+import { useEffect } from 'react'
+import { HookFormInput } from './modules/HookFormInput'
+import { Button } from '@/lib/components/common/modules/Button'
 
 export const PasswordResetRequestForm = () => {
   const {

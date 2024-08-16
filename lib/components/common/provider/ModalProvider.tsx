@@ -1,14 +1,13 @@
 'use client'
-import { useAddressStore } from '../stores/addressStore'
-import { useCartlistStore } from '../stores/cartlistStore'
-import { useOrderlistStore } from '../stores/orderlistStore'
-import { useProductsStore } from '../stores/productsStore'
-import { AddNewAddressForm } from './individual/AddNewAddressForm'
-import { AddressUpdateForm } from './individual/AddressUpdateForm'
-import { AlertErrorModal } from './individual/alertErrorModal'
-import { ChangeOrderAddress } from './individual/ChangeOrderAddress'
-
-import { PostCodeModal } from './individual/PostCodeModal'
+import { useAddressStore } from '@/lib/stores/addressStore'
+import { useCartlistStore } from '@/lib/stores/cartlistStore'
+import { useOrderlistStore } from '@/lib/stores/orderlistStore'
+import { useProductsStore } from '@/lib/stores/productsStore'
+import { AddNewAddressForm } from '@/lib/components/individual/AddNewAddressForm'
+import { AddressUpdateForm } from '@/lib/components/individual/AddressUpdateForm'
+import { AlertErrorModal } from '@/lib/components/common/modals/AlertErrorModal'
+import { ChangeOrderAddress } from '@/lib/components/individual/ChangeOrderAddress'
+import { PostCodeModal } from '@/lib/components/individual/PostCodeModal'
 
 export const ModalProvider = () => {
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
