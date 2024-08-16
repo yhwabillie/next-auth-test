@@ -2,23 +2,12 @@ import { useOrderlistStore } from '@/lib/stores/orderlistStore'
 import { useEffect } from 'react'
 
 export const useOrderlistInfo = (userIdx: string) => {
-  const {
-    fetchData,
-    data,
-    setUserIdx,
-    setOrderIdx,
-    totalPriceWithShippingCost,
-    showModal,
-    loading,
-    setIsShippingCost,
-    handleRemoveOrderData,
-    isEmpty,
-    totalPrice,
-  } = useOrderlistStore()
+  const { fetchOrderList, data, setUserIdx, setOrderIdx, totalPriceWithShippingCost, showModal, loading, removeOrder, isOrderListEmpty, totalPrice } =
+    useOrderlistStore()
 
   useEffect(() => {
     setUserIdx(userIdx)
-    fetchData()
+    fetchOrderList()
   }, [])
 
   return {
@@ -27,9 +16,8 @@ export const useOrderlistInfo = (userIdx: string) => {
     totalPriceWithShippingCost,
     showModal,
     loading,
-    setIsShippingCost,
-    handleRemoveOrderData,
-    isEmpty,
+    removeOrder,
+    isOrderListEmpty,
     totalPrice,
   }
 }

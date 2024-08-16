@@ -47,8 +47,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       const fetchedProducts = await fetchProducts({ userIdx, page, pageSize })
 
       if (!fetchedProducts) {
-        console.error('Failed to fetch products')
-        return
+        throw new Error('Failed to fetch products')
       }
 
       set({
@@ -56,11 +55,13 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
         isEmpty: fetchedProducts.products.length === 0,
       })
     } catch (error) {
-      console.log(error)
+      console.error('Error fetching products:', error)
+      toast.error('상품 데이터를 가져오는 중 오류가 발생했습니다.')
     } finally {
       set({ loading: false })
     }
   },
+
   data: [],
   loading: false,
   isEmpty: false,
@@ -84,57 +85,61 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       },
     })),
 
-  //handleClick
-  toggleWishStatus: async (productIdx: string, page: number, pagesize: number) => {
+  //toggle wish, cart
+  toggleWishStatus: async (productIdx: string, page: number, pageSize: number) => {
     const { userIdx, fetchData } = get()
     set({ loading: true })
 
     try {
       const response = await toggleWishStatus(userIdx, productIdx)
 
-      if (response.success) {
-        await fetchData(page, pagesize)
-
-        if (response.toggleStatus) {
-          toast.success('위시리스트에 추가 했습니다.')
-        } else {
-          toast.success('위시리스트에서 제거 했습니다.')
-        }
-      } else {
-        toast.error('위시리스트 넣기에 실패했습니다. 다시 시도해주세요.')
+      if (!response.success) {
+        throw new Error('Failed to update wish status')
       }
-    } catch (error) {
-      console.error('Error toggling wish status:', error)
-      alert('An error occurred while updating the wish.')
+
+      await fetchData(page, pageSize)
+
+      toast.success(response.toggleStatus ? '위시리스트에 추가했습니다.' : '위시리스트에서 제거했습니다.')
+    } catch (error: unknown) {
+      //에러 메시지 처리
+      if (error instanceof Error) {
+        console.error('Error toggling wishlist status:', error.message)
+        toast.error('위시리스트 업데이트에 실패했습니다. 다시 시도해주세요.')
+      } else {
+        console.error('Unexpected error:', error)
+        toast.error('예기치 않은 오류가 발생했습니다.')
+      }
     } finally {
       set({ loading: false })
     }
   },
-  toggleCartStatus: async (productIdx: string, page: number, pagesize: number) => {
+  toggleCartStatus: async (productIdx: string, page: number, pageSize: number) => {
     const { userIdx, fetchData, sessionUpdate } = get()
     set({ loading: true })
 
     try {
       const response = await toggleProductToCart(userIdx, productIdx)
 
-      if (response.success) {
-        if (sessionUpdate) {
-          sessionUpdate({ cartlist_length: response.cartlistCount })
-        }
-
-        await fetchData(page, pagesize)
-
-        if (response.toggleStatus) {
-          toast.success('장바구니에서 추가 했습니다.')
-        } else {
-          toast.success('장바구니에 제거 했습니다.')
-        }
-      } else {
-        toast.error('장바구니 넣기에 실패했습니다. 다시 시도해주세요.')
+      if (!response.success) {
+        throw new Error('Failed to update cart status')
       }
-    } catch (error) {
-      console.error('Error toggling cart status:', error)
-      alert('An error occurred while updating the cart.')
+
+      if (sessionUpdate) {
+        sessionUpdate({ cartlist_length: response.cartlistCount })
+      }
+
+      await fetchData(page, pageSize)
+
+      toast.success(response.toggleStatus ? '장바구니에 추가했습니다.' : '장바구니에서 제거했습니다.')
+    } catch (error: unknown) {
+      //에러 메시지 처리
+      if (error instanceof Error) {
+        console.error('Error toggling cart status:', error.message)
+        toast.error('장바구니 업데이트에 실패했습니다. 다시 시도해주세요.')
+      } else {
+        console.error('Unexpected error:', error)
+        toast.error('예기치 않은 오류가 발생했습니다.')
+      }
     } finally {
       set({ loading: false })
     }

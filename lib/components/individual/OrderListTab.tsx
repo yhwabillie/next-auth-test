@@ -9,6 +9,7 @@ import { calculateDiscountedPrice, formatPhoneNumber } from '@/lib/utils'
 import { BsChatLeftText } from 'react-icons/bs'
 import { useAddressStore } from '@/lib/stores/addressStore'
 import { useOrderlistInfo } from '@/app/hooks'
+import { SHIPPING_COST_THRESHOLD } from '@/lib/constants'
 dayjs.locale('ko')
 
 interface OrderListTabProps {
@@ -17,11 +18,11 @@ interface OrderListTabProps {
 
 export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
   const { setAddressIdx } = useAddressStore()
-  const { loading, isEmpty, data, handleRemoveOrderData, setIsShippingCost, showModal, setOrderIdx, totalPriceWithShippingCost, totalPrice } =
-    useOrderlistInfo(userIdx)
+  const { loading, isOrderListEmpty, data, removeOrder, showModal, setOrderIdx, totalPriceWithShippingCost, totalPrice } = useOrderlistInfo(userIdx)
 
   if (loading) return <TabContentSkeleton />
-  if (isEmpty) return <EmptyTab sub_title="구매하신 제품이 없습니다." title="💸 필요한 제품을 구매해보세요" type="link" label="쇼핑하러가기" />
+  if (isOrderListEmpty)
+    return <EmptyTab sub_title="구매하신 제품이 없습니다." title="💸 필요한 제품을 구매해보세요" type="link" label="쇼핑하러가기" />
 
   return (
     <section>
@@ -33,15 +34,15 @@ export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
       <ul className="flex flex-col gap-5 px-2">
         {data.map((item) => (
           <li key={item.idx} className="relative rounded-lg bg-blue-400/15 p-8">
-            <IoMdClose onClick={() => handleRemoveOrderData(item.idx)} className="absolute right-5 top-5 cursor-pointer text-2xl" />
+            <IoMdClose onClick={() => removeOrder(item.idx)} className="absolute right-5 top-5 cursor-pointer text-2xl" />
             <div className="mb-2 flex items-center gap-2">
               <strong className="block text-lg text-blue-500">{item.status === 'pending' && '결제완료'}</strong>
               <span
                 className={clsx('inline-block w-fit rounded-md bg-blue-500 px-[10px] py-[6px] text-xs font-medium text-white drop-shadow-md', {
-                  'bg-pink-500': setIsShippingCost(item.idx),
+                  'bg-pink-500': totalPrice(item.idx) >= SHIPPING_COST_THRESHOLD,
                 })}
               >
-                {setIsShippingCost(item.idx) ? '배송비 무료' : '배송비 3,000원'}
+                {totalPrice(item.idx) >= SHIPPING_COST_THRESHOLD ? '배송비 무료' : '배송비 3,000원'}
               </span>
             </div>
             <div className="mb-10 flex flex-col gap-1 border-b border-blue-500/40 pb-5">
@@ -130,7 +131,7 @@ export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
                 </dl>
                 <dl className="mb-4 flex items-center justify-between border-l-4 border-blue-400/30 pb-1 pl-2">
                   <dt className="text-sm text-gray-500">배송비</dt>
-                  <dd className="text-sm text-gray-500">{setIsShippingCost(item.idx) ? '무료' : '3,000원'}</dd>
+                  <dd className="text-sm text-gray-500">{totalPrice(item.idx) >= SHIPPING_COST_THRESHOLD ? '무료' : '3,000원'}</dd>
                 </dl>
 
                 <li className="flex items-center justify-between">

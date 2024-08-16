@@ -9,7 +9,7 @@ interface WishListTabProps {
 }
 
 export const WishListTab = ({ userIdx }: WishListTabProps) => {
-  const { data, isEmpty, loading, handleToggleCartStatus, handleDeleteWishItem } = useWishlistInfo(userIdx)
+  const { data, isEmpty, loading, toggleCartStatus, deleteWishItem } = useWishlistInfo(userIdx)
 
   if (loading) return <TabContentSkeleton />
 
@@ -31,8 +31,8 @@ export const WishListTab = ({ userIdx }: WishListTabProps) => {
                 discount_rate={product.discount_rate}
                 isInCart={product.isInCart}
                 loading={loading}
-                handleDeleteWishItem={() => handleDeleteWishItem(product.idx)}
-                handleToggleCartStatus={() => handleToggleCartStatus(product.idx)}
+                handleDeleteWishItem={() => deleteWishItem(product.idx)}
+                handleToggleCartStatus={() => toggleCartStatus(product.idx)}
               />
             ))}
           </ul>

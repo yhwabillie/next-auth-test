@@ -36,8 +36,8 @@ export const Header = () => {
               </h1>
             </li>
             <li>
-              <Link href="/products" className="font-medium text-blue-600">
-                PRODUCTS
+              <Link href="/search" className="font-medium text-blue-600">
+                SEARCH
               </Link>
             </li>
           </ul>

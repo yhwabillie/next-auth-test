@@ -7,7 +7,7 @@ export const useCartlistInfo = (userIdx: string) => {
   const {
     setSessionUpdate,
     setUserIdx,
-    fetchData,
+    fetchCartAndAddressData,
     data,
     setQuantity,
     deleteCartItem,
@@ -22,16 +22,16 @@ export const useCartlistInfo = (userIdx: string) => {
     activeTabId,
     addressActiveTabId,
     setAddressActiveTabId,
-    SubmitOrder,
+    submitOrder,
   } = useCartlistStore()
 
   useEffect(() => {
     setUserIdx(userIdx)
     setSessionUpdate(update)
-    fetchData()
-  }, [activeTabId, userIdx, setSessionUpdate, update, fetchData])
+    fetchCartAndAddressData()
+  }, [activeTabId, userIdx, setSessionUpdate, update, fetchCartAndAddressData])
 
-  const checkedItemsInfo = useCartlistStore((state) => state.checkedItemsInfo())
+  const checkedItemsInfo = useCartlistStore((state) => state.getSelectedCartItems())
   const totalQuantity = useCartlistStore((state) => state.totalQuantity())
   const totalPrice = useCartlistStore((state) => state.totalPrice())
   const totalPriceWithShippingCost = useCartlistStore((state) => state.totalPriceWithShippingCost())
@@ -50,7 +50,7 @@ export const useCartlistInfo = (userIdx: string) => {
     setActiveTab,
     addressActiveTabId,
     setAddressActiveTabId,
-    SubmitOrder,
+    submitOrder,
     checkedItemsInfo,
     totalQuantity,
     totalPrice,

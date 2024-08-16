@@ -8,11 +8,11 @@ import { BsChatLeftText } from 'react-icons/bs'
 
 export const ChangeOrderAddress = () => {
   const { hideModal, updateAddressData, orderIdx } = useOrderlistStore()
-  const { fetchData, data: address_data, addressIdx } = useAddressStore()
+  const { fetchAddresses, data: address_data, addressIdx } = useAddressStore()
   const { register, handleSubmit, setValue } = useForm<FieldValues>()
 
   useEffect(() => {
-    fetchData()
+    fetchAddresses()
   }, [])
 
   const handleOnSubmitNewAddress = (data: FieldValues) => {

@@ -3,13 +3,13 @@ import { useAddressStore } from '@/lib/stores/addressStore'
 
 export const useAddressInfo = (userIdx: string) => {
   const {
-    fetchData,
+    fetchAddresses,
     defaultAddress,
     EtcAddress,
-    handleOpenEditForm,
-    handleSetDefaultAddress,
+    openEditAddressForm,
+    updateDefaultAddress,
     showModal,
-    handleRemoveAddress,
+    deleteAddress,
     setUserIdx,
     loading,
     isEmpty,
@@ -17,16 +17,16 @@ export const useAddressInfo = (userIdx: string) => {
 
   useEffect(() => {
     setUserIdx(userIdx)
-    fetchData()
-  }, [userIdx, setUserIdx, fetchData])
+    fetchAddresses()
+  }, [userIdx, setUserIdx, fetchAddresses])
 
   return {
     defaultAddress,
     EtcAddress,
-    handleOpenEditForm,
-    handleSetDefaultAddress,
+    openEditAddressForm,
+    updateDefaultAddress,
     showModal,
-    handleRemoveAddress,
+    deleteAddress,
     loading,
     isEmpty,
   }

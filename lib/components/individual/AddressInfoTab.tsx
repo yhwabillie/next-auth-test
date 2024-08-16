@@ -11,7 +11,7 @@ interface AddressInfoTabProps {
 }
 
 export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
-  const { defaultAddress, EtcAddress, handleOpenEditForm, handleSetDefaultAddress, showModal, handleRemoveAddress, loading, isEmpty } =
+  const { defaultAddress, EtcAddress, openEditAddressForm, updateDefaultAddress, showModal, deleteAddress, loading, isEmpty } =
     useAddressInfo(userIdx)
 
   if (loading) return <TabContentSkeleton />
@@ -44,8 +44,8 @@ export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
               <AddressItem
                 key={item.idx}
                 {...item}
-                handleOpenEditForm={() => handleOpenEditForm(item)}
-                handleRemoveAddress={() => handleRemoveAddress(item.idx)}
+                handleOpenEditForm={() => openEditAddressForm(item)}
+                handleRemoveAddress={() => deleteAddress(item.idx)}
               />
             ))}
           </ul>
@@ -62,9 +62,9 @@ export const AddressInfoTab = ({ userIdx }: AddressInfoTabProps) => {
                 <AddressItem
                   key={item.idx}
                   {...item}
-                  handleOpenEditForm={() => handleOpenEditForm(item)}
-                  handleRemoveAddress={() => handleRemoveAddress(item.idx)}
-                  handleSetDefault={() => handleSetDefaultAddress(item.idx)}
+                  handleOpenEditForm={() => openEditAddressForm(item)}
+                  handleRemoveAddress={() => deleteAddress(item.idx)}
+                  handleSetDefault={() => updateDefaultAddress(item.idx)}
                 />
               ))}
             </ul>

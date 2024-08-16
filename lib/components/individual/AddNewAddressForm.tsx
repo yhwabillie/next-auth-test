@@ -8,7 +8,7 @@ import { IoIosArrowDown } from 'react-icons/io'
 import clsx from 'clsx'
 
 export const AddNewAddressForm = () => {
-  const { showModal, hideModal, new_address, handleSubmitNewAddress, updatePostcode } = useAddressStore()
+  const { showModal, hideModal, new_address, createNewAddressData, updatePostcode } = useAddressStore()
   const {
     register,
     handleSubmit,
@@ -32,7 +32,7 @@ export const AddNewAddressForm = () => {
     <div className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center overflow-y-auto bg-black bg-opacity-50">
       <div className="mb-auto mt-auto">
         <form
-          onSubmit={handleSubmit(handleSubmitNewAddress)}
+          onSubmit={handleSubmit(createNewAddressData)}
           className="relative mx-[20px] my-[50px] h-fit w-[600px] rounded-2xl bg-white p-10 shadow-lg"
         >
           <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>

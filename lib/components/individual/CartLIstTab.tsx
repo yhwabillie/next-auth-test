@@ -32,7 +32,7 @@ export const CartListTab = ({ session, userIdx }: CartListTabProps) => {
     setActiveTab,
     addressActiveTabId,
     setAddressActiveTabId,
-    SubmitOrder,
+    submitOrder,
     checkedItemsInfo,
     totalQuantity,
     totalPrice,
@@ -48,7 +48,7 @@ export const CartListTab = ({ session, userIdx }: CartListTabProps) => {
    * 최종 주문 데이터 submit
    */
   const handleSubmitOrder = (data: OrderSchemaType) => {
-    SubmitOrder(data.addressIdx, data.payment)
+    submitOrder(data.addressIdx, data.payment)
   }
 
   if (loading) return <TabContentSkeleton />

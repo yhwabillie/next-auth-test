@@ -4,11 +4,11 @@ import { useEffect } from 'react'
 
 export const useWishlistInfo = (userIdx: string) => {
   const { update } = useSession()
-  const { setUserIdx, fetchData, data, isEmpty, loading, handleToggleCartStatus, handleDeleteWishItem, setSessionUpdate } = useWishlistStore()
+  const { setUserIdx, fetchWishlist, data, isEmpty, loading, toggleCartStatus, deleteWishItem, setSessionUpdate } = useWishlistStore()
 
   useEffect(() => {
     setUserIdx(userIdx)
-    fetchData()
+    fetchWishlist()
     setSessionUpdate(update)
   }, [userIdx])
 
@@ -16,7 +16,7 @@ export const useWishlistInfo = (userIdx: string) => {
     data,
     isEmpty,
     loading,
-    handleToggleCartStatus,
-    handleDeleteWishItem,
+    toggleCartStatus,
+    deleteWishItem,
   }
 }
