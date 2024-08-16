@@ -13,6 +13,7 @@ export const getOrderList = async (userIdx: string): Promise<OrderlistType[]> =>
   validateId(userIdx, 'user')
 
   if (!userIdx) throw new Error('Invalid userIdx provided')
+
   try {
     return await fetchOrderlist(userIdx)
   } catch (error) {
