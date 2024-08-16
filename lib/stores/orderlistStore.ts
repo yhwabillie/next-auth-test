@@ -1,4 +1,5 @@
-import { fetchOrderlist, OrderlistType, removeOrder } from '@/app/actions/order/actions'
+import { UserAddressType } from '@/app/actions/address/actions'
+import { fetchOrderlist, OrderlistType, removeOrder, updateOrderAddress } from '@/app/actions/order/actions'
 import { toast } from 'sonner'
 import { create } from 'zustand'
 
@@ -7,9 +8,19 @@ interface OrderlistStore {
   userIdx: string
   setUserIdx: (userIdx: string) => void
 
+  orderIdx: string
+  setOrderIdx: (orderIdx: string) => void
+
   loading: boolean
   setLoading: (loading: boolean) => void
   isEmpty: boolean
+
+  //modal status
+  modals: {
+    change_address: boolean
+  }
+  showModal: (modalName: keyof OrderlistStore['modals']) => void
+  hideModal: (modalName: keyof OrderlistStore['modals']) => void
 
   //총 제품금액
   totalPrice: (orderIdx: string) => number
@@ -19,11 +30,14 @@ interface OrderlistStore {
   setIsShippingCost: (orderIdx: string) => boolean
 
   //총 결제금액 (배송비 포함 최종)
-  totalPriceWithShippingCost: () => number
+  totalPriceWithShippingCost: (orderIdx: string) => number
 
   //fetch data control
   fetchData: () => Promise<void>
   data: OrderlistType[]
+
+  //update address data
+  updateAddressData: (orderIdx: string, newAddressIdx: string) => Promise<void>
 
   //delete Order
   handleRemoveOrderData: (addressIdx: string) => Promise<void>
@@ -34,9 +48,31 @@ export const useOrderlistStore = create<OrderlistStore>((set, get) => ({
   userIdx: '',
   setUserIdx: (userIdx: string) => set({ userIdx }),
 
+  orderIdx: '',
+  setOrderIdx: (orderIdx: string) => set({ orderIdx }),
+
   loading: false,
   setLoading: (loading: boolean) => set({ loading }),
   isEmpty: false,
+
+  //modal types
+  modals: {
+    change_address: false,
+  },
+  showModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: true,
+      },
+    })),
+  hideModal: (modalName) =>
+    set((state) => ({
+      modals: {
+        ...state.modals,
+        [modalName]: false,
+      },
+    })),
 
   //총 제품금액
   totalPrice: (orderIdx: string) => {
@@ -64,8 +100,14 @@ export const useOrderlistStore = create<OrderlistStore>((set, get) => ({
   },
 
   //총 결제금액 (배송비 포함 최종)
-  totalPriceWithShippingCost: () => {
-    return 1
+  totalPriceWithShippingCost: (orderIdx: string) => {
+    const { totalPrice } = get()
+
+    if (totalPrice(orderIdx) >= 30000) {
+      return totalPrice(orderIdx)
+    } else {
+      return totalPrice(orderIdx) + 3000
+    }
   },
 
   fetchData: async (): Promise<void> => {
@@ -82,6 +124,29 @@ export const useOrderlistStore = create<OrderlistStore>((set, get) => ({
     } catch (error) {
       console.error('주문 내역을 가져오는 중 오류가 발생했습니다:', error)
       toast.error('주문 내역을 가져오는 중 오류가 발생했습니다')
+    } finally {
+      setLoading(false)
+    }
+  },
+
+  updateAddressData: async (orderIdx: string, newAddressIdx: string) => {
+    const { setLoading, fetchData, hideModal } = get()
+
+    setLoading(true)
+
+    try {
+      const response = await updateOrderAddress(orderIdx, newAddressIdx)
+
+      if (!response) {
+        toast.error('주소 업데이트에 실패했습니다.')
+      }
+
+      await fetchData()
+      hideModal('change_address')
+      toast.success('주소가 업데이트되었습니다.')
+    } catch (error) {
+      console.log(error)
+      toast.error('주소 업데이트에 실패했습니다.')
     } finally {
       setLoading(false)
     }

@@ -9,34 +9,20 @@ import { UserAddressType } from '../address/actions'
  * 선택 주문 배송지 업데이트
  */
 export const updateOrderAddress = async (orderIdx: string, newAddressIdx: string) => {
-  const session = await getServerSession(authOptions)
-
-  if (!session || !session.user) {
-    throw new Error('You must be logged in to create an order')
-  }
-
   try {
-    const order = await prisma.order.findUnique({
-      where: {
-        idx: orderIdx,
-      },
-    })
-
-    if (!order) {
-      throw new Error('업데이트하려는 주문 데이터 없음')
-    }
-
-    const address = await prisma.address.findUnique({
+    // 업데이트하려는 주소의 유효성 확인
+    const addressExists = await prisma.address.findUnique({
       where: {
         idx: newAddressIdx,
       },
     })
 
-    if (!address) {
-      throw new Error('업데이트하려는 주소 데이터 없음')
+    if (!addressExists) {
+      throw new Error('업데이트하려는 주소 데이터가 존재하지 않습니다.')
     }
 
-    const response = await prisma.order.update({
+    // 주문의 주소 업데이트
+    const updatedOrder = await prisma.order.update({
       where: {
         idx: orderIdx,
       },
@@ -48,13 +34,10 @@ export const updateOrderAddress = async (orderIdx: string, newAddressIdx: string
       },
     })
 
-    if (!response) {
-      throw new Error('업데이트하려는 주문 없음')
-    }
-
-    return response
+    return updatedOrder
   } catch (error: any) {
-    throw new Error(error)
+    console.error('주문 주소 업데이트 중 오류 발생:', error)
+    throw new Error('주문 주소 업데이트에 실패했습니다. 다시 시도해주세요.')
   }
 }
 
