@@ -5,7 +5,7 @@ import { WishListTab } from './WishListTab'
 import { OrderListTab } from './OrderListTab'
 import { TabMenu } from './TabMenu'
 import { Session } from 'next-auth'
-import { CartListTab } from '@/lib/components/individual/CartListTab'
+import { CartListTab } from '@/lib/components/individual/CartTab'
 import Link from 'next/link'
 
 export type TabItemType = {
