@@ -127,6 +127,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
         category: Array.from(new Set(products.map((product) => product.category))),
         totalProducts,
         isEmpty: products.length === 0,
+        selectedCategory: '전체',
       })
     } catch (error) {
       console.error('Error fetching products:', error)

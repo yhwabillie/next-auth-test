@@ -24,6 +24,7 @@ export const ProductList = ({ session }: ProductListProps) => {
 
   useEffect(() => {
     setSearchQuery('')
+
     fetchData(page, pageSize)
   }, [])
 
