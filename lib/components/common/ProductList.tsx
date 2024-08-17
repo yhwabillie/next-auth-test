@@ -1,6 +1,6 @@
 'use client'
 import { useProductsStore } from '@/lib/stores/productsStore'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Session } from 'next-auth'
 import { Category } from './Category'
 import { LoadingSpinner } from './modules/LoadingSpinner'
@@ -14,7 +14,8 @@ interface ProductListProps {
 }
 
 export const ProductList = ({ session }: ProductListProps) => {
-  const { filteredData, category, selectedCategory, fetchData, setCategoryFilter, loadMoreData, loading, isEmpty } = useProductsStore()
+  const { filteredData, setSearchQuery, category, selectedCategory, fetchData, setCategoryFilter, loadMoreData, loading, isEmpty } =
+    useProductsStore()
 
   const [page, setPage] = useState(1)
   const pageSize = 4
@@ -22,6 +23,7 @@ export const ProductList = ({ session }: ProductListProps) => {
   const { ref, inView } = useInView()
 
   useEffect(() => {
+    setSearchQuery('')
     fetchData(page, pageSize)
   }, [])
 

@@ -7,6 +7,7 @@ import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdo
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { UserNavItem } from '../modules/UserNavItem'
+import { SearchBar } from '../SearchBar'
 
 export enum TooltipTypes {
   NONE = 'NONE',
@@ -24,10 +25,10 @@ export const Header = () => {
   const isNotAuth = status !== 'loading' && !isAuth
 
   return (
-    <header className="sticky top-0 z-10 h-[80px] bg-blue-400/50 backdrop-blur-md">
+    <header className="sticky top-0 z-10 h-[60px] bg-blue-400/50 backdrop-blur-md">
       <div className="mx-auto flex h-full w-[1200px] items-center justify-between px-5">
         <nav className="flex flex-row gap-3">
-          <ul className="flex flex-row gap-3">
+          <ul className="flex w-[92px] flex-row gap-3">
             <li>
               <h1>
                 <Link href="/" className="font-medium text-blue-600">
@@ -35,13 +36,10 @@ export const Header = () => {
                 </Link>
               </h1>
             </li>
-            <li>
-              <Link href="/search" className="font-medium text-blue-600">
-                SEARCH
-              </Link>
-            </li>
           </ul>
         </nav>
+
+        <SearchBar />
 
         <nav className="flex items-center">
           {isLoading && (

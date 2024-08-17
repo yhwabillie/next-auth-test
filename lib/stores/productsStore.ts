@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
 import { fetchProducts, ProductType, toggleProductToCart, toggleWishStatus } from '@/app/actions/products/actions'
+import { debounce } from '../debounce'
 
 interface ProductsStore {
   //data idx
@@ -11,9 +12,17 @@ interface ProductsStore {
   sessionUpdate: ((data: any) => void) | null
   setSessionUpdate: (updateMethod: (data: any) => void) => void
 
+  //autoComplete
+  searchQuery: string
+  autoCompleteSuggestions: ProductType[]
+  setSearchQuery: (query: string) => void
+  fetchAutoCompleteSuggestions: (query: string) => void
+  selectSearchResult: (selectedProduct: ProductType) => void
+
   //category
   data: ProductType[]
   filteredData: ProductType[]
+  searchResult: ProductType[]
   isEmpty: boolean
   category: string[]
   selectedCategory: string
@@ -36,9 +45,54 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
   sessionUpdate: null,
   setSessionUpdate: (updateMethod) => set({ sessionUpdate: updateMethod }),
 
+  //auto complete
+  searchQuery: '',
+  autoCompleteSuggestions: [],
+  setSearchQuery: (query: string) => {
+    set({ searchQuery: query })
+    get().fetchAutoCompleteSuggestions(query) // 자동완성 결과 가져오기
+  },
+  // 카테고리와 이름을 기준으로 자동완성 결과 가져오기
+  fetchAutoCompleteSuggestions: debounce(async (query: string) => {
+    if (!query.trim()) {
+      set({ autoCompleteSuggestions: [] })
+      return
+    }
+
+    const { userIdx, data } = get()
+    set({ loading: true })
+
+    try {
+      // 이름과 카테고리로 검색어 필터링
+      const suggestions = data.filter(
+        (product) => product.name.toLowerCase().includes(query.toLowerCase()) || product.category.toLowerCase().includes(query.toLowerCase()),
+      )
+
+      set({ autoCompleteSuggestions: suggestions })
+    } catch (error) {
+      console.error('Error fetching suggestions:', error)
+      toast.error('자동완성 데이터를 가져오는 중 오류가 발생했습니다.')
+    } finally {
+      set({ loading: false })
+    }
+  }, 300),
+
+  selectSearchResult: (selectedProduct: ProductType) => {
+    const { data, setCategoryFilter } = get()
+
+    // 선택된 제품만 필터링
+    const filteredData = data.filter((product) => product.idx === selectedProduct.idx)
+
+    // 검색 결과를 고정시키고 다른 로직이 실행되지 않도록 설정
+    set({
+      searchResult: filteredData,
+    })
+  },
+
   //category
   data: [],
   filteredData: [],
+  searchResult: [],
   isEmpty: false,
   category: [],
   selectedCategory: '전체',

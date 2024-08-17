@@ -1,5 +1,10 @@
 'use server'
+import { SearchResult } from '@/lib/components/common/SearchResult'
 
 export default async function Page() {
-  return <div>Search</div>
+  return (
+    <div>
+      <SearchResult />
+    </div>
+  )
 }
