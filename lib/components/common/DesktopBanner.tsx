@@ -39,7 +39,7 @@ export const DesktopBanner = () => {
   }
 
   return (
-    <div className="relative mx-auto my-10 hidden w-full max-w-full xl:block">
+    <div className="relative mx-auto my-4 hidden w-full max-w-full xl:block">
       <div className="absolute left-[50%] top-[50%] z-10 ml-[-400px] mt-[-20px] h-12 origin-left">
         <PagingBtn direction="back" clickEvent={() => handleMove('prev')} />
       </div>
@@ -70,16 +70,16 @@ export const DesktopBanner = () => {
         }} // 이동 후 현재 인덱스 업데이트
       >
         {/* 슬라이더의 패널 */}
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white">
+        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
           Panel 1
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white">
+        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
           Panel 2
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white">
+        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
           Panel 3
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white">
+        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
           Panel 4
         </div>
       </Flicking>

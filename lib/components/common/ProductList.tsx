@@ -1,99 +1,104 @@
 'use client'
-import { ProductType } from '@/app/actions/products/actions'
 import { useProductsStore } from '@/lib/stores/productsStore'
-import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { TabContentSkeleton } from '@/lib/components/individual/TabContentSkeleton'
-import { EmptyTab } from '@/lib/components/individual/EmptyTab'
 import { Session } from 'next-auth'
+import { Category } from './Category'
+import { LoadingSpinner } from './modules/LoadingSpinner'
+import { useInView } from 'react-intersection-observer'
+import { motion } from 'framer-motion'
+import { BsHeart } from 'react-icons/bs'
+import { FaShoppingBag } from 'react-icons/fa'
 
 interface ProductListProps {
   session: Session | null
 }
 
 export const ProductList = ({ session }: ProductListProps) => {
-  const { update } = useSession()
-  const userIdx = session?.user?.idx
-  const { fetchData, setUserIdx, data, loading, isEmpty, toggleWishStatus, setSessionUpdate, showModal, toggleCartStatus } = useProductsStore()
+  const { filteredData, category, selectedCategory, fetchData, setCategoryFilter, loadMoreData, loading, isEmpty } = useProductsStore()
 
-  const pageSize = 5
   const [page, setPage] = useState(1)
+  const pageSize = 4
 
-  const handleClickAddWish = (targetItem: ProductType) => {
-    if (!userIdx) {
-      //비회원 접근
-      showModal('alert')
-    } else {
-      //회원 접근
-      toggleWishStatus(targetItem.idx, page, pageSize)
-    }
-  }
-
-  const handleClickAddProduct = (targetItem: ProductType) => {
-    if (!userIdx) {
-      //비회원 접근
-      showModal('alert')
-    } else {
-      //회원 접근
-      toggleCartStatus(targetItem.idx, page, pageSize)
-    }
-  }
+  const { ref, inView } = useInView()
 
   useEffect(() => {
-    if (!userIdx) {
-      //비회원 접근
-    } else if (userIdx) {
-      //회원 접근
-      setUserIdx(userIdx)
-
-      if (!session) return
-      setSessionUpdate(update)
-    }
-
     fetchData(page, pageSize)
-  }, [page, userIdx])
+  }, [])
 
-  if (loading) return <TabContentSkeleton />
+  useEffect(() => {
+    if (inView && !loading && !isEmpty) {
+      setPage((prevPage) => prevPage + 1)
+    }
+  }, [inView, loading, isEmpty])
+
+  useEffect(() => {
+    if (page > 1 && !loading && !isEmpty) {
+      loadMoreData(page, pageSize)
+    }
+  }, [page])
+
+  const variants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+    },
+  }
 
   return (
-    <>
-      {isEmpty ? (
-        <EmptyTab sub_title="입력된 제품정보가 없습니다" title="📦 제품을 추가해주세요." type="link" label="어드민 제품 추가하기" />
-      ) : (
-        <>
-          {data.map((item, index) => (
-            <div key={index}>
-              <p>{item.name}</p>
-              <div className="flex flex-row gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleClickAddWish(item)}
-                  className={clsx('p-3 disabled:bg-gray-700', {
-                    'bg-blue-300 text-black': item.isInWish,
-                    'bg-blue-700 text-white': !item.isInWish,
-                  })}
-                  disabled={loading}
-                >
-                  {item.isInWish ? '위시에서 빼기' : '위시에 넣기'}
+    <div className="container mx-auto px-4">
+      {/* 카테고리 필터 */}
+      <Category category={category} setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
+
+      {/* 상품 리스트 */}
+      <div className="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredData.map((product, index) => (
+          <motion.div
+            variants={variants}
+            initial="hidden"
+            animate="visible"
+            transition={{
+              delay: index * 0.08,
+              ease: 'easeInOut',
+              duration: 0.2,
+            }}
+            key={`${product.idx}-${index}`}
+            className="group relative rounded-lg border bg-white p-4 shadow-lg transition duration-300 ease-in-out hover:shadow-xl"
+          >
+            <div className="relative">
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="mb-4 h-48 w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+
+              {/* 오버레이 효과 */}
+              <div className="absolute inset-0 z-10 rounded-lg bg-black/50 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100"></div>
+
+              {/* 위시리스트 및 장바구니 버튼 */}
+              <div className="absolute right-2 top-2 z-20 flex space-x-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button className="rounded-full bg-white p-2 text-red-500 shadow hover:bg-gray-100">
+                  <BsHeart className="h-6 w-6" />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => handleClickAddProduct(item)}
-                  className={clsx('p-3 disabled:bg-gray-700', {
-                    'bg-red-300 text-black': item.isInCart,
-                    'bg-red-700 text-white': !item.isInCart,
-                  })}
-                  disabled={loading}
-                >
-                  {item.isInCart ? '장바구니에서 빼기' : '장바구니에 넣기'}
+                <button className="rounded-full bg-white p-2 text-blue-500 shadow hover:bg-gray-100">
+                  <FaShoppingBag className="h-6 w-6" />
                 </button>
               </div>
-              <img src={item.imageUrl} alt={item.name} className="h-20 w-20" />
             </div>
-          ))}
-        </>
+            <h3 className="relative z-20 text-lg font-bold text-gray-800">{product.name}</h3>
+            <p className="relative z-20 text-sm text-gray-500">{product.category}</p>
+            <p className="relative z-20 mt-2 text-lg font-semibold text-blue-600">{product.original_price.toLocaleString()}원</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* 로딩 스피너 */}
+      {!isEmpty && (
+        <div ref={ref} className="flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
       )}
-    </>
+    </div>
   )
 }

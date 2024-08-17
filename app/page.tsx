@@ -12,10 +12,10 @@ export default async function Page() {
       <h2 id="page-heading" className="sr-only">
         상품 리스트 본문
       </h2>
-      <header className="mx-auto w-[1200px] border border-red-600 px-5">
+      {/* <header className="mx-auto w-[1200px] border border-red-600 px-5">
         <h3>PRODUCTS</h3>
         <p>상품 리스트입니다. 로그인 후, 위시리스트와 장바구니에 제품을 담아보세요.</p>
-      </header>
+      </header> */}
 
       <DesktopBanner />
 

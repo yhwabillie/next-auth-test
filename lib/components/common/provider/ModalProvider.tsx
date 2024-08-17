@@ -11,7 +11,7 @@ import { PostCodeModal } from '@/lib/components/individual/PostCodeModal'
 
 export const ModalProvider = () => {
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
-  const { modals: product_modals, hideModal: product_hide } = useProductsStore()
+  // const { modals: product_modals, hideModal: product_hide } = useProductsStore()
   const { modals: cart_modals, hideModal: cart_hide } = useCartlistStore()
   const { modals: order_modals, hideModal: order_hide } = useOrderlistStore()
 
@@ -34,7 +34,7 @@ export const ModalProvider = () => {
       {address_modals.postcode && <PostCodeModal />}
       {order_modals.change_address && <ChangeOrderAddress />}
       {address_modals.alert && <AlertErrorModal handleClickClose={() => address_hide('alert')} message={alert_messages.addressList.warning} />}
-      {product_modals.alert && <AlertErrorModal handleClickClose={() => product_hide('alert')} message={alert_messages.products.warning} />}
+      {/* {product_modals.alert && <AlertErrorModal handleClickClose={() => product_hide('alert')} message={alert_messages.products.warning} />} */}
       {cart_modals.need_session && (
         <AlertErrorModal handleClickClose={() => cart_hide('need_session')} message={alert_messages.cartlist.need_session} />
       )}
