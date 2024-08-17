@@ -40,7 +40,8 @@ export const FramerMotionProvider = ({ children }: ProvidersProps) => {
   return (
     <AnimatePresence mode="wait">
       <motion.main key={pathname} {...anim(pageTransition)}>
-        <div className="mx-auto w-[1200px] px-5">{children}</div>
+        {/* <div className="mx-auto w-[1200px] px-5">{children}</div> */}
+        {children}
       </motion.main>
     </AnimatePresence>
   )

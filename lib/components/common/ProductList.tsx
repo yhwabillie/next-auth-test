@@ -4,12 +4,12 @@ import { useProductsStore } from '@/lib/stores/productsStore'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { TabContentSkeleton } from './TabContentSkeleton'
-import { EmptyTab } from './EmptyTab'
+import { TabContentSkeleton } from '@/lib/components/individual/TabContentSkeleton'
+import { EmptyTab } from '@/lib/components/individual/EmptyTab'
 import { Session } from 'next-auth'
 
 interface ProductListProps {
-  session: Session
+  session: Session | null
 }
 
 export const ProductList = ({ session }: ProductListProps) => {
