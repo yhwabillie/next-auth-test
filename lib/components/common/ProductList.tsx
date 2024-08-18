@@ -83,7 +83,7 @@ export const ProductList = () => {
     if (status === 'authenticated') {
       //회원 접근
       toggleCartStatus(targetItem.idx)
-      update({ cartlistLength: cartlistLength })
+      // update({ cartlistLength: cartlistLength })
     } else {
       //비회원 접근
       alert('비회원')

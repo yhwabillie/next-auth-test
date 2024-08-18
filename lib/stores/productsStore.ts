@@ -21,7 +21,6 @@ interface ProductsStore {
 
   //category
   data: ProductType[]
-  setData: (data: ProductType[]) => void
   filteredData: ProductType[]
   searchResult: ProductType[]
   isEmpty: boolean
@@ -132,8 +131,6 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       data: syncedData, // 데이터 동기화
     })
   },
-
-  setData: (data: ProductType[]) => set({ data }),
 
   fetchData: async (page: number, pageSize: number): Promise<void> => {
     set({ loading: true })
