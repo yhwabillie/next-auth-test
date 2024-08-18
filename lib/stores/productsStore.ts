@@ -21,6 +21,7 @@ interface ProductsStore {
 
   //category
   data: ProductType[]
+  setData: (data: ProductType[]) => void
   filteredData: ProductType[]
   searchResult: ProductType[]
   isEmpty: boolean
@@ -34,6 +35,14 @@ interface ProductsStore {
   fetchData: (page: number, pageSize: number) => Promise<void>
   loadMoreData: (page: number, pageSize: number) => Promise<void>
   resetStore: () => void
+
+  //toggle
+  toggleWishStatus: (productIdx: string) => void
+  toggleCartStatus: (productIdx: string) => void
+
+  syncFilteredDataWithData: () => void
+
+  cartlistLength: number
 }
 
 export const useProductsStore = create<ProductsStore>((set, get) => ({
@@ -59,7 +68,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       return
     }
 
-    const { userIdx, data } = get()
+    const { data } = get()
     set({ loading: true })
 
     try {
@@ -101,29 +110,41 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
   hasMore: true,
   loading: false,
 
+  cartlistLength: 0,
+
   // 카테고리 필터링
   setCategoryFilter: (category: string) => {
-    const { data } = get()
-    const filteredData = category === '전체' ? data : data.filter((product) => product.category === category)
+    const { data, filteredData } = get()
+
+    // 데이터 동기화: 필터링할 때 최신 상태 반영
+    const syncedData = data.map((item) => {
+      const matchingFilteredItem = filteredData.find((filteredItem) => filteredItem.idx === item.idx)
+      return matchingFilteredItem ? { ...item, ...matchingFilteredItem } : item
+    })
+
+    const filteredByCategory = category === '전체' ? syncedData : syncedData.filter((product) => product.category === category)
+
     set({
       selectedCategory: category,
-      filteredData,
-      currentPage: 1, // 필터 변경 시 페이지 초기화
-      hasMore: true, // 새로 필터링하면 더 가져올 데이터가 있을 수 있음
+      filteredData: filteredByCategory,
+      currentPage: 1,
+      hasMore: true,
+      data: syncedData, // 데이터 동기화
     })
   },
 
-  fetchData: async (page: number, pageSize: number): Promise<void> => {
-    const { userIdx } = get()
+  setData: (data: ProductType[]) => set({ data }),
 
+  fetchData: async (page: number, pageSize: number): Promise<void> => {
     set({ loading: true })
 
     try {
-      const { products, totalProducts } = await fetchProducts({ userIdx, page, pageSize })
+      //products -> DB에서 위시리스트와 장바구니를 뒤져서 현재 데이터에 같은 값이 있으면 isInwish, isInCart boolean 값으로 표시한 데이터
+      const { products, totalProducts } = await fetchProducts({ page, pageSize })
 
       set({
-        data: products,
-        filteredData: products,
+        data: products, //전체 데이터
+        filteredData: products, //필터링에 사용할 데이터
         category: Array.from(new Set(products.map((product) => product.category))),
         totalProducts,
         isEmpty: products.length === 0,
@@ -139,14 +160,12 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
   // 무한 스크롤을 위한 데이터 로드
   loadMoreData: async (page: number, pageSize: number) => {
-    const { userIdx, selectedCategory, data } = get()
+    const { selectedCategory, data } = get()
 
     set({ loading: true })
 
     try {
-      const { products } = await fetchProducts({ userIdx, page, pageSize })
-
-      // 추가된 데이터를 기존 데이터에 병합
+      const { products } = await fetchProducts({ page, pageSize })
       const mergedData = [...data, ...products]
       const filteredData = selectedCategory === '전체' ? mergedData : mergedData.filter((product) => product.category === selectedCategory)
 
@@ -174,4 +193,78 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       hasMore: true,
       loading: false,
     }),
+
+  //toggle wish, cart
+  toggleWishStatus: async (productIdx: string) => {
+    set({ loading: true })
+
+    try {
+      const response = await toggleWishStatus(productIdx)
+      if (!response?.success) throw new Error('Failed to update wish status')
+
+      // 상태를 업데이트
+      const updatedData = get().data.map((item) => (item.idx === productIdx ? { ...item, isInWish: !item.isInWish } : item))
+      const updatedFilteredData = get().filteredData.map((item) => (item.idx === productIdx ? { ...item, isInWish: !item.isInWish } : item))
+
+      set({ data: updatedData, filteredData: updatedFilteredData })
+
+      toast.success(response.toggleStatus ? '위시리스트에 추가했습니다.' : '위시리스트에서 제거했습니다.')
+    } catch (error: unknown) {
+      //에러 메시지 처리
+      if (error instanceof Error) {
+        console.error('Error toggling wishlist status:', error.message)
+        toast.error('위시리스트 업데이트에 실패했습니다. 다시 시도해주세요.')
+      } else {
+        console.error('Unexpected error:', error)
+        toast.error('예기치 않은 오류가 발생했습니다.')
+      }
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  toggleCartStatus: async (productIdx: string) => {
+    const { sessionUpdate } = get()
+    set({ loading: true })
+
+    try {
+      const response = await toggleProductToCart(productIdx)
+      if (!response?.success) throw new Error('Failed to update cart status')
+
+      if (sessionUpdate) {
+        sessionUpdate({ cartlist_length: response.cartlistCount })
+      }
+
+      const updatedData = get().data.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
+      const updatedFilteredData = get().filteredData.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
+
+      console.log('update', updatedData)
+      console.log('ufilter', updatedFilteredData)
+
+      set({ data: updatedData, filteredData: updatedFilteredData })
+
+      toast.success(response.toggleStatus ? '장바구니에 추가했습니다.' : '장바구니에서 제거했습니다.')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error toggling cart status:', error.message)
+        toast.error('장바구니 업데이트에 실패했습니다. 다시 시도해주세요.')
+      } else {
+        console.error('Unexpected error:', error)
+        toast.error('예기치 않은 오류가 발생했습니다.')
+      }
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  syncFilteredDataWithData: () => {
+    const { data, filteredData } = get()
+
+    const syncedData = data.map((item) => {
+      const matchingFilteredItem = filteredData.find((filteredItem) => filteredItem.idx === item.idx)
+      return matchingFilteredItem ? { ...item, ...matchingFilteredItem } : item
+    })
+
+    set({ data: syncedData })
+  },
 }))

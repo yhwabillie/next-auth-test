@@ -1,8 +1,10 @@
 'use server'
+import authOptions from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { Session } from 'inspector'
+import { getServerSession } from 'next-auth'
 
 interface FetchProductsParams {
-  userIdx: string
   page: number
   pageSize: number
 }
@@ -31,13 +33,12 @@ export interface ProductType {
  *
  * @throws {Error}
  */
-export const fetchProducts = async ({
-  userIdx,
-  page,
-  pageSize,
-}: FetchProductsParams): Promise<{ products: ProductType[]; totalProducts: number }> => {
+export const fetchProducts = async ({ page, pageSize }: FetchProductsParams): Promise<{ products: ProductType[]; totalProducts: number }> => {
   const skip = (page - 1) * pageSize
   const take = pageSize
+  const session = await getServerSession(authOptions)
+  const userIdx = session?.user?.idx
+  console.log('서버인식유저====>', userIdx)
 
   try {
     const [products, totalProducts] = await Promise.all([
@@ -80,6 +81,8 @@ export const fetchProducts = async ({
       isInWish: wishItemSet.has(item.idx),
     }))
 
+    // console.log('화면으로 페이징되어 4개씩 떨어지는 데이터', productsWithCartAndWishStatus)
+
     return { products: productsWithCartAndWishStatus, totalProducts }
   } catch (error) {
     console.error('Error fetching products:', error)
@@ -87,7 +90,12 @@ export const fetchProducts = async ({
   }
 }
 
-export const toggleWishStatus = async (userIdx: string, productIdx: string) => {
+export const toggleWishStatus = async (productIdx: string) => {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.idx) return
+
+  const userIdx = session?.user?.idx
+
   try {
     // 위시리스트에서 제품이 있는지 확인
     const targetProductItem = await prisma.wishlist.findUnique({
@@ -133,7 +141,12 @@ export const toggleWishStatus = async (userIdx: string, productIdx: string) => {
   }
 }
 
-export const toggleProductToCart = async (userIdx: string, productIdx: string) => {
+export const toggleProductToCart = async (productIdx: string) => {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.idx) return
+
+  const userIdx = session?.user?.idx
+
   try {
     // 장바구니에서 제품이 있는지 확인
     const targetProductItem = await prisma.cartList.findUnique({
