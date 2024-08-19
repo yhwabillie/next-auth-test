@@ -1,5 +1,6 @@
 'use client'
 import { TooltipTypes } from '@/lib/components/common/layout/Header'
+import clsx from 'clsx'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
@@ -8,9 +9,10 @@ import { useState } from 'react'
 
 interface UserMenuDropdownProps {
   sessionUser: Session['user']
+  isScrolled: boolean
 }
 
-export const UserMenuDropdown = ({ sessionUser }: UserMenuDropdownProps) => {
+export const UserMenuDropdown = ({ sessionUser, isScrolled }: UserMenuDropdownProps) => {
   const [activeTooltip, setActiveTooltip] = useState(TooltipTypes.NONE)
   const showTooltip = (type: TooltipTypes) => setActiveTooltip(type)
   const closeTooltip = () => setActiveTooltip(TooltipTypes.NONE)
@@ -19,7 +21,7 @@ export const UserMenuDropdown = ({ sessionUser }: UserMenuDropdownProps) => {
     <div className="relative">
       <button
         onClick={() => showTooltip(TooltipTypes.DROP_DWN)}
-        className="block h-10 w-10 overflow-hidden rounded-[50%] border-2 border-gray-600/40 bg-white shadow-lg hover:border-blue-500"
+        className="block h-10 w-10 overflow-hidden rounded-[50%] border-2 border-gray-300 bg-white shadow-lg transition-all duration-300"
       >
         <span className="sr-only">사용자 프로필 이미지</span>
         {sessionUser?.profile_img === 'undefined' ? (

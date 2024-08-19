@@ -4,10 +4,22 @@ import Link from 'next/link'
 import { FaShoppingCart } from 'react-icons/fa'
 import { LinkBtn } from '@/lib/components/common/modules/LinkBtn'
 import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdown'
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
 import { UserNavItem } from '../modules/UserNavItem'
 import { SearchBar } from '../SearchBar'
+import { BsShop } from 'react-icons/bs'
+import localFont from 'next/font/local'
+import { useEffect, useState } from 'react'
+import clsx from 'clsx'
+
+const Matemasie_Regular = localFont({
+  src: [
+    {
+      path: '../../../../public/fonts/Matemasie-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+})
 
 export enum TooltipTypes {
   NONE = 'NONE',
@@ -21,52 +33,80 @@ export const Header = () => {
   const isIndivisual = status === 'authenticated' && session && session.user && session.user.user_type === 'indivisual'
   const isAdmin = status === 'authenticated' && session && session.user && session.user.user_type === 'admin'
   const isAuth = status === 'authenticated' && session && session.user
-  const isLoading = status === 'loading'
-  const isNotAuth = status !== 'loading' && !isAuth
+  const isGuest = status !== 'loading' && !isAuth
+
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
-    <header className="sticky top-0 z-10 h-[60px] bg-blue-400/50 backdrop-blur-md">
-      <div className="mx-auto flex h-full w-[1200px] items-center justify-between px-5">
+    <header
+      className={clsx('sticky top-0 z-40 h-[60px] min-w-[460px] backdrop-blur-md transition-colors duration-300', {
+        'bg-primary-dark/80 shadow-inner': isScrolled,
+      })}
+    >
+      <div className="mx-auto flex h-full w-full items-center justify-between px-5 xl:w-[1200px]">
         <nav className="flex flex-row gap-3">
-          <ul className="flex w-[92px] flex-row gap-3">
+          <ul className="flex flex-row gap-3 md:w-[165px]">
             <li>
               <h1>
-                <Link href="/" className="font-medium text-blue-600">
-                  MAIN
+                <Link
+                  href="/"
+                  className={clsx('text-primary-dark flex items-center gap-2 transition-colors duration-300', {
+                    'text-white': isScrolled,
+                  })}
+                >
+                  <BsShop
+                    className={clsx('text-primary text-2xl', {
+                      'text-white': isScrolled,
+                    })}
+                  />
+                  <span className={`${Matemasie_Regular.className} mt-[-3px] hidden drop-shadow-sm md:block`}>Shopping</span>
                 </Link>
               </h1>
             </li>
           </ul>
         </nav>
 
-        <SearchBar />
+        <SearchBar isScrolled={isScrolled} />
 
-        <nav className="flex items-center">
-          {isLoading && (
-            <div className="flex gap-3">
-              <Skeleton width={75} height={40} />
-              <Skeleton width={75} height={40} />
-            </div>
-          )}
-
-          <div className="flex items-center gap-3">
+        <nav className="flex items-center justify-between md:w-[165px]">
+          <div className="ml-auto flex items-center gap-3">
             {isIndivisual && (
-              <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP}>
-                <FaShoppingCart className="text-lg text-white" />
+              <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>
+                <FaShoppingCart
+                  className={clsx('text-lg ', {
+                    'text-gray-700': isScrolled,
+                  })}
+                />
               </UserNavItem>
             )}
 
             {isAdmin && (
-              <UserNavItem label="상품등록" path="/add-product" type={TooltipTypes.ADD_PRODUCT}>
-                <FaShoppingCart className="text-lg text-white" />
+              <UserNavItem label="상품등록" path="/add-product" type={TooltipTypes.ADD_PRODUCT} isScrolled={isScrolled}>
+                <FaShoppingCart className="text-lg" />
               </UserNavItem>
             )}
 
-            {isAuth && <UserMenuDropdown sessionUser={session.user} />}
+            {isAuth && <UserMenuDropdown sessionUser={session.user} isScrolled={isScrolled} />}
           </div>
 
-          {isNotAuth && (
-            <div className="flex gap-3">
+          {isGuest && (
+            <div className="flex w-full justify-between">
               <LinkBtn label="Login" path="/signIn" bgColor="blue" />
               <LinkBtn label="회원가입" path="/signUp/agreement" bgColor="pink" />
             </div>

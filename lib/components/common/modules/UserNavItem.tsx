@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { TooltipTypes } from '@/lib/components/common/layout/Header'
 import { Session } from 'next-auth'
+import clsx from 'clsx'
 
 interface UserNavItemProps {
   sessionUser?: Session['user']
@@ -10,9 +11,10 @@ interface UserNavItemProps {
   label: string
   path: string
   type: TooltipTypes
+  isScrolled: boolean
 }
 
-export const UserNavItem = ({ sessionUser, children, label, path, type }: UserNavItemProps) => {
+export const UserNavItem = ({ sessionUser, children, label, path, type, isScrolled }: UserNavItemProps) => {
   const [activeTooltip, setActiveTooltip] = useState(TooltipTypes.NONE)
   const showTooltip = (type: TooltipTypes) => setActiveTooltip(type)
   const closeTooltip = () => setActiveTooltip(TooltipTypes.NONE)
@@ -23,10 +25,15 @@ export const UserNavItem = ({ sessionUser, children, label, path, type }: UserNa
         href={path}
         onMouseEnter={() => showTooltip(type)}
         onMouseLeave={() => closeTooltip()}
-        className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-blue-400 text-center text-sm text-white shadow-lg hover:bg-blue-600"
+        className={clsx(
+          'box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-[#333333] text-center text-sm text-white shadow-lg transition-colors duration-300',
+          {
+            'bg-white': isScrolled,
+          },
+        )}
       >
         {sessionUser && sessionUser.cartlist_length! > 0 && (
-          <span className="absolute right-[-10px] top-[-10px] box-border block h-6 w-6 rounded-[50%] bg-red-500 text-center text-xs leading-[24px] shadow-lg">
+          <span className="bg-secondary-dark absolute right-[-10px] top-[-6px] box-border block h-6 w-6 rounded-[50%] text-center text-xs font-semibold leading-[24px] text-white shadow-inner">
             {sessionUser?.cartlist_length}
           </span>
         )}

@@ -53,6 +53,8 @@
   "devDependencies": {
     "@egjs/flicking-plugins": "^4.7.1",
     "@egjs/react-flicking": "^4.11.4",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
     "@types/bcryptjs": "^2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.12",

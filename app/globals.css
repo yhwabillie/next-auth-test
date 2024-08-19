@@ -42,7 +42,3 @@ input::-webkit-inner-spin-button {
 .scroll-area::-webkit-scrollbar-track {
   background: transparent;
 }
-
-/* .flicking-camera {
-  gap: 1.5rem !important;
-} */

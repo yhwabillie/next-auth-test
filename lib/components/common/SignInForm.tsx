@@ -68,7 +68,7 @@ export const SignInForm = () => {
   }, [])
 
   return (
-    <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 bg-white p-8 shadow-xl">
       <legend className="sr-only">로그인 폼</legend>
       <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
         <HookFormInput register={register('id')} error={errors.id} watch={watch('id')} label="아이디" id="id" type="text" />
