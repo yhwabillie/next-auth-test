@@ -39,15 +39,15 @@ export const DesktopBanner = () => {
   }
 
   return (
-    <div className="relative mx-auto my-4 hidden w-full max-w-full xl:block">
-      <div className="absolute left-[50%] top-[50%] z-10 ml-[-400px] mt-[-20px] h-12 origin-left">
+    <div className="relative mx-auto my-4 block w-full min-w-[460px] max-w-full">
+      <div className="absolute left-[50%] top-[50%] z-10 ml-[-30%] mt-[-20px] h-12 origin-left lg:ml-[-300px] xl:ml-[-400px]">
         <PagingBtn direction="back" clickEvent={() => handleMove('prev')} />
       </div>
-      <div className="absolute right-[50%] top-[50%] z-10 mr-[-400px] mt-[-20px] h-12 origin-right">
+      <div className="absolute right-[50%] top-[50%] z-10 mr-[-30%] mt-[-20px] h-12 origin-right lg:mr-[-300px] xl:mr-[-400px]">
         <PagingBtn direction="forward" clickEvent={() => handleMove('next')} />
       </div>
 
-      <div className="absolute bottom-5 right-[50%] z-10 mr-[-304px]">
+      <div className="absolute bottom-5 right-[50%] z-10 mr-[-30%] lg:mr-[-304px]">
         <IndexPlayBtn currentIndex={currentIndex} totalPanels={totalPanels} playStatus={isAutoPlaying} clickEvent={handleToggleAutoPlay} />
       </div>
 
@@ -70,16 +70,16 @@ export const DesktopBanner = () => {
         }} // 이동 후 현재 인덱스 업데이트
       >
         {/* 슬라이더의 패널 */}
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
+        <div className="flicking-panel mx-2 flex aspect-[3/2] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm lg:aspect-[120/41]">
           Panel 1
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
+        <div className="flicking-panel mx-2 flex aspect-[3/2] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm lg:aspect-[120/41]">
           Panel 2
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
+        <div className="flicking-panel mx-2 flex aspect-[3/2] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm lg:aspect-[120/41]">
           Panel 3
         </div>
-        <div className="flicking-panel mx-2 flex aspect-[120/41] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm">
+        <div className="flicking-panel mx-2 flex aspect-[3/2] h-auto w-2/3 max-w-[960px] items-center justify-center rounded-xl bg-gray-500 text-2xl text-white shadow-sm lg:aspect-[120/41]">
           Panel 4
         </div>
       </Flicking>

@@ -55,13 +55,13 @@ export const Header = () => {
 
   return (
     <header
-      className={clsx('sticky top-0 z-40 h-[60px] min-w-[460px] backdrop-blur-md transition-colors duration-300', {
+      className={clsx('sticky top-0 z-40 box-border h-[60px] min-w-[460px] backdrop-blur-md transition-colors duration-300', {
         'bg-primary-dark/80 shadow-inner': isScrolled,
       })}
     >
       <div className="mx-auto flex h-full w-full items-center justify-between px-5 xl:w-[1200px]">
         <nav className="flex flex-row gap-3">
-          <ul className="flex flex-row gap-3 md:w-[165px]">
+          <ul className="flex flex-row gap-3 lg:w-[165px]">
             <li>
               <h1>
                 <Link
@@ -75,7 +75,7 @@ export const Header = () => {
                       'text-white': isScrolled,
                     })}
                   />
-                  <span className={`${Matemasie_Regular.className} mt-[-3px] hidden drop-shadow-sm md:block`}>Shopping</span>
+                  <span className={`${Matemasie_Regular.className} mt-[-5px] hidden drop-shadow-sm lg:block`}>Shopping</span>
                 </Link>
               </h1>
             </li>
@@ -90,7 +90,7 @@ export const Header = () => {
               <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>
                 <FaShoppingCart
                   className={clsx('text-lg ', {
-                    'text-gray-700': isScrolled,
+                    'text-gray-600': isScrolled,
                   })}
                 />
               </UserNavItem>
@@ -107,8 +107,19 @@ export const Header = () => {
 
           {isGuest && (
             <div className="flex w-full justify-between">
-              <LinkBtn label="Login" path="/signIn" bgColor="blue" />
-              <LinkBtn label="회원가입" path="/signUp/agreement" bgColor="pink" />
+              <div className="flex gap-2">
+                <Link className="block rounded-[5px] bg-yellow-500 px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signIn">
+                  로그인
+                </Link>
+                <Link
+                  className="bg-secondary-dark block rounded-[5px] px-2 py-2 text-sm font-semibold text-white shadow-inner"
+                  href="/signUp/agreement"
+                >
+                  회원가입
+                </Link>
+              </div>
+              {/* <LinkBtn label="Login" path="/signIn" bgColor="blue" />
+              <LinkBtn label="회원가입" path="/signUp/agreement" bgColor="pink" /> */}
             </div>
           )}
         </nav>

@@ -13,9 +13,9 @@ export default async function Page() {
 
       <DesktopBanner />
 
-      <div className="mx-auto w-[1200px] px-5">
+      {/* <div className="mx-auto w-[1200px] px-5">
         <ProductList />
-      </div>
+      </div> */}
     </section>
   )
 }
