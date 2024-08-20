@@ -35,13 +35,22 @@ export const ProductList = () => {
     toggleWishStatus,
     setSessionUpdate,
     cartlistLength,
+    totalProducts,
     syncFilteredDataWithData,
   } = useProductsStore()
+
+  // 페이징 상태
   const [page, setPage] = useState(1)
-  const pageSize = 4
-  const { ref, inView } = useInView()
-  const { status, update, data: session } = useSession()
-  const router = useRouter()
+  const pageSize = 10
+
+  // 무한 스크롤 감지
+  const { ref, inView } = useInView({
+    threshold: 0.1, // 요소의 50%만 보여도 콜백 실행
+  })
+  const { status, update } = useSession()
+
+  // 마지막 페이지 계산
+  const lastPage = Math.ceil(totalProducts / pageSize)
 
   //1. 세션확인
   useEffect(() => {
@@ -50,28 +59,23 @@ export const ProductList = () => {
     }
   }, [setSessionUpdate, status])
 
-  //1. 데이터 패치 및 세션확인
+  // 2. 초기 데이터 패치
   useEffect(() => {
     setSearchQuery('')
-    fetchData(page, pageSize)
+    fetchData(page, pageSize) // 초기 페이지는 항상 1
   }, [])
 
-  //data: 기본 전체 데이터, filteredData: 필터링 사용 데이터
-  // console.log('data==>', data)
-  // console.log('filteredData==>', filteredData)
-
-  //2. 인피니트 스크롤
   useEffect(() => {
-    if (inView && !loading && !isEmpty) {
+    if (inView && !loading && !isEmpty && page <= lastPage) {
       setPage((prevPage) => prevPage + 1)
+      loadMoreData(page, pageSize)
     }
   }, [inView, loading, isEmpty])
 
-  useEffect(() => {
-    if (page > 1 && !loading && !isEmpty) {
-      loadMoreData(page, pageSize)
-    }
-  }, [page])
+  console.log('lastPage===>', lastPage + 1)
+  console.log('currentPage==>', page)
+  console.log('totalProducts==>', totalProducts)
+  console.log('loaded==>', filteredData.length)
 
   //위시토글
   const handleClickAddWish = (targetItem: ProductType) => {
@@ -102,8 +106,8 @@ export const ProductList = () => {
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
       {/* 상품 리스트 */}
-      <section className="box-border bg-white px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
-        <ul className="mt-[26px] grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:gap-x-2 md:gap-y-6 lg:grid-cols-4 xl:grid-cols-5">
+      <section className="container mx-auto box-border bg-white md:mt-4 md:bg-transparent">
+        <ul className="mt-[26px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
           {filteredData.map((product, index) => (
             <motion.li
               key={`${product.idx}-${index}`}
@@ -122,7 +126,7 @@ export const ProductList = () => {
                 ease: 'easeInOut',
                 duration: 0.2,
               }}
-              className="group transition-all md:translate-y-0 md:rounded-xl md:bg-white md:p-3 md:hover:translate-y-[-10px]"
+              className="group transition-all md:translate-y-0 md:rounded-xl md:bg-white md:hover:translate-y-[-10px]"
             >
               <div className="mb-3 aspect-square overflow-hidden rounded-xl border border-gray-300 shadow-md">
                 <img src={product.imageUrl} alt={product.name} className="w-full transition-all duration-300 group-hover:scale-110" />
@@ -171,14 +175,17 @@ export const ProductList = () => {
             </motion.li>
           ))}
         </ul>
+        <div ref={ref} className="h-48 w-full bg-red-500">
+          Loading...
+        </div>
       </section>
 
       {/* 로딩 스피너 */}
-      {!isEmpty && (
-        <div ref={ref} className="flex items-center justify-center">
-          <LoadingSpinner />
+      {/* {!isEmpty && (
+        <div ref={ref} className="h-10 w-full bg-red-500">
+          Loading...
         </div>
-      )}
+      )} */}
     </div>
   )
 }

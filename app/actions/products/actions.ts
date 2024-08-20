@@ -93,7 +93,10 @@ export const fetchProducts = async ({ page, pageSize }: FetchProductsParams): Pr
       prisma.product.findMany({
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [
+          { createdAt: 'asc' },
+          { idx: 'asc' }, // 유니크한 필드를 추가하여 순서를 명확히 지정
+        ],
         select: {
           idx: true,
           name: true,

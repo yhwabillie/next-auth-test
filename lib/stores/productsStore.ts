@@ -214,7 +214,10 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
     try {
       const { products } = await fetchProducts({ page, pageSize })
-      const mergedData = [...data, ...products]
+
+      // 중복 제거 로직 추가
+      const mergedData = [...data, ...products.filter((newProduct) => !data.some((existingProduct) => existingProduct.idx === newProduct.idx))]
+
       const filteredData = selectedCategory === '전체' ? mergedData : mergedData.filter((product) => product.category === selectedCategory)
 
       set({

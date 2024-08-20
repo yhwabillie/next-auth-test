@@ -36,72 +36,116 @@ export const Category = ({ setCategoryFilter, selectedCategory }: CategoryProps)
         </li>
 
         <li className="mx-auto w-fit">
-          <button onClick={() => setCategoryFilter('데코/조명')}>
+          <button onClick={() => setCategoryFilter('뷰티')}>
             <p
               className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                'border-blue-600/50 bg-blue-100': selectedCategory === '데코/조명',
+                'border-blue-600/50 bg-blue-100': selectedCategory === '뷰티',
               })}
             >
               <MdOutlineSmartToy
                 className={clsx('text-4xl', {
-                  'text-blue-600': selectedCategory === '데코/조명',
+                  'text-blue-600': selectedCategory === '뷰티',
                 })}
               />
             </p>
             <p
               className={clsx('text-center text-sm', {
-                'text-blue-600': selectedCategory === '데코/조명',
+                'text-blue-600': selectedCategory === '뷰티',
               })}
             >
-              데코/조명
+              뷰티
             </p>
           </button>
         </li>
         <li className="mx-auto w-fit">
-          <button onClick={() => setCategoryFilter('디지털/핸드폰')}>
+          <button onClick={() => setCategoryFilter('가전/디지털')}>
             <p
               className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                'border-blue-600/50 bg-blue-100': selectedCategory === '디지털/핸드폰',
+                'border-blue-600/50 bg-blue-100': selectedCategory === '가전/디지털',
               })}
             >
               <MdOutlineSmartToy
                 className={clsx('text-4xl', {
-                  'text-blue-600': selectedCategory === '디지털/핸드폰',
+                  'text-blue-600': selectedCategory === '가전/디지털',
                 })}
               />
             </p>
             <p
               className={clsx('text-center text-sm', {
-                'text-blue-600': selectedCategory === '디지털/핸드폰',
+                'text-blue-600': selectedCategory === '가전/디지털',
               })}
             >
-              디지털/핸드폰
+              가전/디지털
             </p>
           </button>
         </li>
         <li className="mx-auto w-fit">
-          <button onClick={() => setCategoryFilter('캐릭터인형')}>
+          <button onClick={() => setCategoryFilter('식품')}>
             <p
               className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                'border-blue-600/50 bg-blue-100': selectedCategory === '캐릭터인형',
+                'border-blue-600/50 bg-blue-100': selectedCategory === '식품',
               })}
             >
               <MdOutlineSmartToy
                 className={clsx('text-4xl', {
-                  'text-blue-600': selectedCategory === '캐릭터인형',
+                  'text-blue-600': selectedCategory === '식품',
                 })}
               />
             </p>
             <p
               className={clsx('text-center text-sm', {
-                'text-blue-600': selectedCategory === '캐릭터인형',
+                'text-blue-600': selectedCategory === '식품',
               })}
             >
-              캐릭터인형
+              식품
             </p>
           </button>
         </li>
         <li className="mx-auto w-fit">
+          <button onClick={() => setCategoryFilter('인테리어')}>
+            <p
+              className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
+                'border-blue-600/50 bg-blue-100': selectedCategory === '인테리어',
+              })}
+            >
+              <MdOutlineSmartToy
+                className={clsx('text-4xl', {
+                  'text-blue-600': selectedCategory === '인테리어',
+                })}
+              />
+            </p>
+            <p
+              className={clsx('text-center text-sm', {
+                'text-blue-600': selectedCategory === '인테리어',
+              })}
+            >
+              인테리어
+            </p>
+          </button>
+        </li>
+        <li className="mx-auto w-fit">
+          <button onClick={() => setCategoryFilter('스포츠/레저')}>
+            <p
+              className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
+                'border-blue-600/50 bg-blue-100': selectedCategory === '스포츠/레저',
+              })}
+            >
+              <MdOutlineSmartToy
+                className={clsx('text-4xl', {
+                  'text-blue-600': selectedCategory === '스포츠/레저',
+                })}
+              />
+            </p>
+            <p
+              className={clsx('text-center text-sm', {
+                'text-blue-600': selectedCategory === '스포츠/레저',
+              })}
+            >
+              스포츠/레저
+            </p>
+          </button>
+        </li>
+        {/* <li className="mx-auto w-fit">
           <button onClick={() => setCategoryFilter('생활용품')}>
             <p
               className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
@@ -232,51 +276,7 @@ export const Category = ({ setCategoryFilter, selectedCategory }: CategoryProps)
               생활용품
             </p>
           </button>
-        </li>
-        <li className="mx-auto w-fit">
-          <button onClick={() => setCategoryFilter('생활용품')}>
-            <p
-              className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                'border-blue-600/50 bg-blue-100': selectedCategory === '생활용품',
-              })}
-            >
-              <MdOutlineSmartToy
-                className={clsx('text-4xl', {
-                  'text-blue-600': selectedCategory === '생활용품',
-                })}
-              />
-            </p>
-            <p
-              className={clsx('text-center text-sm', {
-                'text-blue-600': selectedCategory === '생활용품',
-              })}
-            >
-              생활용품
-            </p>
-          </button>
-        </li>
-        <li className="mx-auto w-fit">
-          <button onClick={() => setCategoryFilter('생활용품')}>
-            <p
-              className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                'border-blue-600/50 bg-blue-100': selectedCategory === '생활용품',
-              })}
-            >
-              <MdOutlineSmartToy
-                className={clsx('text-4xl', {
-                  'text-blue-600': selectedCategory === '생활용품',
-                })}
-              />
-            </p>
-            <p
-              className={clsx('text-center text-sm', {
-                'text-blue-600': selectedCategory === '생활용품',
-              })}
-            >
-              생활용품
-            </p>
-          </button>
-        </li>
+        </li> */}
       </ul>
     </>
   )
