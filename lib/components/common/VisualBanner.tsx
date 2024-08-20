@@ -5,11 +5,11 @@ import Flicking, { MoveEndEvent } from '@egjs/react-flicking'
 import { AutoPlay } from '@egjs/flicking-plugins'
 import '@egjs/react-flicking/dist/flicking.css'
 import { useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { delay, motion } from 'framer-motion'
 import Image from 'next/image'
 import clsx from 'clsx'
 
-export const DesktopBanner = () => {
+export const VisualBanner = () => {
   const flickingRef = useRef<Flicking | null>(null)
   const autoPlayRef = useRef<AutoPlay | null>(null)
   const [isAnimating, setIsAnimating] = useState(false) // 애니메이션 상태 관리
@@ -52,6 +52,7 @@ export const DesktopBanner = () => {
         ease: 'easeInOut',
         duration: 0.8, // 자연스러운 전환을 위한 속도
       },
+      delay: 1,
     },
   }
 
@@ -70,10 +71,11 @@ export const DesktopBanner = () => {
   }
 
   const imageVariants = {
-    hidden: { scale: 1, transformOrigin: 'center center' }, // 중앙을 기준으로 설정
+    hidden: { scale: 1, transformOrigin: 'center center', filter: 'blur(3px)' },
     visible: {
       scale: 1.2,
-      transformOrigin: 'center center', // 중앙을 기준으로 설정
+      transformOrigin: 'center center',
+      filter: 'blur(0px)',
       transition: {
         type: 'tween',
         ease: 'easeInOut',
@@ -83,7 +85,7 @@ export const DesktopBanner = () => {
   }
 
   return (
-    <div className="relative mx-auto my-4 block w-full min-w-[460px] max-w-full">
+    <div className="sticky top-0 mx-auto block w-full min-w-[460px] max-w-full md:relative">
       <div className="absolute left-[50%] top-[50%] z-10 ml-[-30%] mt-[-20px] h-12 origin-left lg:ml-[-320px] xl:ml-[-400px]">
         <PagingBtn direction="back" clickEvent={() => handleMove('prev')} />
       </div>
@@ -114,9 +116,9 @@ export const DesktopBanner = () => {
         }}
       >
         {/* 슬라이더의 패널 */}
-        <div className="flicking-panel md:y-20 relative mx-2 box-border aspect-[3/2] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:px-[10%] lg:aspect-[120/41] lg:px-[13%] xl:px-[200px]">
+        <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
           {/* 그라데이션 배경 추가 */}
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t  from-transparent via-black/50 to-black/50"></div>
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 
           <motion.div variants={containerVariants} initial="hidden" animate={currentIndex === 0 ? 'visible' : 'hidden'} className="relative z-[1]">
             <motion.h2 variants={itemVariants} className="block text-2xl font-bold drop-shadow-md md:text-3xl">
@@ -131,7 +133,7 @@ export const DesktopBanner = () => {
             <Image src="/images/banner-1.webp" alt="banner-1" fill className="h-full w-full object-cover" />
           </motion.div>
         </div>
-        <div className="flicking-panel md:y-20 relative mx-2 box-border aspect-[3/2] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:px-[10%] lg:aspect-[120/41] lg:px-[13%] xl:px-[200px]">
+        <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
           {/* 그라데이션 배경 추가 */}
           <div className="absolute inset-0 z-[1] bg-gradient-to-t  from-transparent via-black/50 to-black/50"></div>
 
@@ -148,7 +150,7 @@ export const DesktopBanner = () => {
             <Image src="/images/banner-2.webp" alt="banner-2" fill className="h-full w-full object-cover" />
           </motion.div>
         </div>
-        <div className="flicking-panel md:y-20 relative mx-2 box-border aspect-[3/2] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:px-[10%] lg:aspect-[120/41] lg:px-[13%] xl:px-[200px]">
+        <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
           {/* 그라데이션 배경 추가 */}
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 
@@ -165,7 +167,7 @@ export const DesktopBanner = () => {
             <Image src="/images/banner-3.webp" alt="banner-2" fill className="h-full w-full object-cover" />
           </motion.div>
         </div>
-        <div className="flicking-panel md:y-20 relative mx-2 box-border aspect-[3/2] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:px-[10%] lg:aspect-[120/41] lg:px-[13%] xl:px-[200px]">
+        <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
           {/* 그라데이션 배경 추가 */}
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 

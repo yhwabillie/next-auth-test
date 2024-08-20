@@ -16,11 +16,13 @@ module.exports = {
           light: '#FEE2E2', // 연한 분홍색
           DEFAULT: '#F87171', // 밝은 레드
           dark: '#EF4444', // 어두운 레드
+          tonDown: '#cc3b3b',
         },
         secondary: {
           light: '#FDE68A', // 밝은 노란색
           DEFAULT: '#FBBF24', // 노란색
           dark: '#F59E0B', // 어두운 노란색
+          tonDown: '#d98c0a',
         },
         accent: {
           light: '#BFDBFE', // 연한 파란색

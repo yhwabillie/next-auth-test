@@ -1,8 +1,6 @@
 'use server'
-import authOptions from '@/lib/auth'
-import { DesktopBanner } from '@/lib/components/common/DesktopBanner'
 import { ProductList } from '@/lib/components/common/ProductList'
-import { getServerSession, Session } from 'next-auth'
+import { VisualBanner } from '@/lib/components/common/VisualBanner'
 
 export default async function Page() {
   return (
@@ -11,11 +9,8 @@ export default async function Page() {
         상품 리스트 본문
       </h2>
 
-      <DesktopBanner />
-
-      {/* <div className="mx-auto w-[1200px] px-5">
-        <ProductList />
-      </div> */}
+      <VisualBanner />
+      <ProductList />
     </section>
   )
 }

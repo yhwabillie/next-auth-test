@@ -90,7 +90,7 @@ export const Header = () => {
               <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>
                 <FaShoppingCart
                   className={clsx('text-lg ', {
-                    'text-gray-600': isScrolled,
+                    'text-primary-tonDown': isScrolled,
                   })}
                 />
               </UserNavItem>
