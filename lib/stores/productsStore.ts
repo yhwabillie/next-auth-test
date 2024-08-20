@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
-import { fetchProducts, ProductType, toggleProductToCart, toggleWishStatus } from '@/app/actions/products/actions'
+import { fetchAllProducts, fetchProducts, ProductType, toggleProductToCart, toggleWishStatus } from '@/app/actions/products/actions'
 import { debounce } from '../debounce'
 
 interface ProductsStore {
@@ -32,6 +32,23 @@ interface ProductsStore {
   loading: boolean
   setCategoryFilter: (category: string) => void
   fetchData: (page: number, pageSize: number) => Promise<void>
+  allData: ProductType[]
+  fetchAllData: () => Promise<
+    | {
+        allProducts: {
+          isInCart: boolean
+          isInWish: boolean
+          category: string
+          idx: string
+          name: string
+          original_price: number
+          discount_rate: number
+          imageUrl: string
+        }[]
+        totalProducts: number
+      }
+    | undefined
+  >
   loadMoreData: (page: number, pageSize: number) => Promise<void>
   resetStore: () => void
 
@@ -60,6 +77,33 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
     set({ searchQuery: query })
     get().fetchAutoCompleteSuggestions(query) // 자동완성 결과 가져오기
   },
+
+  allData: [],
+  fetchAllData: async () => {
+    set({ loading: true })
+
+    try {
+      //products -> DB에서 위시리스트와 장바구니를 뒤져서 현재 데이터에 같은 값이 있으면 isInwish, isInCart boolean 값으로 표시한 데이터
+      const response = await fetchAllProducts()
+
+      if (!response) {
+        console.log('no data')
+        return
+      }
+
+      set({
+        allData: response.allProducts,
+      })
+
+      return { allProducts: response.allProducts, totalProducts: response.totalProducts }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      toast.error('상품 데이터를 가져오는 중 오류가 발생했습니다.')
+    } finally {
+      set({ loading: false })
+    }
+  },
+
   // 카테고리와 이름을 기준으로 자동완성 결과 가져오기
   fetchAutoCompleteSuggestions: debounce(async (query: string) => {
     if (!query.trim()) {
@@ -67,12 +111,19 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       return
     }
 
-    const { data } = get()
+    const { fetchAllData } = get()
     set({ loading: true })
+
+    const allData = await fetchAllData()
+
+    if (!allData) {
+      console.log('no data')
+      return
+    }
 
     try {
       // 이름과 카테고리로 검색어 필터링
-      const suggestions = data.filter(
+      const suggestions = allData.allProducts.filter(
         (product) => product.name.toLowerCase().includes(query.toLowerCase()) || product.category.toLowerCase().includes(query.toLowerCase()),
       )
 
@@ -202,8 +253,9 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       // 상태를 업데이트
       const updatedData = get().data.map((item) => (item.idx === productIdx ? { ...item, isInWish: !item.isInWish } : item))
       const updatedFilteredData = get().filteredData.map((item) => (item.idx === productIdx ? { ...item, isInWish: !item.isInWish } : item))
+      const updatedSearchData = get().allData.map((item) => (item.idx === productIdx ? { ...item, isInWish: !item.isInWish } : item))
 
-      set({ data: updatedData, filteredData: updatedFilteredData })
+      set({ data: updatedData, filteredData: updatedFilteredData, allData: updatedSearchData })
 
       toast.success(response.toggleStatus ? '위시리스트에 추가했습니다.' : '위시리스트에서 제거했습니다.')
     } catch (error: unknown) {
@@ -234,11 +286,12 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
       const updatedData = get().data.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
       const updatedFilteredData = get().filteredData.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
+      const updatedSearchData = get().allData.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
 
       console.log('update', updatedData)
       console.log('ufilter', updatedFilteredData)
 
-      set({ data: updatedData, filteredData: updatedFilteredData })
+      set({ data: updatedData, filteredData: updatedFilteredData, allData: updatedSearchData })
 
       toast.success(response.toggleStatus ? '장바구니에 추가했습니다.' : '장바구니에서 제거했습니다.')
     } catch (error: unknown) {

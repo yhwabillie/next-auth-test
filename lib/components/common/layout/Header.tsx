@@ -84,7 +84,7 @@ export const Header = () => {
 
         <SearchBar isScrolled={isScrolled} />
 
-        <nav className="flex items-center justify-between md:w-[165px]">
+        <nav className="flex w-fit items-center justify-between">
           <div className="ml-auto flex items-center gap-3">
             {isIndivisual && (
               <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>
@@ -118,8 +118,6 @@ export const Header = () => {
                   회원가입
                 </Link>
               </div>
-              {/* <LinkBtn label="Login" path="/signIn" bgColor="blue" />
-              <LinkBtn label="회원가입" path="/signUp/agreement" bgColor="pink" /> */}
             </div>
           )}
         </nav>

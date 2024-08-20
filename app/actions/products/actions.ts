@@ -20,6 +20,55 @@ export interface ProductType {
   isInWish?: boolean
 }
 
+export const fetchAllProducts = async () => {
+  const session = await getServerSession(authOptions)
+  const userIdx = session?.user?.idx
+
+  try {
+    const [products, totalProducts] = await Promise.all([
+      prisma.product.findMany({
+        orderBy: { createdAt: 'desc' },
+        select: {
+          idx: true,
+          name: true,
+          category: true,
+          original_price: true,
+          discount_rate: true,
+          imageUrl: true,
+        },
+      }),
+      prisma.product.count(),
+    ])
+
+    // 미리 장바구니와 위시리스트 항목을 가져옴
+    const [cartItems, wishItems] = await Promise.all([
+      prisma.cartList.findMany({
+        where: { userIdx },
+        select: { productIdx: true },
+      }),
+      prisma.wishlist.findMany({
+        where: { userIdx },
+        select: { productIdx: true },
+      }),
+    ])
+
+    // Set을 사용하여 빠르게 장바구니와 위시리스트 상태 확인
+    const cartItemSet = new Set(cartItems.map((item) => item.productIdx))
+    const wishItemSet = new Set(wishItems.map((item) => item.productIdx))
+
+    // 제품 목록에 장바구니 및 위시리스트 상태 추가
+    const productsWithCartAndWishStatus = products.map((item) => ({
+      ...item,
+      isInCart: cartItemSet.has(item.idx),
+      isInWish: wishItemSet.has(item.idx),
+    }))
+
+    return { allProducts: productsWithCartAndWishStatus, totalProducts }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 /**
  * 제품 목록을 페이지네이션을 고려하여 가져오는 함수.
  *
@@ -38,7 +87,6 @@ export const fetchProducts = async ({ page, pageSize }: FetchProductsParams): Pr
   const take = pageSize
   const session = await getServerSession(authOptions)
   const userIdx = session?.user?.idx
-  console.log('서버인식유저====>', userIdx)
 
   try {
     const [products, totalProducts] = await Promise.all([
