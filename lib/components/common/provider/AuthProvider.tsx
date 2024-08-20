@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }: ProvidersProps) => {
   return (
     <SessionProvider>
       <body
-        className={clsx('bg-gray-200', {
+        className={clsx('bg-[#f1f4f6]', {
           'overflow-hidden': modalState || address_modal_state,
         })}
       >

@@ -55,15 +55,19 @@ export const SearchResult = () => {
   }
 
   return (
-    <section className="container mx-auto mt-20">
-      <h2 className="mb-6 text-2xl font-bold text-gray-800">검색 결과</h2>
-      <p className="mb-4 text-gray-600">"{query}"에 대한 검색 결과</p>
+    <section className="container mx-auto mt-10 min-w-[460px]">
+      <header className="mx-8 box-border rounded-lg bg-white px-8 py-4 drop-shadow-md md:mx-4">
+        <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-700">🔎 검색 결과</h2>
+        <p className="text-lg tracking-tight text-gray-600">
+          <span className="text-primary-dark mr-1 inline-block font-semibold">"{query}"</span>에 대한 검색 결과
+        </p>
+      </header>
 
       {results.length > 0 ? (
         <>
           {/* 상품 리스트 */}
-          <section className="box-border bg-white px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
-            <ul className="mt-[26px] grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:gap-x-2 md:gap-y-6 lg:grid-cols-4 xl:grid-cols-5">
+          <section className="box-border px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
+            <ul className="mt-[26px] grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:gap-x-2 lg:grid-cols-4 xl:grid-cols-5">
               {results.map((product, index) => (
                 <motion.li
                   key={`${product.idx}-${index}`}
@@ -82,7 +86,7 @@ export const SearchResult = () => {
                     ease: 'easeInOut',
                     duration: 0.2,
                   }}
-                  className="group transition-all md:translate-y-0 md:rounded-xl md:bg-white md:p-3 md:hover:translate-y-[-10px]"
+                  className="group rounded-xl bg-white p-3 transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
                 >
                   <div className="mb-3 aspect-square overflow-hidden rounded-xl border border-gray-300 shadow-md">
                     <img src={product.imageUrl} alt={product.name} className="w-full transition-all duration-300 group-hover:scale-110" />

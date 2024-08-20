@@ -97,7 +97,7 @@ export const ProductList = () => {
 
   //마크업
   return (
-    <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] overflow-x-hidden rounded-t-[2rem] bg-white pb-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
+    <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
@@ -149,6 +149,7 @@ export const ProductList = () => {
 
               <div className="md:flex md:justify-end">
                 <button
+                  aria-label="wishlist cart add remove toggle button"
                   type="button"
                   onClick={() => handleClickAddWish(product)}
                   className="bg-secondary-dark hover:bg-secondary-tonDown mr-2 inline-block rounded-md p-2 text-sm text-white shadow-md transition-all duration-300"
@@ -156,6 +157,7 @@ export const ProductList = () => {
                   {product.isInWish ? <LuHeartOff className="text-2xl" /> : <FaHeartCirclePlus className="text-2xl drop-shadow-md" />}
                 </button>
                 <button
+                  aria-label="shopping cart add remove toggle button"
                   type="button"
                   onClick={() => handleClickAddProduct(product)}
                   className={clsx('inline-block rounded-md p-2 text-sm text-white duration-300', {

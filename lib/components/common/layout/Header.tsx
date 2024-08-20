@@ -71,11 +71,11 @@ export const Header = () => {
                   })}
                 >
                   <BsShop
-                    className={clsx('text-primary text-2xl', {
+                    className={clsx('text-primary-dark text-2xl', {
                       'text-white': isScrolled,
                     })}
                   />
-                  <span className={`${Matemasie_Regular.className} mt-[-5px] hidden drop-shadow-sm lg:block`}>Shopping</span>
+                  <span className={`${Matemasie_Regular.className} mt-[-5px] hidden lg:block`}>Shopping</span>
                 </Link>
               </h1>
             </li>
@@ -108,7 +108,7 @@ export const Header = () => {
           {isGuest && (
             <div className="flex w-full justify-between">
               <div className="flex gap-2">
-                <Link className="block rounded-[5px] bg-yellow-500 px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signIn">
+                <Link className="bg-secondary-dark block rounded-[5px] px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signIn">
                   로그인
                 </Link>
                 <Link

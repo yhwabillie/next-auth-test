@@ -73,13 +73,14 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
           placeholder="제품, 카테고리 검색"
           className={clsx('bg-primary-dark w-[calc(100%-32px)] focus:outline-0', {
             'placeholder:text-primary-dark/50 text-primary-dark bg-white': isScrolled,
-            'text-white placeholder:text-white/50': !isScrolled,
+            'text-white placeholder:text-white': !isScrolled,
           })}
         />
-        <button type="button" className=" pl-3" onClick={handleSearch}>
+        <button aria-label="search button" type="button" className=" pl-3" onClick={handleSearch}>
           <IoSearch
-            className={clsx('text-xl text-white', {
-              '!text-primary-dark': isScrolled,
+            className={clsx('text-xl ', {
+              'text-primary-dark': isScrolled,
+              'text-white': !isScrolled,
             })}
           />
         </button>

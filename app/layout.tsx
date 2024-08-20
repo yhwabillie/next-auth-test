@@ -5,6 +5,7 @@ import { Toaster } from 'sonner'
 import './globals.css'
 import { FramerMotionProvider } from '@/lib/components/common/FramerMotionProvider'
 import { ModalProvider } from '@/lib/components/common/provider/ModalProvider'
+import localFont from 'next/font/local'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',

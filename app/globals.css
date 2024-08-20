@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'pretendard/dist/web/static/pretendard.css';
+
+html,
+body {
+  font-family: 'Pretendard';
+}
+
 input[type='checkbox'] {
   -webkit-appearance: none;
   -moz-appearance: none;
