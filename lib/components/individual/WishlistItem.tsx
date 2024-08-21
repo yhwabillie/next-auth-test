@@ -28,9 +28,12 @@ export const WishlistItem = React.memo(
     handleToggleCartStatus,
   }: WishlistItemProps) => {
     return (
-      <li className="mb-5 flex flex-row justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0">
-        <div className="flex flex-row">
-          <img src={imageUrl} alt={name} className="mr-5 block h-28 w-28 rounded-lg border border-gray-400/30 drop-shadow-lg" />
+      <li className="mb-5 flex flex-col justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0 md:flex-row">
+        <div className="mb-2 flex flex-row md:mb-0">
+          <div className="relative mr-5 block h-28 w-28 overflow-hidden rounded-lg border border-gray-400/30 drop-shadow-lg">
+            <img src={imageUrl} alt={name} className="absolute left-0 top-0 object-fill" />
+          </div>
+
           <div className="flex flex-col justify-center">
             <p className="mb-1 block w-fit rounded-md bg-blue-600 px-2 py-1 text-sm text-white drop-shadow-md">{category}</p>
             <strong className="text-md block font-medium text-gray-600">{name}</strong>
@@ -59,7 +62,7 @@ export const WishlistItem = React.memo(
             onClick={handleToggleCartStatus}
             disabled={loading}
             className={clsx(
-              'flex items-center gap-2 rounded-lg px-10 py-3 text-sm font-semibold drop-shadow-lg transition-all duration-150 ease-in-out ',
+              'flex items-center justify-center gap-2 rounded-lg px-10 py-3 text-sm font-semibold drop-shadow-lg transition-all duration-150 ease-in-out ',
               {
                 'bg-gray-400/50 hover:bg-gray-400 hover:text-white': isInCart,
                 'bg-red-500 text-white hover:bg-red-600': !isInCart,

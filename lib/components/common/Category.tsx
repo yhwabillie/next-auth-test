@@ -37,8 +37,8 @@ export const Category = ({ setCategoryFilter, selectedCategory }: CategoryProps)
           <li key={index} className="mx-auto w-fit">
             <button onClick={() => setCategoryFilter(category.name)}>
               <p
-                className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border shadow-sm', {
-                  '!border-primary/50 bg-primary/15': selectedCategory === category.name,
+                className={clsx('mx-auto mb-1 flex h-[42px] w-[42px] items-center justify-center rounded-lg border-transparent bg-gray-200/70', {
+                  'bg-primary/15': selectedCategory === category.name,
                 })}
               >
                 {React.cloneElement(category.icon, {
@@ -48,7 +48,7 @@ export const Category = ({ setCategoryFilter, selectedCategory }: CategoryProps)
                 })}
               </p>
               <p
-                className={clsx('text-center text-sm tracking-tighter text-accent', {
+                className={clsx('text-center text-xs tracking-tighter text-accent md:text-sm', {
                   'font-medium text-primary': selectedCategory === category.name,
                 })}
               >

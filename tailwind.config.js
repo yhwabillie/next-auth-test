@@ -25,7 +25,7 @@ module.exports = {
           DEFAULT: '#B04A4A', // 벽돌색
         },
         secondary: {
-          DEFAULT: '#F39C12', // 노랑색
+          DEFAULT: '#660000', // 노랑색
         },
         accent: {
           DEFAULT: '#333333', // 짙은회색

@@ -130,7 +130,14 @@ export const VisualBanner = () => {
           </motion.div>
 
           <motion.div variants={imageVariants} initial="hidden" animate={currentIndex === 0 ? 'visible' : 'hidden'} className="absolute inset-0">
-            <Image src="/images/banner-1.webp" alt="banner-1" fill className="h-full w-full object-cover" />
+            <Image
+              src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/banners/banner-1.webp"
+              alt="banner-1"
+              fill
+              sizes="100%"
+              className="h-full w-full object-cover"
+              priority
+            />
           </motion.div>
         </div>
         <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
@@ -147,7 +154,13 @@ export const VisualBanner = () => {
           </motion.div>
 
           <motion.div variants={imageVariants} initial="hidden" animate={currentIndex === 1 ? 'visible' : 'hidden'} className="absolute inset-0">
-            <Image src="/images/banner-2.webp" alt="banner-2" fill className="h-full w-full object-cover" />
+            <Image
+              src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/banners/banner-2.webp"
+              alt="banner-2"
+              fill
+              sizes="100%"
+              className="h-full w-full object-cover"
+            />
           </motion.div>
         </div>
         <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
@@ -164,7 +177,13 @@ export const VisualBanner = () => {
           </motion.div>
 
           <motion.div variants={imageVariants} initial="hidden" animate={currentIndex === 2 ? 'visible' : 'hidden'} className="absolute inset-0">
-            <Image src="/images/banner-3.webp" alt="banner-2" fill className="h-full w-full object-cover" />
+            <Image
+              src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/banners/banner-3.webp"
+              alt="banner-2"
+              fill
+              sizes="100%"
+              className="h-full w-full object-cover"
+            />
           </motion.div>
         </div>
         <div className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]">
@@ -181,7 +200,14 @@ export const VisualBanner = () => {
           </motion.div>
 
           <motion.div variants={imageVariants} initial="hidden" animate={currentIndex === 3 ? 'visible' : 'hidden'} className="absolute inset-0">
-            <Image src="/images/banner-4.webp" alt="banner-2" fill className="h-full w-full object-cover" />
+            <Image
+              src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/banners/banner-4.webp"
+              alt="banner-2"
+              fill
+              sizes="100%"
+              className="h-full w-full object-cover"
+              priority
+            />
           </motion.div>
         </div>
       </Flicking>

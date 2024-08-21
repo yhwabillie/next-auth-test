@@ -169,13 +169,13 @@ export const ProductList = () => {
               </div>
 
               {/* 제품 배경 이미지 */}
-              <figure className="absolute left-0 top-0">
+              <figure className="absolute left-0 top-0 w-full">
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
-                  width={200}
-                  height={200}
                   priority={true}
+                  width={400}
+                  height={600}
                   className="w-full transition-all duration-300 group-hover:scale-110"
                 />
               </figure>

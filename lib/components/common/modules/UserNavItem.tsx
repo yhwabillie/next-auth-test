@@ -29,12 +29,12 @@ export const UserNavItem = ({ sessionUser, children, label, path, type, isScroll
         className={clsx(
           'box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg transition-colors duration-300',
           {
-            'bg-white': isScrolled,
+            'bg-white !text-accent': isScrolled,
           },
         )}
       >
         {sessionUser && sessionUser.cartlist_length! > 0 && (
-          <span className="absolute right-[-10px] top-[-6px] box-border block h-6 w-6 rounded-[50%] bg-accent text-center text-xs font-semibold leading-[24px] text-white shadow-inner">
+          <span className="absolute right-[-10px] top-[-6px] box-border block h-6 w-6 rounded-[50%] bg-red-400 text-center text-xs font-semibold leading-[24px] text-white shadow-inner">
             {sessionUser?.cartlist_length}
           </span>
         )}

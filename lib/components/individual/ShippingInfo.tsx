@@ -15,7 +15,7 @@ interface ShippingInfoProps {
 
 export const ShippingInfo = ({ addresses, isAddressEmpty, setActiveTab, setAddressActiveTabId, addressActiveTabId, register }: ShippingInfoProps) => {
   return (
-    <fieldset className="mx-4 mb-16">
+    <fieldset className="mx-4">
       <h6 className="mb-2 block text-lg font-semibold">배송지 정보</h6>
 
       {isAddressEmpty ? (
@@ -54,20 +54,20 @@ export const ShippingInfo = ({ addresses, isAddressEmpty, setActiveTab, setAddre
               addressActiveTabId === item.idx && (
                 <dl key={index} className="flex flex-col gap-3 border-l-4 border-gray-200 pl-4">
                   <div className="flex items-center gap-2">
-                    <dt className="w-[200px] font-medium">받는이</dt>
+                    <dt className="w-[150px] font-medium md:w-[200px]">받는이</dt>
                     <dd className="text-gray-700">{item.recipientName}</dd>
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[200px] font-medium">연락처</dt>
+                    <dt className="w-[150px] font-medium md:w-[200px]">연락처</dt>
                     <dd>{formatPhoneNumber(item.phoneNumber)}</dd>
                     <input {...register('phoneNumber')} className="h-0 w-0" type="number" value={item.phoneNumber} />
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[200px] font-medium">배송지</dt>
-                    <dd className="text-gray-700">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</dd>
+                    <dt className="w-[150px] font-medium md:w-[200px]">배송지</dt>
+                    <dd className="w-[calc(100%-150px)] break-all text-gray-700 md:w-[calc(100%-200px)]">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</dd>
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[200px] font-medium">배송 요청사항</dt>
+                    <dt className="w-[150px] font-medium md:w-[200px]">배송 요청사항</dt>
                     <dd className="text-gray-700">{item.deliveryNote}</dd>
                   </div>
                 </dl>

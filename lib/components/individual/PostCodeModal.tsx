@@ -12,8 +12,8 @@ export const PostCodeModal = () => {
   }
 
   return (
-    <div className="fixed left-0 top-0 z-20 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-      <section className="box-border flex min-h-full w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+    <div className="fixed left-0 top-0 z-[100] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
+      <section className="box-border flex min-h-full w-[420px] flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:w-[600px] md:p-10">
         <h2 className="mb-4 block text-center text-2xl font-semibold tracking-tighter">주소 검색</h2>
         <div className="mb-4 h-full">
           <DaumPostcodeEmbed className="h-full" onComplete={handleComplete} autoClose={false} />

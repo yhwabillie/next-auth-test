@@ -28,17 +28,20 @@ export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
           <li
             key={index}
             onClick={() => setActiveTab(item.id)}
-            className={clsx('flex w-[25%] cursor-pointer justify-center rounded-md px-5 py-3 text-center transition-all duration-300 last:mr-0', {
-              'bg-white font-bold text-gray-700': item.id === activeTabId,
-              'border-transparent text-gray-500': item.id !== activeTabId,
-            })}
+            className={clsx(
+              'flex w-[25%] cursor-pointer justify-center rounded-md px-2 py-3 text-center transition-all duration-300 last:mr-0 md:px-5',
+              {
+                'bg-white font-bold text-gray-700': item.id === activeTabId,
+                'border-transparent text-gray-500': item.id !== activeTabId,
+              },
+            )}
           >
-            <button className="flex flex-row items-center justify-center gap-2">
+            <button className="flex flex-col items-center justify-center gap-2 md:flex-row">
               {item.id === 1 && <MdLocalShipping className="text-xl" />}
               {item.id === 2 && <FaStar className="text-lg" />}
               {item.id === 3 && <FaShoppingCart className="text-lg" />}
               {item.id === 4 && <TbShoppingBagCheck className="text-xl" />}
-              <span className="text-sm">{item.label}</span>
+              <span className="text-xs lg:text-sm">{item.label}</span>
             </button>
           </li>
         ))}

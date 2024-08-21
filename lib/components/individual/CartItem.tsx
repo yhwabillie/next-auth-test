@@ -43,12 +43,18 @@ export const CartItem = ({
       })}
     >
       <div className="flex flex-row">
-        <label htmlFor={idx} className="mr-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-gray-400/20 drop-shadow-md">
-          <input id={idx} type="checkbox" checked={checkedItems[idx] || false} onChange={handleChangeCheckbox} />
-          {checkedItems[idx] && <FaCheck className="cursor-pointer text-lg text-blue-600" />}
-        </label>
-        <img src={imageUrl} alt={name} className="mr-5 block h-28 w-28 rounded-lg border border-gray-400/30 drop-shadow-lg" />
-        <div className="flex flex-col justify-center">
+        <div>
+          <label htmlFor={idx} className="mr-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-gray-400/20 drop-shadow-md">
+            <input id={idx} type="checkbox" checked={checkedItems[idx] || false} onChange={handleChangeCheckbox} />
+            {checkedItems[idx] && <FaCheck className="cursor-pointer text-lg text-blue-600" />}
+          </label>
+
+          <div className="relative mr-5 mt-2 block h-20 w-20 overflow-hidden rounded-md border border-gray-400/30 drop-shadow-lg md:h-28 md:w-28 md:rounded-lg">
+            <img src={imageUrl} alt={name} className="absolute left-0 top-0 object-fill" />
+          </div>
+        </div>
+
+        <div className="flex w-[calc(100%-112px)] flex-col justify-end">
           <p className="mb-1 block w-fit rounded-md bg-blue-600 px-2 py-1 text-sm text-white drop-shadow-md">{category}</p>
           <strong className="text-md block font-medium text-gray-600">{name}</strong>
 

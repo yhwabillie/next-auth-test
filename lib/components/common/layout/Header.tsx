@@ -55,7 +55,7 @@ export const Header = () => {
   return (
     <header
       className={clsx('sticky top-0 z-40 box-border h-[60px] min-w-[460px] backdrop-blur-md transition-colors duration-300', {
-        'bg-primary-dark/80 shadow-inner': isScrolled,
+        'bg-primary/80 shadow-inner': isScrolled,
       })}
     >
       <div className="mx-auto flex h-full w-full items-center justify-between px-5 xl:w-[1200px]">
@@ -71,7 +71,7 @@ export const Header = () => {
                   })}
                 >
                   <BsShop
-                    className={clsx('text-2xl text-accent', {
+                    className={clsx('text-2xl text-primary', {
                       'text-white': isScrolled,
                     })}
                   />
@@ -90,7 +90,7 @@ export const Header = () => {
               <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>
                 <FaShoppingCart
                   className={clsx('text-lg ', {
-                    'text-primary-tonDown': isScrolled,
+                    'text-primary': isScrolled,
                   })}
                 />
               </UserNavItem>

@@ -13,7 +13,7 @@ interface PaymentInfoProps {
 export const PaymentInfo = ({ register, checkedItemsInfo, totalQuantity, totalPrice, calculateDiscountedPrice }: PaymentInfoProps) => {
   return (
     <>
-      <h5 className="mb-5 block rounded-lg bg-blue-50 px-4 py-3 text-xl font-semibold text-black">💸 결제 정보</h5>
+      <h5 className="mb-5 mt-16 block rounded-lg bg-blue-50 px-4 py-3 text-xl font-semibold text-black">💸 결제 정보</h5>
       <fieldset className="mx-4">
         <ul className="flex flex-col gap-5">
           <li className="flex flex-col gap-2">
@@ -43,14 +43,16 @@ export const PaymentInfo = ({ register, checkedItemsInfo, totalQuantity, totalPr
               {checkedItemsInfo.map(({ product, quantity }) => (
                 <li key={product.idx} className="mb-2 flex items-center justify-between gap-x-5 px-2 text-gray-600/50">
                   <p className="flex items-center gap-4">
-                    <span className="block w-[300px] font-medium">{product.name}</span>
-                    <span className="font-medium">{quantity}개</span>
+                    <span className="md:text-md block w-[200px] text-sm font-medium md:w-[300px]">{product.name}</span>
+                    <span className="md:text-md text-sm font-medium">{quantity}개</span>
                   </p>
-                  <span>{`${calculateDiscountedPrice(product.original_price, product.discount_rate, quantity)}`}</span>
+                  <span className="md:text-md text-sm">{`${calculateDiscountedPrice(product.original_price, product.discount_rate, quantity)}`}</span>
                 </li>
               ))}
 
-              <li className="mt-4 px-2 text-gray-600/50">{totalPrice >= 30000 ? '배송비(3만원 이상 무료배송) 0원' : '배송비(+3,000원)'}</li>
+              <li className="md:text-md mt-4 px-2 text-sm text-gray-600/50">
+                {totalPrice >= 30000 ? '배송비(3만원 이상 무료배송) 0원' : '배송비(+3,000원)'}
+              </li>
 
               <li className="mt-4 flex flex-row items-center justify-between border-t border-blue-600 px-2 py-4">
                 <span className="text-md text-red-600">최종 결제금액</span>

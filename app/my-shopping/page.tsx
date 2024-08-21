@@ -21,12 +21,12 @@ export default async function Page() {
   }
 
   return (
-    <section aria-labelledby="page-heading">
+    <section aria-labelledby="page-heading" className="container mx-auto mb-6">
       <h2 id="page-heading" className="sr-only">
         마이쇼핑 본문
       </h2>
       <SectionHeader title="🛍️ MY SHOPPING" desc="배송정보, 위시리스트, 장바구니, 주문 상세정보를 확인하세요" />
-      <main className="mt-5 overflow-hidden rounded-lg border-b bg-white p-10 drop-shadow-sm">
+      <main className="overflow-hidden rounded-lg border-b bg-white p-4 drop-shadow-sm md:p-10">
         <UserShoppingTabs session={session} />
       </main>
     </section>
