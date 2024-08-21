@@ -7,8 +7,8 @@ export default async function Page() {
       <h2 id="page-heading" className="sr-only">
         회원가입 정보 등록 본문
       </h2>
-      <header>
-        <h3 className="mb-10 block text-center text-2xl font-semibold text-gray-700">📌 회원정보 입력</h3>
+      <header className="mb-10">
+        <h3 className="mb-4 block text-center text-2xl font-semibold text-gray-700">📌 회원정보 입력</h3>
         <p className="text-center">회원가입을 위한 정보를 입력하세요.</p>
       </header>
       <SignUpForm />

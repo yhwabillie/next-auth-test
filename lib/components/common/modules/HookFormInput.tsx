@@ -43,7 +43,7 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
         disabled={disabled}
         readOnly={readonly}
         className={clsx(
-          'text-md leading-1 block w-full rounded-md border px-[15px] pb-[10px] pt-[27px] font-normal shadow-md outline-0 placeholder:font-normal focus:outline-none ',
+          'text-md leading-1 block w-full rounded-md border bg-white px-[15px] pb-[10px] pt-[27px] font-normal shadow-md outline-0 placeholder:font-normal focus:outline-none disabled:bg-gray-200 ',
           {
             '!border-red-400 placeholder:!text-red-400/50 focus:!border-red-400 focus:text-red-400': error,
             '!text-red-400': error && !isFocus,

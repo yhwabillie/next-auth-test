@@ -14,6 +14,8 @@ import { HookFormCheckBox } from '@/lib/components/common/modules/HookFormCheckB
 import { useRouter } from 'next/navigation'
 import { useModalStore } from '@/lib/zustandStore'
 import dayjs from 'dayjs'
+import 'dayjs/locale/ko' // 한국어 로케일 불러오기
+dayjs.locale('ko') // 한국어 로케일 설정
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
   idx: string
@@ -239,6 +241,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         <h3 className="text-xl font-medium text-blue-400">{`${data.name}님은`}</h3>
         <p>{`${data.user_type === 'indivisual' ? '일반' : '관리자'} 사용자 입니다`}</p>
       </div>
+
       <form className="flex flex-col items-center justify-center gap-16">
         <legend className="sr-only">프로필 폼</legend>
         <fieldset className="flex flex-col items-center justify-center gap-14">
@@ -303,6 +306,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 error={errors.input_password}
                 label="비밀번호"
                 type="password"
+                placeholder="현재 비밀번호를 입력하세요"
               />
               {errors.input_password && !!watch('input_password') && (
                 <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.input_password.message}</p>
@@ -353,7 +357,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
             </>
           )}
 
-          <div className="mb-4 mt-10">
+          <div className="mb-10 mt-10">
             <div className="mb-2">
               <HookFormCheckBox
                 register={register('service_agreement')}
@@ -364,7 +368,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 readOnly={true}
               />
             </div>
-            <p>동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+            <p className="mb-4">동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.SERVICE)} label="전문보기" />
           </div>
           <div className="mb-10">
@@ -378,10 +382,10 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 readOnly={true}
               />
             </div>
-            <p>동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+            <p className="mb-4">동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.PRIVACY)} label="전문보기" />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <div className="mb-2">
               <HookFormCheckBox
                 register={register('selectable_agreement')}
@@ -395,7 +399,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               />
             </div>
 
-            <p>마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+            <p className="mb-4">마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
             <Button type="button" clickEvent={() => openModal(ModalTypes.SELECTABLE)} label="전문보기" />
           </div>
           <Button
@@ -409,8 +413,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
       {/* Modal */}
       {activeModal === ModalTypes.SERVICE && (
-        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+        <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
+          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
             <h2 className="text-center text-2xl font-semibold tracking-tighter">서비스 이용 동의 (필수) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
@@ -437,8 +441,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       )}
 
       {activeModal === ModalTypes.PRIVACY && (
-        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+        <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
+          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
             <h2 className="text-center text-2xl font-semibold tracking-tighter">개인 정보 이용 동의 (필수) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
@@ -465,8 +469,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       )}
 
       {activeModal === ModalTypes.SELECTABLE && (
-        <div className="fixed left-0 top-0 z-10 flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10">
-          <section className="box-border flex min-h-full max-w-[600px] flex-col justify-between rounded-2xl bg-white p-10 shadow-lg">
+        <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
+          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
             <h2 className="text-center text-2xl font-semibold tracking-tighter">마케팅 이용 동의 (선택) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam

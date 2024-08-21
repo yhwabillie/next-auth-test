@@ -24,6 +24,7 @@ export const SignUpForm = () => {
   const [profileImage, setProfileImage] = useState('')
   const [isConfirmID, setIsConfirmID] = useState(false)
   const [isConfirmEmail, setIsConfirmEmail] = useState(false)
+  const [isLoading, setIsLoading] = useState(false) // 로딩 상태 관리
   const router = useRouter()
   const {
     register,
@@ -110,6 +111,8 @@ export const SignUpForm = () => {
     formData.append('input_data', blob)
     formData.append('profile_img', data.profile_img[0])
 
+    setIsLoading(true) // 폼 제출 시 로딩 상태로 전환
+
     toast.promise(
       axios({
         method: 'post',
@@ -130,7 +133,9 @@ export const SignUpForm = () => {
           console.log(err)
           return `${err}`
         },
-        finally: () => {},
+        finally: () => {
+          setIsLoading(false) // 폼 제출 완료 후 로딩 상태 해제
+        },
       },
     )
   }
@@ -231,7 +236,7 @@ export const SignUpForm = () => {
           />
         </div>
 
-        <fieldset className="w-[400px]">
+        <fieldset className="w-full md:w-[400px]">
           <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 타입을 선택해주세요</legend>
           <div className="mb-20 flex flex-row justify-center gap-3">
             <HookFormRadioItem
@@ -243,12 +248,12 @@ export const SignUpForm = () => {
             />
             <HookFormRadioItem register={register('user_type')} id="admin" value="admin" name="user_type" checked={watch('user_type') === 'admin'} />
           </div>
-          <div className="mb-6">
+          <div className="mx-auto mb-6 w-fit">
             <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 정보를 입력해주세요</legend>
             <HookFormInput register={register('name')} error={errors.name} id="name" label="사용자 이름" type="text" />
             {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
           </div>
-          <div className="mb-6">
+          <div className="mx-auto mb-6 w-fit">
             <div className="flex h-fit w-fit flex-col">
               <HookFormInput register={register('id')} error={errors.id} id="id" label="아이디" type="text" disabled={isConfirmID} />
 
@@ -285,7 +290,7 @@ export const SignUpForm = () => {
 
             {errors.id && !!watch('id') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.id.message}</p>}
           </div>
-          <div className="mb-6">
+          <div className="mx-auto mb-6 w-fit">
             <div className="flex h-fit w-fit flex-col">
               <HookFormInput register={register('email')} error={errors.email} id="email" label="이메일" type="email" disabled={isConfirmEmail} />
 
@@ -322,11 +327,11 @@ export const SignUpForm = () => {
               {errors.email && !!watch('email') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.email.message}</p>}
             </div>
           </div>
-          <div className="mb-4">
+          <div className="mx-auto mb-4 w-fit">
             <HookFormInput register={register('password')} error={errors.password} id="password" label="비밀번호" type="password" />
             <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password && !!watch('password') && `${errors.password.message}`}</p>
           </div>
-          <div>
+          <div className="mx-auto mb-4 w-fit">
             <HookFormInput
               register={register('password_confirm')}
               error={errors.password_confirm}
@@ -341,8 +346,8 @@ export const SignUpForm = () => {
         </fieldset>
 
         <div className="flex w-[194px] justify-center gap-3">
-          <Button label="이전" clickEvent={() => router.back()} type="button" />
-          <Button label="제출하기" disalbe={!(Object.keys(errors).length === 0 && isConfirmEmail && isConfirmID)} />
+          <Button label="이전" clickEvent={() => router.back()} type="button" disalbe={isLoading} />
+          <Button label={isLoading ? '제출 중...' : '제출하기'} disalbe={!(Object.keys(errors).length === 0 && isConfirmEmail && isConfirmID)} />
         </div>
       </form>
     </Suspense>

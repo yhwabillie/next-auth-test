@@ -27,7 +27,7 @@ export const AgreementForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto w-[400px]">
+    <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto mb-[90px] w-[400px] pr-8">
       <fieldset className="mb-10">
         <HookFormCheckBox
           id="check_all"
@@ -40,7 +40,7 @@ export const AgreementForm = () => {
             agreements.forEach((agreement: any) => setValue(agreement, isChecked))
           }}
         />
-        <p className="pl-8 text-lg font-normal tracking-tighter text-gray-600/70">
+        <p className="break-all pl-8 font-normal tracking-tighter text-gray-600/70">
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
           Itaque nihil aspern
         </p>
@@ -61,7 +61,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -89,7 +89,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -117,7 +117,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -133,8 +133,8 @@ export const AgreementForm = () => {
         </div>
       </fieldset>
 
-      <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-white py-5">
-        <div className="mx-auto w-[500px]">
+      <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-gray-100 py-5">
+        <div className="mx-auto box-border w-[400px] md:w-[500px]">
           <Button
             label="다음"
             disalbe={!(watch('service_agreement') && watch('privacy_agreement'))}
