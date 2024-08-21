@@ -98,7 +98,11 @@ export const Header = () => {
 
             {isAdmin && (
               <UserNavItem label="상품등록" path="/add-product" type={TooltipTypes.ADD_PRODUCT} isScrolled={isScrolled}>
-                <FaShoppingCart className="text-lg" />
+                <FaShoppingCart
+                  className={clsx('text-lg ', {
+                    'text-primary': isScrolled,
+                  })}
+                />
               </UserNavItem>
             )}
 

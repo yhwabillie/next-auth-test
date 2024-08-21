@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/lib/components/common/modules/LoadingSpinner'
 import { Product } from '@prisma/client'
 import * as XLSX from 'xlsx'
 import { ProductItemModal } from '@/lib/components/admin/ProductItemModal'
+import { IoMdArrowDropdown } from 'react-icons/io'
 
 interface CheckedItem {
   [key: string]: boolean
@@ -212,8 +213,12 @@ export const ProductList = () => {
     // 맨 앞으로 화살표 버튼
     if (currentPage > 1) {
       pageButtons.push(
-        <button key="first" className="h-10 w-10 bg-pink-400" onClick={() => handlePageChange(1)}>
-          <FaAngleDoubleLeft />
+        <button
+          key="first"
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-600 shadow-md"
+          onClick={() => handlePageChange(1)}
+        >
+          <FaAngleDoubleLeft className="text-white" />
         </button>,
       )
     }
@@ -221,8 +226,12 @@ export const ProductList = () => {
     // 이전 화살표 버튼 (1번째 페이지가 아닐 경우 show)
     if (currentPage > 1) {
       pageButtons.push(
-        <button key="prev" className="h-10 w-10 bg-gray-400" onClick={() => handlePageChange(currentPage - 1)}>
-          <FaAngleLeft />
+        <button
+          key="prev"
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500 shadow-md"
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          <FaAngleLeft className="text-white" />
         </button>,
       )
     }
@@ -230,7 +239,11 @@ export const ProductList = () => {
     // 이전 페이지 버튼 (1번째 페이지가 아닐 경우 show)
     if (currentPage > 1) {
       pageButtons.push(
-        <button key={currentPage - 1} className="h-10 w-10 bg-blue-400" onClick={() => handlePageChange(currentPage - 1)}>
+        <button
+          key={currentPage - 1}
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-300"
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
           {currentPage - 1}
         </button>,
       )
@@ -238,7 +251,7 @@ export const ProductList = () => {
 
     // 현재 페이지 버튼 (항상 show)
     pageButtons.push(
-      <button key="current" className="h-10 w-10 bg-blue-600" disabled>
+      <button key="current" className="h-10 w-10 rounded-md bg-blue-200 font-semibold text-blue-600" disabled>
         {currentPage}
       </button>,
     )
@@ -246,7 +259,11 @@ export const ProductList = () => {
     // 다음 페이지 버튼 (마지막 페이지가 아닐 경우 show)
     if (currentPage < totalPages) {
       pageButtons.push(
-        <button key={currentPage + 1} className="h-10 w-10 bg-blue-400" onClick={() => handlePageChange(currentPage + 1)}>
+        <button
+          key={currentPage + 1}
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-300 font-semibold text-gray-500"
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
           {currentPage + 1}
         </button>,
       )
@@ -255,8 +272,12 @@ export const ProductList = () => {
     // 다음 화살표 버튼 (마지막 페이지가 아닐 경우 show)
     if (currentPage < totalPages) {
       pageButtons.push(
-        <button key="next" className="h-10 w-10 bg-gray-400" onClick={() => handlePageChange(currentPage + 1)}>
-          <FaAngleRight />
+        <button
+          key="next"
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500 shadow-md"
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          <FaAngleRight className="text-white" />
         </button>,
       )
     }
@@ -264,8 +285,12 @@ export const ProductList = () => {
     // 맨 뒤로 화살표 버튼
     if (currentPage < totalPages) {
       pageButtons.push(
-        <button key="last" className="h-10 w-10 bg-pink-400" onClick={() => handlePageChange(totalPages)}>
-          <FaAngleDoubleRight />
+        <button
+          key="last"
+          className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-600 shadow-md"
+          onClick={() => handlePageChange(totalPages)}
+        >
+          <FaAngleDoubleRight className="text-white" />
         </button>,
       )
     }
@@ -385,11 +410,11 @@ export const ProductList = () => {
   }, [checkedItems])
 
   return (
-    <section aria-labelledby="product-list-heading">
+    <section aria-labelledby="product-list-heading" className="mx-4 lg:mx-0">
       <h4 id="product-list-heading" className="sr-only">
         업로드된 상품 리스트
       </h4>
-      <div className="flex flex-row justify-end gap-2">
+      <div className="mb-10 flex flex-row justify-end gap-2 lg:mb-5">
         <div className="w-[230px]">
           <Button label="전체 Excel 다운로드" clickEvent={handleDownload} disalbe={!(data.length > 0)} />
         </div>
@@ -397,14 +422,21 @@ export const ProductList = () => {
           <Button label="선택 삭제" clickEvent={handleDeleteSelected} spinner={deleteLoading} disalbe={deleteLoading || !(data.length > 0)} />
         </div>
       </div>
-      <select onChange={handleCategoryChange} value={selectedCategory || ''}>
-        <option value="">전체</option>
-        {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
+      <div className="relative w-fit shadow-sm">
+        <select
+          onChange={handleCategoryChange}
+          value={selectedCategory || ''}
+          className="w-[200px] rounded-md border border-blue-500/50 px-3 py-2 font-medium text-blue-500 focus:outline-0"
+        >
+          <option value="">전체</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+        <IoMdArrowDropdown className="absolute right-[5px] top-[50%] z-10 translate-y-[-50%] text-2xl text-blue-500" />
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-10">
@@ -412,8 +444,8 @@ export const ProductList = () => {
         </div>
       ) : (
         <>
-          <table className="mt-5 w-full border-collapse">
-            <thead className="bg-gray-100">
+          <table className="mx-0 mt-5 w-full border-collapse">
+            <thead className="bg-blue-100">
               <tr className="h-10 border-b border-t border-gray-300">
                 <th className="box-border w-[5%]">
                   <label
@@ -456,7 +488,7 @@ export const ProductList = () => {
                 <th className="w-[15%] text-center text-sm">판매가</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white">
               {data.map((item: Product, index: any) => (
                 <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="w-[5%]">
@@ -489,7 +521,7 @@ export const ProductList = () => {
               ))}
             </tbody>
           </table>
-          <div className="flex flex-row items-center justify-center gap-3 py-10">{renderPaginationButtons()}</div>
+          <div className="flex flex-row items-center justify-center gap-2 py-10">{renderPaginationButtons()}</div>
         </>
       )}
 
