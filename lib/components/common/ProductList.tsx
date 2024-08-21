@@ -126,7 +126,7 @@ export const ProductList = () => {
               <div>
                 <p className="relative z-[1] mb-2 text-sm font-semibold text-white/80 transition-all duration-300">{product.category}</p>
                 <p className="relative z-[1] flex flex-nowrap overflow-hidden">
-                  <span className="group-hover:animate-marquee inline-block whitespace-nowrap text-lg tracking-tight text-white">
+                  <span className="inline-block whitespace-nowrap text-lg tracking-tight text-white group-hover:animate-marquee">
                     {product.name}&nbsp;&nbsp;&nbsp;&nbsp;{/* 공백 추가 */}
                     {product.name}&nbsp;&nbsp;&nbsp;&nbsp;{/* 공백 추가 */}
                   </span>
@@ -148,7 +148,7 @@ export const ProductList = () => {
                 </div>
                 <ul className="relative z-[1] flex h-fit w-fit flex-col gap-3">
                   <li className="flex items-center justify-center">
-                    <button>
+                    <button aria-label="shopping cart add remove toggle button" type="button" onClick={() => handleClickAddProduct(product)}>
                       {product.isInCart ? (
                         <TbShoppingBagMinus className="text-4xl text-white drop-shadow-md transition-all hover:text-gray-300" />
                       ) : (
@@ -157,7 +157,7 @@ export const ProductList = () => {
                     </button>
                   </li>
                   <li className="flex items-center justify-center">
-                    <button>
+                    <button aria-label="wishlist cart add remove toggle button" type="button" onClick={() => handleClickAddWish(product)}>
                       {product.isInWish ? (
                         <LuHeartOff className="text-3xl text-white drop-shadow-md transition-all hover:text-gray-300" />
                       ) : (
@@ -169,58 +169,19 @@ export const ProductList = () => {
               </div>
 
               {/* 제품 배경 이미지 */}
-              <figure className="absolute left-0 top-0 h-full w-full">
+              <figure className="absolute left-0 top-0">
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
-                  fill={true}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  width={200}
+                  height={200}
                   priority={true}
-                  className="transition-all duration-300 group-hover:scale-110"
+                  className="w-full transition-all duration-300 group-hover:scale-110"
                 />
               </figure>
 
-              {/* 그라데이션 배경 추가 */}
-              <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/80 transition-all duration-300"></div>
-
-              {/* <div className="mb-3">
-                {product.discount_rate > 0 && (
-                  <span className="mr-1 inline-block text-lg font-bold tracking-tight text-gray-700">
-                    {calculateDiscountedPrice(product.original_price, product.discount_rate)}
-                  </span>
-                )}
-
-                {product.discount_rate > 0 && (
-                  <span className="text-primary-dark mr-1 inline-block text-lg font-bold tracking-tight">{`${product.discount_rate * 100}%`}</span>
-                )}
-                <span
-                  className={clsx('text-lg font-bold tracking-tight text-gray-700', {
-                    'text-sm font-normal !text-gray-400 line-through': product.discount_rate > 0,
-                  })}
-                >{`${product.original_price.toLocaleString('ko-KR')}원`}</span>
-              </div> */}
-
-              {/* <div className="md:flex md:justify-end">
-                <button
-                  aria-label="wishlist cart add remove toggle button"
-                  type="button"
-                  onClick={() => handleClickAddWish(product)}
-                  className="bg-secondary-dark hover:bg-secondary-tonDown mr-2 inline-block rounded-md p-2 text-sm text-white shadow-md transition-all duration-300"
-                >
-                  {product.isInWish ? <LuHeartOff className="text-2xl" /> : <FaHeartCirclePlus className="text-2xl drop-shadow-md" />}
-                </button>
-                <button
-                  aria-label="shopping cart add remove toggle button"
-                  type="button"
-                  onClick={() => handleClickAddProduct(product)}
-                  className={clsx('inline-block rounded-md p-2 text-sm text-white duration-300', {
-                    'bg-primary-dark hover:bg-primary-tonDown': !product.isInCart,
-                    'bg-gray-600 hover:bg-gray-700': product.isInCart,
-                  })}
-                >
-                  {product.isInCart ? <TbShoppingBagMinus className="text-2xl" /> : <TbShoppingBagPlus className="text-2xl drop-shadow-md" />}
-                </button>
-              </div> */}
+              {/* 그라데이션 배경 */}
+              <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/50 transition-all duration-300"></div>
             </motion.li>
           ))}
         </ul>

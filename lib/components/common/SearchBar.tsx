@@ -56,7 +56,7 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
     <fieldset className="relative z-20">
       <div
         className={clsx(
-          'border-primary-dark bg-primary-dark relative mx-auto flex h-[38px] w-full items-center justify-between rounded-[19px] border-[1px] py-3 pl-6 pr-3 shadow-md md:w-[400px]',
+          'border-primary bg-primary relative mx-auto flex h-[38px] w-full items-center justify-between rounded-[19px] border-[1px] py-3 pl-6 pr-3 shadow-md md:w-[400px]',
           {
             '!border-white': isFocus,
             'bg-white': isScrolled,
@@ -71,15 +71,15 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
           type="search"
           title="검색어"
           placeholder="제품, 카테고리 검색"
-          className={clsx('bg-primary-dark w-[calc(100%-32px)] focus:outline-0', {
-            'placeholder:text-primary-dark/50 text-primary-dark bg-white': isScrolled,
+          className={clsx('bg-primary w-[calc(100%-32px)] focus:outline-0', {
+            'placeholder:text-primary/50 text-primary bg-white': isScrolled,
             'text-white placeholder:text-white': !isScrolled,
           })}
         />
         <button aria-label="search button" type="button" className=" pl-3" onClick={handleSearch}>
           <IoSearch
             className={clsx('text-xl ', {
-              'text-primary-dark': isScrolled,
+              'text-primary': isScrolled,
               'text-white': !isScrolled,
             })}
           />

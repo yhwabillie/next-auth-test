@@ -2,7 +2,6 @@
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { FaShoppingCart } from 'react-icons/fa'
-import { LinkBtn } from '@/lib/components/common/modules/LinkBtn'
 import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdown'
 import { UserNavItem } from '../modules/UserNavItem'
 import { SearchBar } from '../SearchBar'
@@ -65,13 +64,14 @@ export const Header = () => {
             <li>
               <h1>
                 <Link
+                  aria-label="home"
                   href="/"
-                  className={clsx('text-primary-dark flex items-center gap-2 transition-colors duration-300', {
+                  className={clsx('flex items-center gap-2 text-accent transition-colors duration-300', {
                     'text-white': isScrolled,
                   })}
                 >
                   <BsShop
-                    className={clsx('text-primary-dark text-2xl', {
+                    className={clsx('text-2xl text-accent', {
                       'text-white': isScrolled,
                     })}
                   />
@@ -108,13 +108,10 @@ export const Header = () => {
           {isGuest && (
             <div className="flex w-full justify-between">
               <div className="flex gap-2">
-                <Link className="bg-secondary-dark block rounded-[5px] px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signIn">
+                <Link className="block rounded-[5px] bg-secondary px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signIn">
                   로그인
                 </Link>
-                <Link
-                  className="bg-secondary-dark block rounded-[5px] px-2 py-2 text-sm font-semibold text-white shadow-inner"
-                  href="/signUp/agreement"
-                >
+                <Link className="block rounded-[5px] bg-secondary px-2 py-2 text-sm font-semibold text-white shadow-inner" href="/signUp/agreement">
                   회원가입
                 </Link>
               </div>
