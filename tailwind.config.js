@@ -11,6 +11,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 10s linear infinite',
+      },
       colors: {
         primary: {
           light: '#FEE2E2', // 연한 분홍색
