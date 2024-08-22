@@ -10,6 +10,7 @@ import { BsChatLeftText } from 'react-icons/bs'
 import { useAddressStore } from '@/lib/stores/addressStore'
 import { useOrderlistInfo } from '@/app/hooks'
 import { SHIPPING_COST_THRESHOLD } from '@/lib/constants'
+import Image from 'next/image'
 dayjs.locale('ko')
 
 interface OrderListTabProps {
@@ -62,7 +63,9 @@ export const OrderListTab = ({ userIdx }: OrderListTabProps) => {
               <ul className="mb-10 flex flex-col gap-5">
                 {item.orderItems.map(({ product, quantity }, index) => (
                   <li key={index} className="flex flex-row gap-4 rounded-lg bg-white py-3 pl-3 drop-shadow-md">
-                    <img src={product.imageUrl} alt={product.name} className="h-20 w-20 rounded-lg border border-gray-500/30 drop-shadow-md" />
+                    <figure className="relative h-20 w-20 overflow-hidden rounded-lg border border-gray-500/30 drop-shadow-md">
+                      <Image src={product.imageUrl} alt={product.name} width={40} height={60} className="absolute left-0 top-0 w-full object-fill" />
+                    </figure>
                     <div>
                       <strong className="mb-1 block font-semibold tracking-tighter text-gray-700">{product.name}</strong>
                       <p className="mb-1 flex items-center gap-2">

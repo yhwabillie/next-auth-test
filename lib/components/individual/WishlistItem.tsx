@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import Image from 'next/image'
 import React from 'react'
 import { FaTrashCan } from 'react-icons/fa6'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
@@ -28,13 +29,13 @@ export const WishlistItem = React.memo(
     handleToggleCartStatus,
   }: WishlistItemProps) => {
     return (
-      <li className="mb-5 flex flex-col justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0 md:flex-row">
-        <div className="mb-2 flex flex-row md:mb-0">
-          <div className="relative mr-5 block h-28 w-28 overflow-hidden rounded-lg border border-gray-400/30 drop-shadow-lg">
-            <img src={imageUrl} alt={name} className="absolute left-0 top-0 object-fill" />
-          </div>
+      <li className="mb-5 flex flex-col justify-between rounded-lg border border-gray-300 bg-gray-100 p-3 last:mb-0 lg:flex-row">
+        <div className="mb-2 flex flex-row lg:mb-0">
+          <figure className="relative mr-5 block h-28 w-28 overflow-hidden rounded-lg border border-gray-400/30 drop-shadow-lg">
+            <Image src={imageUrl} alt={name} width={80} height={120} className="absolute left-0 top-0 w-full object-fill" />
+          </figure>
 
-          <div className="flex flex-col justify-center">
+          <div className="flex w-[calc(100%-132px)] flex-col justify-center">
             <p className="mb-1 block w-fit rounded-md bg-blue-600 px-2 py-1 text-sm text-white drop-shadow-md">{category}</p>
             <strong className="text-md block font-medium text-gray-600">{name}</strong>
 

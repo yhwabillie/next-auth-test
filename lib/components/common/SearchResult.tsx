@@ -89,7 +89,7 @@ export const SearchResult = () => {
                   className="group rounded-xl bg-white p-3 transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
                 >
                   <div className="mb-3 aspect-square overflow-hidden rounded-xl border border-gray-300 shadow-md">
-                    <img src={product.imageUrl} alt={product.name} className="w-full transition-all duration-300 group-hover:scale-110" />
+                    <img src={product.imageUrl} alt={product.name} className="object-fill transition-all duration-300 group-hover:scale-110" />
                   </div>
 
                   <p className="md:text-md mb-2 font-semibold tracking-tight text-gray-700">{product.name}</p>
@@ -115,7 +115,7 @@ export const SearchResult = () => {
                     <button
                       type="button"
                       onClick={() => handleClickAddWish(product)}
-                      className="bg-secondary-dark hover:bg-secondary-tonDown mr-2 inline-block rounded-md p-2 text-sm text-white shadow-md transition-all duration-300"
+                      className="mr-2 inline-block rounded-md bg-secondary p-2 text-sm text-white shadow-md transition-all duration-300"
                     >
                       {product.isInWish ? <LuHeartOff className="text-2xl" /> : <FaHeartCirclePlus className="text-2xl drop-shadow-md" />}
                     </button>
@@ -123,7 +123,7 @@ export const SearchResult = () => {
                       type="button"
                       onClick={() => handleClickAddProduct(product)}
                       className={clsx('inline-block rounded-md p-2 text-sm text-white duration-300', {
-                        'bg-primary-dark hover:bg-primary-tonDown': !product.isInCart,
+                        'hover:bg-primary-tonDown bg-primary': !product.isInCart,
                         'bg-gray-600 hover:bg-gray-700': product.isInCart,
                       })}
                     >

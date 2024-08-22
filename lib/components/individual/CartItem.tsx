@@ -43,13 +43,13 @@ export const CartItem = ({
       })}
     >
       <div className="flex flex-row">
-        <div>
+        <div className="lg:flex">
           <label htmlFor={idx} className="mr-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-gray-400/20 drop-shadow-md">
             <input id={idx} type="checkbox" checked={checkedItems[idx] || false} onChange={handleChangeCheckbox} />
             {checkedItems[idx] && <FaCheck className="cursor-pointer text-lg text-blue-600" />}
           </label>
 
-          <div className="relative mr-5 mt-2 block h-20 w-20 overflow-hidden rounded-md border border-gray-400/30 drop-shadow-lg md:h-28 md:w-28 md:rounded-lg">
+          <div className="relative mr-5 mt-2 block h-20 w-20 overflow-hidden rounded-md border border-gray-400/30 drop-shadow-lg md:h-28 md:w-28 md:rounded-lg lg:mt-0">
             <img src={imageUrl} alt={name} className="absolute left-0 top-0 object-fill" />
           </div>
         </div>

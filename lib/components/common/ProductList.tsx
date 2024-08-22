@@ -1,20 +1,15 @@
 'use client'
 import { useProductsStore } from '@/lib/stores/productsStore'
-import { useEffect, useRef, useState } from 'react'
-import { Session } from 'next-auth'
+import { useEffect, useState } from 'react'
 import { Category } from './Category'
 import { LoadingSpinner } from './modules/LoadingSpinner'
 import { useInView } from 'react-intersection-observer'
 import { motion } from 'framer-motion'
-import { BsHeart } from 'react-icons/bs'
-import { FaShoppingBag } from 'react-icons/fa'
 import { useSession } from 'next-auth/react'
 import { ProductType } from '@/app/actions/products/actions'
-import { useRouter } from 'next/navigation'
 import { LuHeartOff } from 'react-icons/lu'
 import { FaHeartCirclePlus } from 'react-icons/fa6'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
-import clsx from 'clsx'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import Image from 'next/image'
 
@@ -169,14 +164,14 @@ export const ProductList = () => {
               </div>
 
               {/* 제품 배경 이미지 */}
-              <figure className="absolute left-0 top-0 w-full">
+              <figure className="absolute left-0 top-0 h-full w-full">
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
                   priority={true}
                   width={400}
                   height={600}
-                  className="w-full transition-all duration-300 group-hover:scale-110"
+                  className="object-fill transition-all duration-300 group-hover:scale-110"
                 />
               </figure>
 
