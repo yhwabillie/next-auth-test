@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SignJWT } from 'jose'
 import nodemailer from 'nodemailer'
-export const maxDuration = 300
+// export const maxDuration = 300
 export const dynamic = 'force-dynamic'
 
 const SECRET_KEY = process.env.RESET_PW_JWT
