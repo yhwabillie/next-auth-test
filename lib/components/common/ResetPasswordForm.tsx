@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ResetPwSchema, ResetPwSchemaType } from '@/lib/zodSchema'
 import { toast } from 'sonner'
@@ -10,16 +10,13 @@ import { Button } from './modules/Button'
 import { HookFormInput } from '@/lib/components/common/modules/HookFormInput'
 
 export const ResetPasswordForm = () => {
+  const [isLoading, setIsLoading] = useState(false) // 로딩 상태 관리
   const searchParams = useSearchParams()
   const router = useRouter()
   const reset_token = searchParams.get('token') // 쿼리 파라미터에서 토큰을 가져옵니다.
   const {
     register,
-    resetField,
-    setValue,
     watch,
-    getValues,
-    reset,
     setFocus,
     formState: { errors },
   } = useForm<ResetPwSchemaType>({
@@ -33,6 +30,8 @@ export const ResetPasswordForm = () => {
 
   const handleUpdateNewPw = async () => {
     const new_input_pw = watch('password')
+
+    setIsLoading(true)
 
     try {
       const response = await fetch('/api/reset-password', {
@@ -62,11 +61,13 @@ export const ResetPasswordForm = () => {
     } catch (error) {
       console.log(error)
       toast.error('신규 비밀번호 갱신 request 중 에러 발생')
+    } finally {
+      setIsLoading(false)
     }
   }
 
   //submit 버튼 비활성화 조건
-  const isSubmitDisabled = watch('password') === '' || watch('password_confirm') === '' || !!errors.password || !!errors.password_confirm
+  const isSubmitDisabled = watch('password') === '' || watch('password_confirm') === '' || !!errors.password || !!errors.password_confirm || isLoading
 
   useEffect(() => {
     if (!reset_token) {
@@ -98,11 +99,12 @@ export const ResetPasswordForm = () => {
           label="신규 비밀번호 확인"
           id="password_confirm"
           type="password"
+          disabled={isLoading}
         />
         {errors.password_confirm && !!watch('password') && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password_confirm.message}</p>}
       </div>
 
-      <Button type="button" label="비밀번호 업데이트" clickEvent={handleUpdateNewPw} disalbe={isSubmitDisabled} />
+      <Button type="button" label={isLoading ? '업데이트 중' : '비밀번호 업데이트'} clickEvent={handleUpdateNewPw} disalbe={isSubmitDisabled} />
     </div>
   )
 }
