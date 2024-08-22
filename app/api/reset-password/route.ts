@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
-export const maxDuration = 300
+// export const maxDuration = 300
 export const dynamic = 'force-dynamic'
 
 const SECRET_KEY = process.env.RESET_PW_JWT

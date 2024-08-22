@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { supabase } from '@/lib/supabaseClient'
 import prisma from '@/lib/prisma'
 import dotenv from 'dotenv'
-export const maxDuration = 300
+// export const maxDuration = 300
 export const dynamic = 'force-dynamic'
 
 dotenv.config()
