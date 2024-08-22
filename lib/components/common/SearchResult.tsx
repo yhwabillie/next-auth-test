@@ -67,7 +67,7 @@ export const SearchResult = () => {
         <>
           {/* 상품 리스트 */}
           <section className="box-border px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
-            <ul className="mt-[26px] grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:gap-x-2 lg:grid-cols-4 xl:grid-cols-5">
+            <ul className="mb-20 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:gap-x-2 lg:grid-cols-4 xl:grid-cols-5">
               {results.map((product, index) => (
                 <motion.li
                   key={`${product.idx}-${index}`}

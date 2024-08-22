@@ -171,7 +171,7 @@ export const ProductList = () => {
                   priority={true}
                   width={400}
                   height={600}
-                  className="object-fill transition-all duration-300 group-hover:scale-110"
+                  className="h-full w-full object-fill transition-all duration-300 group-hover:scale-110"
                 />
               </figure>
 
