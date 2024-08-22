@@ -12,6 +12,8 @@ import { FaHeartCirclePlus } from 'react-icons/fa6'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import Image from 'next/image'
+import { SkeletonProduct } from './SkeletonProduct'
+import clsx from 'clsx'
 
 export const ProductList = () => {
   const {
@@ -28,6 +30,9 @@ export const ProductList = () => {
     setSessionUpdate,
     totalProducts,
   } = useProductsStore()
+
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   // 페이징 상태
   const [page, setPage] = useState(1)
@@ -90,40 +95,30 @@ export const ProductList = () => {
 
   //마크업
   return (
-    <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
+    <div className="relative z-10 mx-auto box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
+      {/* 카테고리 Loading */}
+      <div
+        className={clsx('absolute h-full w-full bg-black/60 transition-opacity duration-300', {
+          'z-10 cursor-not-allowed opacity-100': loading,
+          'z-[-1] opacity-0': !loading,
+        })}
+      ></div>
+
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
       {/* 상품 리스트 */}
       <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
         <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
-          {filteredData.map((product, index) => (
-            <motion.li
-              key={product.idx}
-              variants={{
-                hidden: {
-                  opacity: 0,
-                },
-                visible: {
-                  opacity: 1,
-                },
-              }}
-              initial="hidden"
-              animate="visible"
-              transition={{
-                delay: index * 0.08,
-                ease: 'easeInOut',
-                duration: 0.2,
-              }}
-              className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5"
-            >
+          {filteredData.map((product) => (
+            <li key={product.idx} className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
               {/* 카테고리, 제목 */}
               <div>
                 <p className="relative z-[1] mb-2 text-sm font-semibold text-white/80 transition-all duration-300">{product.category}</p>
                 <p className="relative z-[1] flex flex-nowrap overflow-hidden">
                   <span className="inline-block whitespace-nowrap text-lg tracking-tight text-white group-hover:animate-marquee">
-                    {product.name}&nbsp;&nbsp;&nbsp;&nbsp;{/* 공백 추가 */}
-                    {product.name}&nbsp;&nbsp;&nbsp;&nbsp;{/* 공백 추가 */}
+                    {product.name}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {product.name}&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
                 </p>
               </div>
@@ -138,7 +133,9 @@ export const ProductList = () => {
                       </p>
                     </>
                   ) : (
-                    <p className="text-lg font-normal tracking-tight text-white drop-shadow-md">{`${product.original_price.toLocaleString('ko-KR')}원`}</p>
+                    <p className="text-lg font-normal tracking-tight text-white drop-shadow-md">{`${product.original_price.toLocaleString(
+                      'ko-KR',
+                    )}원`}</p>
                   )}
                 </div>
                 <ul className="relative z-[1] flex h-fit w-fit flex-col gap-3">
@@ -163,8 +160,19 @@ export const ProductList = () => {
                 </ul>
               </div>
 
+              {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                  {!imageError ? (
+                    <LoadingSpinner /> // 로딩 중일 때 스피너
+                  ) : (
+                    <p className="text-sm text-gray-500">Image not available</p> // 로드 실패 시 대체 텍스트
+                  )}
+                </div>
+              )}
+
               {/* 제품 배경 이미지 */}
-              <figure className="absolute left-0 top-0 h-full w-full">
+              <figure className={`absolute inset-0 transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
@@ -172,13 +180,21 @@ export const ProductList = () => {
                   width={400}
                   height={600}
                   className="h-full w-full object-fill transition-all duration-300 group-hover:scale-110"
+                  onLoadingComplete={() => setImageLoaded(true)}
+                  onError={() => {
+                    setImageError(true)
+                    setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
+                  }}
                 />
               </figure>
 
               {/* 그라데이션 배경 */}
               <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/50 transition-all duration-300"></div>
-            </motion.li>
+            </li>
           ))}
+
+          {/* 로딩 중일 때 스켈레톤 컴포넌트 렌더링 */}
+          {loading && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)}
         </ul>
         {!(page === lastPage + 1) && (
           <div ref={ref} className="flex h-48 w-full items-center justify-center">
