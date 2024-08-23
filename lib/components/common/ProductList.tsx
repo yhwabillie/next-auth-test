@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { Category } from './Category'
 import { LoadingSpinner } from './modules/LoadingSpinner'
 import { useInView } from 'react-intersection-observer'
-import { motion } from 'framer-motion'
 import { useSession } from 'next-auth/react'
 import { ProductType } from '@/app/actions/products/actions'
 import { LuHeartOff } from 'react-icons/lu'
@@ -13,7 +12,6 @@ import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import Image from 'next/image'
 import { SkeletonProduct } from './SkeletonProduct'
-import clsx from 'clsx'
 
 export const ProductList = () => {
   const {
@@ -66,11 +64,6 @@ export const ProductList = () => {
       loadMoreData(page, pageSize)
     }
   }, [inView, loading, isEmpty])
-
-  // console.log('lastPage===>', lastPage + 1)
-  // console.log('currentPage==>', page)
-  // console.log('totalProducts==>', totalProducts)
-  // console.log('loaded==>', filteredData.length)
 
   //위시토글
   const handleClickAddWish = (targetItem: ProductType) => {

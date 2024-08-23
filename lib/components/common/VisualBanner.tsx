@@ -52,7 +52,7 @@ export const VisualBanner = () => {
       transition: {
         staggerChildren: 0.1, // 자식 요소가 순차적으로 애니메이션됨
         ease: 'easeInOut',
-        duration: 0.5, // 자연스러운 전환을 위한 속도
+        duration: 0.3, // 자연스러운 전환을 위한 속도
       },
       // delay: 1,
     },

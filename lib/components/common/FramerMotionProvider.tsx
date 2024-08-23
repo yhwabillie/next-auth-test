@@ -21,19 +21,19 @@ export const FramerMotionProvider = ({ children }: ProvidersProps) => {
   const pageTransition = {
     initial: {
       opacity: 0,
-      x: -200,
+      x: -100,
     },
     enter: {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
         ease: [0.76, 0, 0.24, 1],
       },
     },
     exist: {
       opacity: 1,
-      x: 200,
+      x: 100,
     },
   }
 
