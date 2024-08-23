@@ -114,6 +114,57 @@ export const VisualBanner = () => {
 
   return (
     <div className="sticky top-0 mx-auto block w-full min-w-[460px] max-w-full md:relative">
+      {/* CSS 인라인화 */}
+      <style jsx>{`
+        .flicking-panel {
+          position: relative;
+          margin: 0 0.5rem;
+          box-sizing: border-box;
+          aspect-ratio: 9 / 14;
+          height: auto;
+          width: 66.666667%;
+          max-width: 960px;
+          overflow: hidden;
+          border-radius: 0.75rem;
+          background-color: #6b7280; /* bg-gray-500 */
+          padding: 3rem 15%;
+          font-size: 1.5rem;
+          color: white;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+        @media (min-width: 640px) {
+          .flicking-panel {
+            padding-left: 10%;
+            padding-right: 10%;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .flicking-panel {
+            aspect-ratio: 3 / 2;
+            padding-left: 10%;
+            padding-right: 10%;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .flicking-panel {
+            padding-left: 13%;
+            padding-right: 13%;
+          }
+        }
+
+        @media (min-width: 1280px) {
+          .flicking-panel {
+            aspect-ratio: 120 / 41;
+            padding-left: 200px;
+            padding-right: 200px;
+          }
+        }
+      `}</style>
+
       <div className="absolute left-[50%] top-[50%] z-10 ml-[-30%] mt-[-20px] h-12 origin-left lg:ml-[-320px] xl:ml-[-400px]">
         <PagingBtn direction="back" clickEvent={() => handleMove('prev')} />
       </div>
@@ -145,10 +196,7 @@ export const VisualBanner = () => {
       >
         {/* 슬라이더의 패널 */}
         {panels.map((item, index) => (
-          <div
-            key={index}
-            className="flicking-panel relative mx-2 box-border aspect-[9/14] h-auto w-2/3 max-w-[960px] overflow-hidden rounded-xl bg-gray-500 px-[15%] py-12 text-2xl text-white shadow-sm sm:px-[10%] md:aspect-[3/2] md:px-[10%] lg:px-[13%] xl:aspect-[120/41] xl:px-[200px]"
-          >
+          <div key={index} className="flicking-panel">
             {/* 그라데이션 배경 추가 */}
             <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 
@@ -192,7 +240,6 @@ export const VisualBanner = () => {
                 width={960}
                 height={328}
                 className="h-full w-full object-cover"
-                priority={index === 0} // 첫 번째 이미지만 priority로 설정
                 onLoad={() => setImageLoaded(true)}
                 onError={() => {
                   setImageError(true)
