@@ -110,7 +110,7 @@ export const ProductList = () => {
       {/* 상품 리스트 */}
       <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
         <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
-          {filteredData.map((product) => (
+          {filteredData.map((product, index) => (
             <li key={product.idx} className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
               {/* 카테고리, 제목 */}
               <div>
@@ -176,15 +176,15 @@ export const ProductList = () => {
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
-                  priority={true}
                   width={400}
                   height={600}
-                  className="h-full w-full object-fill transition-all duration-300 group-hover:scale-110"
+                  className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
                   onLoad={() => setImageLoaded(true)}
                   onError={() => {
                     setImageError(true)
                     setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
                   }}
+                  priority={index === 0} // 첫 번째 이미지만 priority로 설정
                 />
               </figure>
 

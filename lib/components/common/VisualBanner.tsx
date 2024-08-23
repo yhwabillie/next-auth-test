@@ -245,6 +245,7 @@ export const VisualBanner = () => {
                   setImageError(true)
                   setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
                 }}
+                priority={index === 0} // 첫 번째 이미지만 priority로 설정
               />
             </motion.figure>
           </div>
