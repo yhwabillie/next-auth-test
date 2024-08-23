@@ -91,14 +91,12 @@ export const ProductList = () => {
   }
 
   useEffect(() => {
-    console.log('filtering 상태가 변경되었습니다:', filtering)
-  }, [filtering]) // filtering 상태가 변경될 때 로그 출력
-
-  useEffect(() => {
     if (filteredData.length > 0) {
-      // 이미지 로드 상태를 초기화
-      setImageLoadedStates(new Array(filteredData.length).fill(false))
-      setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
+      setTimeout(() => {
+        // 이미지 로드 상태를 초기화
+        setImageLoadedStates(new Array(filteredData.length).fill(false))
+        setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
+      }, 0)
     }
   }, [filteredData])
 
