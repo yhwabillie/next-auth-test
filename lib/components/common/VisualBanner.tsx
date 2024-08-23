@@ -50,11 +50,11 @@ export const VisualBanner = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2, // 자식 요소가 순차적으로 애니메이션됨
+        staggerChildren: 0.1, // 자식 요소가 순차적으로 애니메이션됨
         ease: 'easeInOut',
-        duration: 0.8, // 자연스러운 전환을 위한 속도
+        duration: 0.5, // 자연스러운 전환을 위한 속도
       },
-      delay: 1,
+      // delay: 1,
     },
   }
 
@@ -80,7 +80,7 @@ export const VisualBanner = () => {
       transition: {
         type: 'tween',
         ease: 'easeInOut',
-        duration: 1,
+        duration: 0.5,
       },
     },
   }
@@ -223,7 +223,7 @@ export const VisualBanner = () => {
                 variants={imageVariants}
                 initial="hidden"
                 animate={isActive ? 'visible' : 'hidden'}
-                className={`absolute inset-0 transition-opacity duration-500 ${isActive && imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-0 transition-opacity duration-500`}
               >
                 <Image
                   src={item.image}
