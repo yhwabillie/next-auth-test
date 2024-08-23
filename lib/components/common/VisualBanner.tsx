@@ -76,11 +76,10 @@ export const VisualBanner = () => {
   }
 
   const imageVariants = {
-    hidden: { scale: 1, transformOrigin: 'center center', filter: 'blur(3px)' },
+    hidden: { scale: 1.2, transformOrigin: 'center center' },
     visible: {
-      scale: 1.2,
+      scale: 1,
       transformOrigin: 'center center',
-      filter: 'blur(0px)',
       transition: {
         type: 'tween',
         ease: 'easeInOut',

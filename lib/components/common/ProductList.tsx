@@ -96,14 +96,6 @@ export const ProductList = () => {
   //마크업
   return (
     <div className="relative z-10 mx-auto box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
-      {/* 카테고리 Loading */}
-      {/* <div
-        className={clsx('absolute h-full w-full bg-black/60 transition-opacity duration-300', {
-          'z-10 cursor-not-allowed opacity-100': loading,
-          'z-[-1] opacity-0': !loading,
-        })}
-      ></div> */}
-
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
