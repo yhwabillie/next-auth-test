@@ -215,7 +215,7 @@ export const ProductList = () => {
           ))}
 
           {/* 로딩 중일 때 스켈레톤 컴포넌트 렌더링 */}
-          {loading && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)}
+          {/* {loading && !filtering && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
         </ul>
         {!(page === lastPage + 1) && (
           <div ref={triggerRef} className="flex h-48 w-full items-center justify-center">
