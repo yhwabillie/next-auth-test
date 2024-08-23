@@ -2,19 +2,19 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async headers() {
-    return [
-      {
-        source: '/(.*)', // 모든 경로에 적용
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable', // 1년 동안 캐싱, 변경되지 않음
-          },
-        ],
-      },
-    ]
-  },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: '/(.*)', // 모든 경로에 적용
+  //       headers: [
+  //         {
+  //           key: 'Cache-Control',
+  //           value: 'public, max-age=31536000, immutable', // 1년 동안 캐싱, 변경되지 않음
+  //         },
+  //       ],
+  //     },
+  //   ]
+  // },
   images: {
     remotePatterns: [
       {
