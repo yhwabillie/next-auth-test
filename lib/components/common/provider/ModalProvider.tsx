@@ -8,6 +8,7 @@ import { AddressUpdateForm } from '@/lib/components/individual/AddressUpdateForm
 import { AlertErrorModal } from '@/lib/components/common/modals/AlertErrorModal'
 import { ChangeOrderAddress } from '@/lib/components/individual/ChangeOrderAddress'
 import { PostCodeModal } from '@/lib/components/individual/PostCodeModal'
+import { FloatingBtn } from '../FloatingBtn'
 
 export const ModalProvider = () => {
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
@@ -34,10 +35,10 @@ export const ModalProvider = () => {
       {address_modals.postcode && <PostCodeModal />}
       {order_modals.change_address && <ChangeOrderAddress />}
       {address_modals.alert && <AlertErrorModal handleClickClose={() => address_hide('alert')} message={alert_messages.addressList.warning} />}
-      {/* {product_modals.alert && <AlertErrorModal handleClickClose={() => product_hide('alert')} message={alert_messages.products.warning} />} */}
       {cart_modals.need_session && (
         <AlertErrorModal handleClickClose={() => cart_hide('need_session')} message={alert_messages.cartlist.need_session} />
       )}
+      <FloatingBtn />
     </>
   )
 }

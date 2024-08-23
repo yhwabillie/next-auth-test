@@ -12,6 +12,7 @@ import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import Image from 'next/image'
 import { SkeletonProduct } from './SkeletonProduct'
+import { useFloatingBtnStore } from '@/lib/zustandStore'
 
 export const ProductList = () => {
   const {
@@ -29,6 +30,8 @@ export const ProductList = () => {
     totalProducts,
   } = useProductsStore()
 
+  const { setState, state } = useFloatingBtnStore()
+
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -37,9 +40,15 @@ export const ProductList = () => {
   const pageSize = 10
 
   // 무한 스크롤 감지
-  const { ref, inView } = useInView({
+  const { ref: triggerRef, inView: triggerInVeiw } = useInView({
     threshold: 0.1,
   })
+
+  //플로팅 버튼 감지
+  const { ref: floatingBtnRef, inView: floatingBtnInView } = useInView({
+    threshold: 0.3,
+  })
+
   const { status, update } = useSession()
 
   // 마지막 페이지 계산
@@ -52,6 +61,11 @@ export const ProductList = () => {
     }
   }, [setSessionUpdate, status])
 
+  // 플로팅 버튼 초기화
+  useEffect(() => {
+    setState(floatingBtnInView)
+  }, [floatingBtnInView])
+
   // 2. 초기 데이터 패치
   useEffect(() => {
     setSearchQuery('')
@@ -59,11 +73,11 @@ export const ProductList = () => {
   }, [])
 
   useEffect(() => {
-    if (inView && !loading && !isEmpty && page <= lastPage) {
+    if (triggerInVeiw && !loading && !isEmpty && page <= lastPage) {
       setPage((prevPage) => prevPage + 1)
       loadMoreData(page, pageSize)
     }
-  }, [inView, loading, isEmpty])
+  }, [triggerInVeiw, loading, isEmpty])
 
   //위시토글
   const handleClickAddWish = (targetItem: ProductType) => {
@@ -88,12 +102,12 @@ export const ProductList = () => {
 
   //마크업
   return (
-    <div className="relative z-10 mx-auto box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:w-auto md:bg-transparent">
+    <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:mt-0 md:w-auto md:bg-transparent">
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
       {/* 상품 리스트 */}
-      <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
+      <section ref={floatingBtnRef} className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
         <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
           {filteredData.map((product, index) => (
             <li key={product.idx} className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
@@ -182,7 +196,7 @@ export const ProductList = () => {
           {loading && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)}
         </ul>
         {!(page === lastPage + 1) && (
-          <div ref={ref} className="flex h-48 w-full items-center justify-center">
+          <div ref={triggerRef} className="flex h-48 w-full items-center justify-center">
             <LoadingSpinner />
           </div>
         )}
