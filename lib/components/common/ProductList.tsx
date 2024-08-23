@@ -106,6 +106,8 @@ export const ProductList = () => {
 
       // 모든 이미지가 로드되었는지 확인
       const allImagesLoaded = newStates.every((loaded) => loaded)
+      console.log('===>', allImagesLoaded)
+
       if (allImagesLoaded) {
         setFiltering(false) // 모든 이미지가 로드되었을 때 filtering을 false로 설정
       }
@@ -113,8 +115,6 @@ export const ProductList = () => {
       return newStates
     })
   }
-
-  console.log(imageLoadedStates)
 
   //마크업
   return (
@@ -178,7 +178,7 @@ export const ProductList = () => {
               </div>
 
               {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
-              {!imageLoaded && (
+              {!filtering && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
                   {!imageError ? (
                     <LoadingSpinner /> // 로딩 중일 때 스피너
