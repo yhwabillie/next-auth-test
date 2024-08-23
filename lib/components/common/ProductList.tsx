@@ -33,7 +33,7 @@ export const ProductList = () => {
 
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
-  const [imageLoadedStates, setImageLoadedStates] = useState<boolean[]>([])
+  const [imageLoadedStates, setImageLoadedStates] = useState<boolean[]>([]) // 모든 이미지의 로드 상태를 추적
 
   // 페이징 상태
   const [page, setPage] = useState(1)
@@ -92,11 +92,9 @@ export const ProductList = () => {
 
   useEffect(() => {
     if (filteredData.length > 0) {
-      setTimeout(() => {
-        // 이미지 로드 상태를 초기화
-        setImageLoadedStates(new Array(filteredData.length).fill(false))
-        setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
-      }, 0)
+      // 이미지 로드 상태를 초기화
+      setImageLoadedStates(new Array(filteredData.length).fill(false))
+      setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
     }
   }, [filteredData])
 
@@ -115,6 +113,8 @@ export const ProductList = () => {
       return newStates
     })
   }
+
+  console.log(imageLoadedStates)
 
   //마크업
   return (
