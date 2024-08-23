@@ -78,16 +78,3 @@ export const useProductStore = create<ProductState>((set) => ({
   productState: false,
   setProductState: (data: boolean) => set({ productState: data }),
 }))
-
-type FloatingBtnType = {
-  state: boolean
-  setState: (state: boolean) => void
-}
-
-export const useFloatingBtnStore = create<FloatingBtnType>((set) => ({
-  state: false,
-  setState: (state: boolean) =>
-    set({
-      state: state,
-    }),
-}))

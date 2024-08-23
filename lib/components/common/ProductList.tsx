@@ -12,7 +12,6 @@ import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import Image from 'next/image'
 import { SkeletonProduct } from './SkeletonProduct'
-import { useFloatingBtnStore } from '@/lib/zustandStore'
 
 export const ProductList = () => {
   const {
@@ -30,8 +29,6 @@ export const ProductList = () => {
     totalProducts,
   } = useProductsStore()
 
-  const { setState, state } = useFloatingBtnStore()
-
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -42,11 +39,6 @@ export const ProductList = () => {
   // 무한 스크롤 감지
   const { ref: triggerRef, inView: triggerInVeiw } = useInView({
     threshold: 0.1,
-  })
-
-  //플로팅 버튼 감지
-  const { ref: floatingBtnRef, inView: floatingBtnInView } = useInView({
-    threshold: 0.3,
   })
 
   const { status, update } = useSession()
@@ -60,11 +52,6 @@ export const ProductList = () => {
       setSessionUpdate(update)
     }
   }, [setSessionUpdate, status])
-
-  // 플로팅 버튼 초기화
-  useEffect(() => {
-    setState(floatingBtnInView)
-  }, [floatingBtnInView])
 
   // 2. 초기 데이터 패치
   useEffect(() => {
@@ -107,7 +94,7 @@ export const ProductList = () => {
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
       {/* 상품 리스트 */}
-      <section ref={floatingBtnRef} className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
+      <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
         <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
           {filteredData.map((product, index) => (
             <li key={product.idx} className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
