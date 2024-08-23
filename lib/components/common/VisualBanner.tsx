@@ -1,19 +1,32 @@
 'use client'
-import { IndexPlayBtn } from './IndexPlayBtn'
-import { PagingBtn } from './PagingBtn'
-import Flicking from '@egjs/react-flicking'
-import { AutoPlay } from '@egjs/flicking-plugins'
-import '@egjs/react-flicking/dist/flicking.css'
+
 import { useRef, useState } from 'react'
+import dotenv from 'dotenv'
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import dotenv from 'dotenv'
 import clsx from 'clsx'
+
+// CSS 파일 및 스타일 관련 임포트
+import '@egjs/react-flicking/dist/flicking.css'
+
+// 내부 모듈 및 컴포넌트 임포트
+import { IndexPlayBtn } from './IndexPlayBtn'
+import { PagingBtn } from './PagingBtn'
+import { AutoPlay } from '@egjs/flicking-plugins'
 import { LoadingSpinner } from './modules/LoadingSpinner'
+
+// 동적 로딩을 위한 Flicking 임포트
+import type { FlickingProps } from '@egjs/react-flicking'
+const Flicking = dynamic(() => import('@egjs/react-flicking'), {
+  ssr: false, // 서버사이드 렌더링 비활성화
+})
+
+// 환경변수 설정
 dotenv.config()
 
 export const VisualBanner = () => {
-  const flickingRef = useRef<Flicking | null>(null)
+  const flickingRef = useRef<FlickingProps | null>(null)
   const autoPlayRef = useRef<AutoPlay | null>(null)
   const [isAnimating, setIsAnimating] = useState(false) // 애니메이션 상태 관리
   const [isAutoPlaying, setIsAutoPlaying] = useState(false) // 초기값을 false로 설정
@@ -192,7 +205,7 @@ export const VisualBanner = () => {
                 fill
                 sizes="100%"
                 className="h-full w-full object-cover"
-                priority
+                priority={index === 0} // 첫 번째 이미지만 priority로 설정
                 onLoad={() => setImageLoaded(true)}
                 onError={() => {
                   setImageError(true)
