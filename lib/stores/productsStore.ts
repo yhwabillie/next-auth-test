@@ -187,15 +187,31 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       return matchingFilteredItem ? { ...item, ...matchingFilteredItem } : item
     })
 
-    const filteredByCategory = category === '전체' ? syncedData : syncedData.filter((product) => product.category === category)
+    let filteredByCategory
 
-    set({
-      selectedCategory: category,
-      filteredData: filteredByCategory,
-      currentPage: 1,
-      hasMore: true,
-      data: syncedData, // 데이터 동기화
-    })
+    if (category === '전체') {
+      filteredByCategory = syncedData
+
+      set({
+        selectedCategory: category,
+        filteredData: filteredByCategory,
+        currentPage: 1,
+        hasMore: true,
+        data: syncedData, // 데이터 동기화
+      })
+    } else {
+      setTimeout(() => {
+        const filteredByCategory = syncedData.filter((product) => product.category === category)
+
+        set({
+          selectedCategory: category,
+          filteredData: filteredByCategory,
+          currentPage: 1,
+          hasMore: true,
+          data: syncedData, // 데이터 동기화
+        })
+      }, 0)
+    }
   },
 
   fetchData: async (page: number, pageSize: number): Promise<void> => {
