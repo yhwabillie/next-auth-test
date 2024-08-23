@@ -1,8 +1,13 @@
-'use client'
+interface SkeletonProductProps {
+  triggerRef?: (node?: Element | null) => void
+}
 
-export const SkeletonProduct = () => {
+export const SkeletonProduct = ({ triggerRef }: SkeletonProductProps) => {
   return (
-    <li className="group relative box-border flex aspect-[2/3] animate-pulse flex-col justify-between overflow-hidden p-5 shadow-md shadow-gray-400">
+    <li
+      ref={triggerRef}
+      className="group relative box-border flex aspect-[2/3] animate-pulse flex-col justify-between overflow-hidden p-5 shadow-md shadow-gray-400"
+    >
       {/* 카테고리, 제목 */}
       <div className="space-y-2">
         <div className="relative z-[1] mb-2 h-4 w-1/3 rounded bg-gray-400"></div>

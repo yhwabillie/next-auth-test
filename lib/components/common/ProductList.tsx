@@ -215,12 +215,17 @@ export const ProductList = () => {
           {/* 로딩 중일 때 스켈레톤 컴포넌트 렌더링 */}
           {/* {loading && !filtering && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
 
-          {!(page === lastPage + 1) &&
-            Array.from({ length: 5 }).map((_, index) => (
-              <div ref={triggerRef}>
-                <SkeletonProduct key={index} />
-              </div>
-            ))}
+          {/* {!(page === lastPage + 1) && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
+
+          {!(page === lastPage + 1) && (
+            <>
+              <SkeletonProduct triggerRef={triggerRef} />
+              <SkeletonProduct />
+              <SkeletonProduct />
+              <SkeletonProduct />
+              <SkeletonProduct />
+            </>
+          )}
         </ul>
 
         {!(page === lastPage + 1) && (
