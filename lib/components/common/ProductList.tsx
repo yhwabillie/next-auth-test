@@ -180,7 +180,7 @@ export const ProductList = () => {
                   width={400}
                   height={600}
                   className="h-full w-full object-fill transition-all duration-300 group-hover:scale-110"
-                  onLoadingComplete={() => setImageLoaded(true)}
+                  onLoad={() => setImageLoaded(true)}
                   onError={() => {
                     setImageError(true)
                     setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
