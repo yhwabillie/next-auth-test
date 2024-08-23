@@ -122,8 +122,6 @@ export const ProductList = () => {
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
-      <div className="text-2xl">{filtering ? '필터중' : '필터완'}</div>
-
       {/* 상품 리스트 */}
       <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
         <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
@@ -216,7 +214,10 @@ export const ProductList = () => {
 
           {/* 로딩 중일 때 스켈레톤 컴포넌트 렌더링 */}
           {/* {loading && !filtering && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
+
+          {!(page === lastPage + 1) && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)}
         </ul>
+
         {!(page === lastPage + 1) && (
           <div ref={triggerRef} className="flex h-48 w-full items-center justify-center">
             <LoadingSpinner />

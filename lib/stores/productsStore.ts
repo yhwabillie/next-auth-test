@@ -189,7 +189,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
     console.log('필터링 중입니다...') // 상태가 true로 변경된 직후
 
     // 필터링 로직을 대체하기 위해 지연시간을 추가
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    // await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // 실제 필터링 로직 (필터링 완료 후 상태 업데이트)
     const { data, filteredData } = get()
