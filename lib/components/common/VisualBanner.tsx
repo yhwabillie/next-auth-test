@@ -5,12 +5,9 @@ import { AutoPlay } from '@egjs/flicking-plugins'
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import dotenv from 'dotenv'
-import clsx from 'clsx'
 import { LoadingSpinner } from './modules/LoadingSpinner'
 import Flicking from '@egjs/react-flicking'
 import '@egjs/react-flicking/dist/flicking.css'
-dotenv.config()
 
 export const VisualBanner = () => {
   const flickingRef = useRef<Flicking | null>(null)
@@ -194,61 +191,57 @@ export const VisualBanner = () => {
         }}
       >
         {/* 슬라이더의 패널 */}
-        {panels.map((item, index) => (
-          <div key={index} className="flicking-panel">
-            {/* 그라데이션 배경 추가 */}
-            <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
+        {panels.map((item, index) => {
+          const isActive = currentIndex === index
 
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate={currentIndex === index ? 'visible' : 'hidden'}
-              className="relative z-[1]"
-            >
-              <motion.h2 variants={itemVariants} className="block text-2xl font-bold drop-shadow-md md:text-3xl">
-                {item.title}
-              </motion.h2>
-              <motion.p variants={itemVariants} className="mt-2 text-sm drop-shadow-md md:text-lg">
-                {item.description}
-              </motion.p>
-            </motion.div>
+          return (
+            <div key={index} className="flicking-panel">
+              {/* 그라데이션 배경 추가 */}
+              <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 
-            {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-accent">
-                {!imageError ? (
-                  <LoadingSpinner /> // 로딩 중일 때 스피너
-                ) : (
-                  <p className="text-sm text-gray-500">Image not available</p> // 로드 실패 시 대체 텍스트
-                )}
-              </div>
-            )}
+              <motion.div variants={containerVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="relative z-[1]">
+                <motion.h2 variants={itemVariants} className="block text-2xl font-bold drop-shadow-md md:text-3xl">
+                  {item.title}
+                </motion.h2>
+                <motion.p variants={itemVariants} className="mt-2 text-sm drop-shadow-md md:text-lg">
+                  {item.description}
+                </motion.p>
+              </motion.div>
 
-            <motion.figure
-              variants={imageVariants}
-              initial="hidden"
-              animate={currentIndex === index ? 'visible' : 'hidden'}
-              className={clsx('absolute inset-0 transition-opacity duration-500', {
-                'opacity-100': imageLoaded,
-                'opacity-0': !imageLoaded,
-              })}
-            >
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={960}
-                height={328}
-                className="h-full w-full object-cover"
-                onLoad={() => setImageLoaded(true)}
-                onError={() => {
-                  setImageError(true)
-                  setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
-                }}
-                priority={index === 0} // 첫 번째 이미지만 priority로 설정
-              />
-            </motion.figure>
-          </div>
-        ))}
+              {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-accent">
+                  {!imageError ? (
+                    <LoadingSpinner /> // 로딩 중일 때 스피너
+                  ) : (
+                    <p className="text-sm text-gray-500">Image not available</p> // 로드 실패 시 대체 텍스트
+                  )}
+                </div>
+              )}
+
+              <motion.figure
+                variants={imageVariants}
+                initial="hidden"
+                animate={isActive ? 'visible' : 'hidden'}
+                className={`absolute inset-0 transition-opacity duration-500 ${isActive && imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={960}
+                  height={328}
+                  className="h-full w-full object-cover"
+                  onLoad={() => setImageLoaded(true)}
+                  onError={() => {
+                    setImageError(true)
+                    setImageLoaded(true)
+                  }}
+                  priority={index === 0}
+                />
+              </motion.figure>
+            </div>
+          )
+        })}
       </Flicking>
     </div>
   )
