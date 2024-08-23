@@ -19,6 +19,11 @@ interface ProductsStore {
   fetchAutoCompleteSuggestions: (query: string) => void
   selectSearchResult: (selectedProduct: ProductType) => void
 
+  //loaded images
+  loadedImages: Record<number, boolean>
+  setLoadedImages: (images: Record<number, boolean>) => void
+  resetLoadedImages: () => void
+
   //category
   data: ProductType[]
   filteredData: ProductType[]
@@ -147,6 +152,16 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       searchResult: filteredData,
     })
   },
+
+  loadedImages: {},
+  setLoadedImages: (images) =>
+    set((state) => ({
+      loadedImages: { ...state.loadedImages, ...images },
+    })),
+  resetLoadedImages: () =>
+    set({
+      loadedImages: {},
+    }),
 
   //category
   data: [],

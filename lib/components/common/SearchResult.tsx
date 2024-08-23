@@ -1,6 +1,6 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useProductsStore } from '@/lib/stores/productsStore'
 import { ProductType } from '@/app/actions/products/actions'
 import { useSession } from 'next-auth/react'
@@ -10,16 +10,28 @@ import clsx from 'clsx'
 import { LuHeartOff } from 'react-icons/lu'
 import { FaHeartCirclePlus } from 'react-icons/fa6'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
+import Image from 'next/image'
 
 export const SearchResult = () => {
   const searchParams = useSearchParams()
   const { status, update } = useSession()
   const query = searchParams.get('query') || ''
-  const { allData, setSearchQuery, toggleCartStatus, toggleWishStatus, setSessionUpdate } = useProductsStore()
+  const { allData, setSearchQuery, toggleCartStatus, loadedImages, resetLoadedImages, setLoadedImages, toggleWishStatus, setSessionUpdate } =
+    useProductsStore()
 
   const results = allData.filter(
     (product) => product.name.toLowerCase().includes(query.toLowerCase()) || product.category.toLowerCase().includes(query.toLowerCase()),
   )
+
+  // 스켈레톤 애니메이션 설정
+  const skeletonVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: [0.5, 1, 0.5], transition: { duration: 1.5, repeat: Infinity } },
+  }
+
+  const handleImageLoad = (index: number) => {
+    setLoadedImages({ [index]: true }) // Zustand의 상태 업데이트
+  }
 
   //1. 세션확인
   useEffect(() => {
@@ -30,7 +42,15 @@ export const SearchResult = () => {
 
   useEffect(() => {
     setSearchQuery(query)
+
+    resetLoadedImages()
     setSearchQuery('')
+
+    const initialLoadedImages: Record<number, boolean> = {}
+    results.forEach((_, index) => {
+      initialLoadedImages[index] = false
+    })
+    setLoadedImages(initialLoadedImages)
   }, [query, setSearchQuery])
 
   //위시토글
@@ -66,7 +86,7 @@ export const SearchResult = () => {
       {results.length > 0 ? (
         <>
           {/* 상품 리스트 */}
-          <section className="box-border px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
+          <div className="box-border px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
             <ul className="mb-20 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:gap-x-2 lg:grid-cols-4 xl:grid-cols-5">
               {results.map((product, index) => (
                 <motion.li
@@ -88,9 +108,42 @@ export const SearchResult = () => {
                   }}
                   className="group rounded-xl bg-white p-3 transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
                 >
-                  <div className="mb-3 aspect-square overflow-hidden rounded-xl border border-gray-300 shadow-md">
-                    <img src={product.imageUrl} alt={product.name} className="object-fill transition-all duration-300 group-hover:scale-110" />
-                  </div>
+                  {/* 스켈레톤 또는 이미지 표시 */}
+                  {!loadedImages[index] && (
+                    <motion.div
+                      variants={skeletonVariants}
+                      initial="initial"
+                      animate="animate"
+                      className="absolute left-0 top-0 z-10 h-full w-full rounded-xl bg-white p-3"
+                    >
+                      {/* 이미지 스켈레톤 */}
+                      <div className="mb-3 aspect-square w-full animate-pulse rounded-lg bg-gray-200"></div>
+
+                      {/* 텍스트 스켈레톤 */}
+                      <div className="mb-2 h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                      <div className="mb-2 h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
+
+                      {/* 가격 및 할인률 스켈레톤 */}
+                      <div className="mb-2 h-4 w-1/3 animate-pulse rounded bg-gray-200"></div>
+                    </motion.div>
+                  )}
+
+                  <figure
+                    className={clsx('mb-3 aspect-square w-full overflow-hidden rounded-xl border border-gray-300 shadow-md', {
+                      'opacity-0': !loadedImages[index], // 로드 완료 전까지 숨김 처리
+                      'opacity-100': loadedImages[index],
+                    })}
+                  >
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      width={400}
+                      height={600}
+                      priority={index === 0} // 첫 번째 이미지만 priority로 설정
+                      onLoad={() => handleImageLoad(index)} // 이미지 로드 완료 시 true로 설정
+                      className="object-cover transition-all duration-300 group-hover:scale-110"
+                    />
+                  </figure>
 
                   <p className="md:text-md mb-2 font-semibold tracking-tight text-gray-700">{product.name}</p>
 
@@ -133,10 +186,10 @@ export const SearchResult = () => {
                 </motion.li>
               ))}
             </ul>
-          </section>
+          </div>
         </>
       ) : (
-        <p className="text-gray-600">검색 결과가 없습니다.</p>
+        <div className="mt-4 box-border px-8 lg:container md:bg-transparent md:px-4 lg:mx-auto">검색 결과가 없습니다.</div>
       )}
     </section>
   )
