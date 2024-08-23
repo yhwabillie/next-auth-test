@@ -26,6 +26,7 @@ interface ProductsStore {
 
   //category
   filtering: boolean
+  setFiltering: (filtering: boolean) => void
   data: ProductType[]
   filteredData: ProductType[]
   searchResult: ProductType[]
@@ -180,6 +181,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
   // 필터링 상태 관리
   filtering: false,
+  setFiltering: (filtering) => set({ filtering }),
 
   // 카테고리 필터링
   setCategoryFilter: async (category: string) => {

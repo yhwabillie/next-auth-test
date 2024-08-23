@@ -28,10 +28,12 @@ export const ProductList = () => {
     setSessionUpdate,
     totalProducts,
     filtering,
+    setFiltering,
   } = useProductsStore()
 
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const [imageLoadedStates, setImageLoadedStates] = useState<boolean[]>([])
 
   // 페이징 상태
   const [page, setPage] = useState(1)
@@ -91,6 +93,30 @@ export const ProductList = () => {
   useEffect(() => {
     console.log('filtering 상태가 변경되었습니다:', filtering)
   }, [filtering]) // filtering 상태가 변경될 때 로그 출력
+
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      // 이미지 로드 상태를 초기화
+      setImageLoadedStates(new Array(filteredData.length).fill(false))
+      setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
+    }
+  }, [filteredData])
+
+  // 각 이미지가 로드될 때 호출되는 함수
+  const handleImageLoad = (index: number) => {
+    setImageLoadedStates((prevStates) => {
+      const newStates = [...prevStates]
+      newStates[index] = true
+
+      // 모든 이미지가 로드되었는지 확인
+      const allImagesLoaded = newStates.every((loaded) => loaded)
+      if (allImagesLoaded) {
+        setFiltering(false) // 모든 이미지가 로드되었을 때 filtering을 false로 설정
+      }
+
+      return newStates
+    })
+  }
 
   //마크업
   return (
@@ -172,10 +198,14 @@ export const ProductList = () => {
                   width={400}
                   height={600}
                   className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
-                  onLoad={() => setImageLoaded(true)}
+                  onLoad={() => {
+                    setImageLoaded(true)
+                    handleImageLoad(index)
+                  }}
                   onError={() => {
                     setImageError(true)
                     setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
+                    handleImageLoad(index) // 이미지 에러 발생 시에도 로드 처리
                   }}
                   priority={index === 0} // 첫 번째 이미지만 priority로 설정
                 />
