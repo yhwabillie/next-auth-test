@@ -25,6 +25,7 @@ interface ProductsStore {
   resetLoadedImages: () => void
 
   //category
+  filtering: boolean
   data: ProductType[]
   filteredData: ProductType[]
   searchResult: ProductType[]
@@ -177,11 +178,20 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
   cartlistLength: 0,
 
+  // 필터링 상태 관리
+  filtering: false,
+
   // 카테고리 필터링
-  setCategoryFilter: (category: string) => {
+  setCategoryFilter: async (category: string) => {
+    set({ filtering: true })
+    console.log('필터링 중입니다...') // 상태가 true로 변경된 직후
+
+    // 필터링 로직을 대체하기 위해 지연시간을 추가
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // 실제 필터링 로직 (필터링 완료 후 상태 업데이트)
     const { data, filteredData } = get()
 
-    // 데이터 동기화: 필터링할 때 최신 상태 반영
     const syncedData = data.map((item) => {
       const matchingFilteredItem = filteredData.find((filteredItem) => filteredItem.idx === item.idx)
       return matchingFilteredItem ? { ...item, ...matchingFilteredItem } : item
@@ -191,29 +201,21 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
 
     if (category === '전체') {
       filteredByCategory = syncedData
-
-      set({
-        selectedCategory: category,
-        filteredData: filteredByCategory,
-        currentPage: 1,
-        hasMore: true,
-        data: syncedData, // 데이터 동기화
-      })
     } else {
-      setTimeout(() => {
-        const filteredByCategory = syncedData.filter((product) => product.category === category)
-
-        set({
-          selectedCategory: category,
-          filteredData: filteredByCategory,
-          currentPage: 1,
-          hasMore: true,
-          data: syncedData, // 데이터 동기화
-        })
-      }, 0)
+      filteredByCategory = syncedData.filter((product) => product.category === category)
     }
-  },
 
+    set({
+      selectedCategory: category,
+      filteredData: filteredByCategory,
+      currentPage: 1,
+      hasMore: true,
+      data: syncedData, // 데이터 동기화
+      filtering: false, // 필터링 완료
+    })
+
+    console.log('필터링 완료') // 상태가 false로 변경된 직후
+  },
   fetchData: async (page: number, pageSize: number): Promise<void> => {
     set({ loading: true })
 

@@ -27,6 +27,7 @@ export const ProductList = () => {
     toggleWishStatus,
     setSessionUpdate,
     totalProducts,
+    filtering,
   } = useProductsStore()
 
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -87,11 +88,17 @@ export const ProductList = () => {
     }
   }
 
+  useEffect(() => {
+    console.log('filtering 상태가 변경되었습니다:', filtering)
+  }, [filtering]) // filtering 상태가 변경될 때 로그 출력
+
   //마크업
   return (
     <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:mt-0 md:w-auto md:bg-transparent">
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
+
+      <div className="text-2xl">{filtering ? '필터중' : '필터완'}</div>
 
       {/* 상품 리스트 */}
       <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
