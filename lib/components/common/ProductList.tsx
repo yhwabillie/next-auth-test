@@ -10,10 +10,12 @@ import { LuHeartOff } from 'react-icons/lu'
 import { FaHeartCirclePlus } from 'react-icons/fa6'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import { calculateDiscountedPrice } from '@/lib/utils'
-import Image from 'next/image'
 import { SkeletonProduct } from './SkeletonProduct'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export const ProductList = () => {
+  const { status, update } = useSession()
   const {
     filteredData,
     setSearchQuery,
@@ -27,27 +29,15 @@ export const ProductList = () => {
     toggleWishStatus,
     setSessionUpdate,
     totalProducts,
-    filtering,
-    setFiltering,
   } = useProductsStore()
 
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
-  const [imageLoadedStates, setImageLoadedStates] = useState<boolean[]>([]) // 모든 이미지의 로드 상태를 추적
-
-  // 페이징 상태
   const [page, setPage] = useState(1)
   const pageSize = 10
+  const lastPage = Math.ceil(totalProducts / pageSize)
 
-  // 무한 스크롤 감지
   const { ref: triggerRef, inView: triggerInVeiw } = useInView({
     threshold: 0.1,
   })
-
-  const { status, update } = useSession()
-
-  // 마지막 페이지 계산
-  const lastPage = Math.ceil(totalProducts / pageSize)
 
   //1. 세션확인
   useEffect(() => {
@@ -59,9 +49,10 @@ export const ProductList = () => {
   // 2. 초기 데이터 패치
   useEffect(() => {
     setSearchQuery('')
-    fetchData(page, pageSize) // 초기 페이지는 항상 1
+    fetchData(page, pageSize)
   }, [])
 
+  // 3. 무한 스크롤 Trigger
   useEffect(() => {
     if (triggerInVeiw && !loading && !isEmpty && page <= lastPage) {
       setPage((prevPage) => prevPage + 1)
@@ -69,7 +60,7 @@ export const ProductList = () => {
     }
   }, [triggerInVeiw, loading, isEmpty])
 
-  //위시토글
+  //위시 추가&제거 Toggle
   const handleClickAddWish = (targetItem: ProductType) => {
     if (status === 'authenticated') {
       //회원 접근
@@ -80,6 +71,7 @@ export const ProductList = () => {
     }
   }
 
+  //장바구니 추가&제거 Toggle
   const handleClickAddProduct = (targetItem: ProductType) => {
     if (status === 'authenticated') {
       //회원 접근
@@ -88,32 +80,6 @@ export const ProductList = () => {
       //비회원 접근
       alert('비회원')
     }
-  }
-
-  useEffect(() => {
-    if (filteredData.length > 0) {
-      // 이미지 로드 상태를 초기화
-      setImageLoadedStates(new Array(filteredData.length).fill(false))
-      setFiltering(true) // 이미지 로딩 시작 시 filtering 상태를 true로 설정
-    }
-  }, [filteredData])
-
-  // 각 이미지가 로드될 때 호출되는 함수
-  const handleImageLoad = (index: number) => {
-    setImageLoadedStates((prevStates) => {
-      const newStates = [...prevStates]
-      newStates[index] = true
-
-      // 모든 이미지가 로드되었는지 확인
-      const allImagesLoaded = newStates.every((loaded) => loaded)
-      console.log('===>', allImagesLoaded)
-
-      if (allImagesLoaded) {
-        setFiltering(false) // 모든 이미지가 로드되었을 때 filtering을 false로 설정
-      }
-
-      return newStates
-    })
   }
 
   //마크업
@@ -175,47 +141,39 @@ export const ProductList = () => {
                 </ul>
               </div>
 
-              {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
-              {!filtering && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                  {!imageError ? (
-                    <LoadingSpinner /> // 로딩 중일 때 스피너
-                  ) : (
-                    <p className="text-sm text-gray-500">Image not available</p> // 로드 실패 시 대체 텍스트
-                  )}
-                </div>
-              )}
-
               {/* 제품 배경 이미지 */}
-              <figure className={`absolute inset-0 transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+              <motion.figure
+                variants={{
+                  hidden: {
+                    opacity: 0,
+                  },
+                  visible: {
+                    opacity: 1,
+                  },
+                }}
+                initial="hidden"
+                animate="visible"
+                transition={{
+                  delay: index * 0.01, // 인덱스에 따라 더 부드러운 지연
+                  ease: 'easeInOut', // 부드러운 전환을 위한 ease 설정
+                  duration: 0.2, // 전환 시간을 더 길게 설정
+                }}
+                className="absolute inset-0 transition-opacity duration-500"
+              >
                 <Image
                   src={product.imageUrl}
                   alt={product.name}
                   width={400}
                   height={600}
                   className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
-                  onLoad={() => {
-                    setImageLoaded(true)
-                    handleImageLoad(index)
-                  }}
-                  onError={() => {
-                    setImageError(true)
-                    setImageLoaded(true) // 이미지 에러 발생 시 플레이스홀더 해제
-                    handleImageLoad(index) // 이미지 에러 발생 시에도 로드 처리
-                  }}
-                  priority={index === 0} // 첫 번째 이미지만 priority로 설정
+                  priority={index === 0}
                 />
-              </figure>
+              </motion.figure>
 
               {/* 그라데이션 배경 */}
               <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/50 transition-all duration-300"></div>
             </li>
           ))}
-
-          {/* 로딩 중일 때 스켈레톤 컴포넌트 렌더링 */}
-          {/* {loading && !filtering && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
-
-          {/* {!(page === lastPage + 1) && Array.from({ length: 5 }).map((_, index) => <SkeletonProduct key={index} />)} */}
 
           {!(page === lastPage + 1) && (
             <>

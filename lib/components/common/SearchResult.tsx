@@ -108,23 +108,6 @@ export const SearchResult = () => {
                   }}
                   className="group rounded-xl bg-white p-3 transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
                 >
-                  {/* 스켈레톤 또는 이미지 표시 */}
-                  {/* {!loadedImages[index] && (
-                    <motion.div
-                      variants={skeletonVariants}
-                      initial="initial"
-                      animate="animate"
-                      className="absolute left-0 top-0 z-10 h-full w-full rounded-xl bg-white p-3"
-                    >
-                      <div className="mb-3 aspect-square w-full animate-pulse rounded-lg bg-gray-200"></div>
-
-                      <div className="mb-2 h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
-                      <div className="mb-2 h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
-
-                      <div className="mb-2 h-4 w-1/3 animate-pulse rounded bg-gray-200"></div>
-                    </motion.div>
-                  )} */}
-
                   <figure className="mb-3 aspect-square w-full overflow-hidden rounded-xl border border-gray-300 shadow-md">
                     <Image
                       src={product.imageUrl}
