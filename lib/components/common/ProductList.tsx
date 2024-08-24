@@ -13,9 +13,11 @@ import { calculateDiscountedPrice } from '@/lib/utils'
 import { SkeletonProduct } from './SkeletonProduct'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { useFloatingBtnStore } from '@/lib/zustandStore'
 
 export const ProductList = () => {
   const { status, update } = useSession()
+  const { setState } = useFloatingBtnStore()
   const {
     filteredData,
     setSearchQuery,
@@ -41,6 +43,9 @@ export const ProductList = () => {
 
   //1. 세션확인
   useEffect(() => {
+    //플로팅버튼 활성화
+    setState(true)
+
     if (status === 'authenticated') {
       setSessionUpdate(update)
     }

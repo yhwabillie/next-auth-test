@@ -9,12 +9,14 @@ import { AlertErrorModal } from '@/lib/components/common/modals/AlertErrorModal'
 import { ChangeOrderAddress } from '@/lib/components/individual/ChangeOrderAddress'
 import { PostCodeModal } from '@/lib/components/individual/PostCodeModal'
 import { FloatingBtn } from '../FloatingBtn'
+import { useFloatingBtnStore } from '@/lib/zustandStore'
 
 export const ModalProvider = () => {
   const { modals: address_modals, hideModal: address_hide } = useAddressStore()
   // const { modals: product_modals, hideModal: product_hide } = useProductsStore()
   const { modals: cart_modals, hideModal: cart_hide } = useCartlistStore()
   const { modals: order_modals, hideModal: order_hide } = useOrderlistStore()
+  const { state } = useFloatingBtnStore()
 
   const alert_messages = {
     addressList: {
@@ -38,7 +40,7 @@ export const ModalProvider = () => {
       {cart_modals.need_session && (
         <AlertErrorModal handleClickClose={() => cart_hide('need_session')} message={alert_messages.cartlist.need_session} />
       )}
-      <FloatingBtn />
+      {state && <FloatingBtn />}
     </>
   )
 }

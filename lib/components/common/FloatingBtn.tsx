@@ -41,6 +41,7 @@ export const FloatingBtn = () => {
 
   return (
     <button
+      aria-label="scroll to top button"
       onClick={scrollToTop}
       className={`fixed bottom-4 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
