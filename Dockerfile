@@ -11,6 +11,16 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* prisma ./
 
 # Use BuildKit to securely mount secrets during the build process
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Use BuildKit to securely mount secrets during the build process
 RUN --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_URL \
     --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_ANON_KEY \
     --mount=type=secret,id=RESET_PW_JWT \
@@ -40,16 +50,7 @@ RUN --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_URL \
     export EMAIL_USER=$(cat /run/secrets/EMAIL_USER) && \
     export EMAIL_PASSWORD=$(cat /run/secrets/EMAIL_PASSWORD) && \
     export NEXT_PUBLIC_SUPABASE_STORAGE_URL=$(cat /run/secrets/NEXT_PUBLIC_SUPABASE_STORAGE_URL) && \
-    corepack enable pnpm && pnpm install --frozen-lockfile'
-
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-RUN corepack enable pnpm && pnpm build
+    corepack enable pnpm && pnpm build'
 
 # Production image, copy all the files and run next
 FROM base AS runner
