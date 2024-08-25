@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 FROM node:20-alpine AS base
-ENV NODE_ENV=production
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -14,6 +13,7 @@ RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -27,6 +27,7 @@ RUN corepack enable pnpm && pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
+ENV NODE_ENV=production
 WORKDIR /app
 
 ENV NODE_ENV=production
