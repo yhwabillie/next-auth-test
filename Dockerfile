@@ -1,5 +1,4 @@
 FROM node:20-alpine AS base
-ENV NODE_ENV=production
 
 FROM base AS deps
 RUN corepack enable && corepack prepare pnpm@9.5.0
@@ -9,11 +8,11 @@ RUN pnpm install --frozen-lockfile
 ENV NODE_ENV=production
 
 FROM base AS builder
-ENV NODE_ENV=production
 RUN corepack enable && corepack prepare pnpm@9.5.0
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
+ENV NODE_ENV=production
 RUN pnpm prisma generate
 RUN pnpm build
 
