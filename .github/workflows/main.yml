@@ -5,9 +5,9 @@ on:
     branches: [main]
 
 env:
-  DOCKER_BUILDKIT: 1 # BuildKit 활성화
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/next-auth-test
   VERSION: ${{ github.sha }}
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   build:
@@ -24,23 +24,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Create secret files
-        run: |
-          echo "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" > supabase_url.txt
-          echo "${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" > supabase_anon_key.txt
-          echo "${{ secrets.RESET_PW_JWT }}" > reset_pw_jwt.txt
-          echo "${{ secrets.DATABASE_URL }}" > database_url.txt
-          echo "${{ secrets.DIRECT_URL }}" > direct_url.txt
-          echo "${{ secrets.NEXTAUTH_URL }}" > nextauth_url.txt
-          echo "${{ secrets.NEXTAUTH_SECRET }}" > nextauth_secret.txt
-          echo "${{ secrets.NEXT_PUBLIC_PROJECT_DIR }}" > project_dir.txt
-          echo "${{ secrets.NEXT_PUBLIC_BASE_URL }}" > base_url.txt
-          echo "${{ secrets.EMAIL_SERVER }}" > email_server.txt
-          echo "${{ secrets.EMAIL_PORT }}" > email_port.txt
-          echo "${{ secrets.EMAIL_USER }}" > email_user.txt
-          echo "${{ secrets.EMAIL_PASSWORD }}" > email_password.txt
-          echo "${{ secrets.NEXT_PUBLIC_SUPABASE_STORAGE_URL }}" > supabase_storage_url.txt
-
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
@@ -48,21 +31,19 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
           file: Dockerfile
-          secrets: |
-            id=NEXT_PUBLIC_SUPABASE_URL,src=supabase_url.txt
-            id=NEXT_PUBLIC_SUPABASE_ANON_KEY,src=supabase_anon_key.txt
-            id=RESET_PW_JWT,src=reset_pw_jwt.txt
-            id=DATABASE_URL,src=database_url.txt
-            id=DIRECT_URL,src=direct_url.txt
-            id=NEXTAUTH_URL,src=nextauth_url.txt
-            id=NEXTAUTH_SECRET,src=nextauth_secret.txt
-            id=NEXT_PUBLIC_PROJECT_DIR,src=project_dir.txt
-            id=NEXT_PUBLIC_BASE_URL,src=base_url.txt
-            id=EMAIL_SERVER,src=email_server.txt
-            id=EMAIL_PORT,src=email_port.txt
-            id=EMAIL_USER,src=email_user.txt
-            id=EMAIL_PASSWORD,src=email_password.txt
-            id=NEXT_PUBLIC_SUPABASE_STORAGE_URL,src=supabase_storage_url.txt
-
-      - name: Cleanup secret files
-        run: rm *.txt
+          build-args: |
+            NODE_ENV=production
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            RESET_PW_JWT=${{ secrets.RESET_PW_JWT }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DIRECT_URL=${{ secrets.DIRECT_URL }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            NEXT_PUBLIC_PROJECT_DIR=${{ secrets.NEXT_PUBLIC_PROJECT_DIR }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            EMAIL_SERVER=${{ secrets.EMAIL_SERVER }}
+            EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+            EMAIL_USER=${{ secrets.EMAIL_USER }}
+            EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+            NEXT_PUBLIC_SUPABASE_STORAGE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_STORAGE_URL }}
