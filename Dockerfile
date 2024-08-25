@@ -1,4 +1,5 @@
 FROM node:20-alpine AS base
+ENV NODE_ENV=production
 
 FROM base AS deps
 RUN corepack enable && corepack prepare pnpm@9.5.0
