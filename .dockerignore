@@ -1,7 +1,6 @@
 .next
 Dockerfile
 .dockerignore
-.env
 README.md
 .prettierrc
 .gitignore
