@@ -13,8 +13,13 @@ RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
-ENV NODE_ENV production
 WORKDIR /app
+
+# Define build arguments to accept secrets from GitHub Actions
+ARG NEXT_PUBLIC_SUPABASE_URL
+
+# Set environment variables using the build arguments
+ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -48,7 +53,6 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV NODE_ENV production
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
