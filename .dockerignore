@@ -1,8 +1,9 @@
-.next
-.env
 Dockerfile
 .dockerignore
+node_modules
 README.md
+.next
+.git
+.env*
 .prettierrc
 .gitignore
-.git
