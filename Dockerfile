@@ -1,5 +1,7 @@
 FROM node:20-alpine AS base
 
+ENV NODE_ENV=production
+
 FROM base AS deps
 RUN corepack enable && corepack prepare pnpm@9.5.0
 WORKDIR /app
@@ -23,8 +25,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-
-ENV NODE_ENV=production
 
 ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
