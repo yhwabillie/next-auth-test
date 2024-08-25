@@ -17,6 +17,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create .env file from secrets
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env
+          echo "RESET_PW_JWT=${{ secrets.RESET_PW_JWT }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_PROJECT_DIR=${{ secrets.NEXT_PUBLIC_PROJECT_DIR }}" >> .env
+          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
+          echo "EMAIL_SERVER=${{ secrets.EMAIL_SERVER }}" >> .env
+          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_STORAGE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_STORAGE_URL }}" >> .env
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -31,18 +48,8 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
           file: Dockerfile
-          secrets: |
-            id=NEXT_PUBLIC_SUPABASE_URL,src=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-            id=NEXT_PUBLIC_SUPABASE_ANON_KEY,src=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-            id=RESET_PW_JWT,src=${{ secrets.RESET_PW_JWT }}
-            id=DATABASE_URL,src=${{ secrets.DATABASE_URL }}
-            id=DIRECT_URL,src=${{ secrets.DIRECT_URL }}
-            id=NEXTAUTH_URL,src=${{ secrets.NEXTAUTH_URL }}
-            id=NEXTAUTH_SECRET,src=${{ secrets.NEXTAUTH_SECRET }}
-            id=NEXT_PUBLIC_PROJECT_DIR,src=${{ secrets.NEXT_PUBLIC_PROJECT_DIR }}
-            id=NEXT_PUBLIC_BASE_URL,src=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-            id=EMAIL_SERVER,src=${{ secrets.EMAIL_SERVER }}
-            id=EMAIL_PORT,src=${{ secrets.EMAIL_PORT }}
-            id=EMAIL_USER,src=${{ secrets.EMAIL_USER }}
-            id=EMAIL_PASSWORD,src=${{ secrets.EMAIL_PASSWORD }}
-            id=NEXT_PUBLIC_SUPABASE_STORAGE_URL,src=${{ secrets.NEXT_PUBLIC_SUPABASE_STORAGE_URL }}
+          build-args: |
+            --env-file .env
+
+      - name: Cleanup .env file
+        run: rm .env

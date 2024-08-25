@@ -18,23 +18,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Use BuildKit to securely mount secrets during the build process
-RUN --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_URL \
-    --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_ANON_KEY \
-    --mount=type=secret,id=RESET_PW_JWT \
-    --mount=type=secret,id=DATABASE_URL \
-    --mount=type=secret,id=DIRECT_URL \
-    --mount=type=secret,id=NEXTAUTH_URL \
-    --mount=type=secret,id=NEXTAUTH_SECRET \
-    --mount=type=secret,id=NEXT_PUBLIC_PROJECT_DIR \
-    --mount=type=secret,id=NEXT_PUBLIC_BASE_URL \
-    --mount=type=secret,id=EMAIL_SERVER \
-    --mount=type=secret,id=EMAIL_PORT \
-    --mount=type=secret,id=EMAIL_USER \
-    --mount=type=secret,id=EMAIL_PASSWORD \
-    --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_STORAGE_URL \
-    corepack enable pnpm && pnpm build
-
+# 빌드 중 환경 변수 사용
+RUN corepack enable pnpm && pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
