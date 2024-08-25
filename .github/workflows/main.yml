@@ -29,4 +29,21 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
           build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DIRECT_URL=${{ secrets.DIRECT_URL }}
+
+            NEXT_PUBLIC_PROJECT_DIR=${{ secrets.NEXT_PUBLIC_PROJECT_DIR }}
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
+            EMAIL_SERVER=${{ secrets.EMAIL_SERVER }}
+            EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+            EMAIL_USER=${{ secrets.EMAIL_USER }}
+            EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+
+            RESET_PW_JWT=${{ secrets.RESET_PW_JWT }}
+            NEXT_PUBLIC_SUPABASE_STORAGE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_STORAGE_URL }}
