@@ -7,9 +7,9 @@ export const dynamic = 'force-dynamic'
 
 const SECRET_KEY = process.env.RESET_PW_JWT
 
-if (!SECRET_KEY) {
-  throw new Error('환경변수 RESET_PW_JWT 누락')
-}
+// if (!SECRET_KEY) {
+//   throw new Error('환경변수 RESET_PW_JWT 누락')
+// }
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
