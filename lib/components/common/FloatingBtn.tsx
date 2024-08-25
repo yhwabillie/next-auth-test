@@ -1,8 +1,10 @@
 'use client'
+import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { PiArrowLineUpBold } from 'react-icons/pi'
 
 export const FloatingBtn = () => {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
@@ -37,7 +39,10 @@ export const FloatingBtn = () => {
     return () => {
       if (observerRef.current) observerRef.current.disconnect()
     }
-  }, [])
+  }, [pathname])
+
+  // 특정 경로에서만 플로팅 버튼이 보이도록 조건부 렌더링
+  if (pathname !== '/desired-path' && pathname !== '/') return null
 
   return (
     <button

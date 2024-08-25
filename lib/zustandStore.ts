@@ -78,13 +78,3 @@ export const useProductStore = create<ProductState>((set) => ({
   productState: false,
   setProductState: (data: boolean) => set({ productState: data }),
 }))
-
-interface FloatingBtnState {
-  state: boolean
-  setState: (data: boolean) => void
-}
-
-export const useFloatingBtnStore = create<FloatingBtnState>((set) => ({
-  state: false,
-  setState: (data: boolean) => set({ state: data }),
-}))
