@@ -24,6 +24,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 
+ENV NODE_ENV=production
+
 ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 CMD ["node", "/app/server.js"]
