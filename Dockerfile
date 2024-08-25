@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy only package files to leverage Docker cache
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* prisma ./
 RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
