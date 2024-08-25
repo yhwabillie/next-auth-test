@@ -61,21 +61,23 @@ export const ProductList = () => {
   }, [loadInitialData])
 
   // 3. 무한 스크롤 Trigger (데이터 중복 로드 방지)
+  const [loadingMore, setLoadingMore] = useState(false)
+
   const handleLoadMore = useCallback(
     debounce(async () => {
-      if (!loading && !isEmpty && hasMorePages) {
+      if (!loading && !isEmpty && hasMorePages && !loadingMore) {
+        setLoadingMore(true)
         try {
-          setPage((prevPage) => {
-            const nextPage = prevPage + 1
-            loadMoreData(nextPage, pageSize)
-            return nextPage
-          })
+          await loadMoreData(page + 1, pageSize)
+          setPage((prevPage) => prevPage + 1)
         } catch (error) {
           toast.error('추가 데이터를 가져오는 중 오류가 발생했습니다.')
+        } finally {
+          setLoadingMore(false)
         }
       }
     }, 300),
-    [loading, isEmpty, hasMorePages, loadMoreData, pageSize],
+    [loading, isEmpty, hasMorePages, loadingMore, loadMoreData, pageSize],
   )
 
   useEffect(() => {
@@ -127,7 +129,8 @@ export const ProductList = () => {
           ))}
 
           {/* Skeleton Products (무한 스크롤 시 추가로 로드될 때 표시) */}
-          {hasMorePages && Array.from({ length: 5 }).map((_, i) => <SkeletonProduct key={i} triggerRef={i === 0 ? triggerRef : undefined} />)}
+          {hasMorePages &&
+            Array.from({ length: 5 }, (_, i) => <SkeletonProduct key={`skeleton-${i}`} triggerRef={i === 0 ? triggerRef : undefined} />)}
         </ul>
 
         {hasMorePages && (
