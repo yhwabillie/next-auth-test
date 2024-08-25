@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM node:20-alpine AS base
+ENV NODE_ENV=production
 
 # Install dependencies only when needed
 FROM base AS deps

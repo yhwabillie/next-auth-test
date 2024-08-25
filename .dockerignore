@@ -1,4 +1,5 @@
 .next
+.env
 Dockerfile
 .dockerignore
 README.md
