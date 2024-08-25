@@ -6,15 +6,15 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies
-COPY package.json pnpm-lock.yaml* prisma ./
+# Copy only package files to leverage Docker cache
+COPY package.json pnpm-lock.yaml* ./
 RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 
-# Copy node_modules and source code from previous stages
+# Copy dependencies and application code
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
