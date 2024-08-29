@@ -3,13 +3,15 @@ import prisma from '@/lib/prisma'
 import { SignJWT } from 'jose'
 import nodemailer from 'nodemailer'
 import 'dayjs/locale/ko' // 한국어 로케일 불러오기
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import dayjs from 'dayjs'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 dayjs.locale('ko') // 한국어 로케일 설정
-// export const maxDuration = 300
-export const dynamic = 'force-dynamic'
 
 const SECRET_KEY = process.env.RESET_PW_JWT
-const passwordUpdateRequestDate = new Date()
+const passwordUpdateRequestDate = dayjs().tz('Asia/Seoul')
 
 if (!SECRET_KEY) {
   throw new Error('환경변수 RESET_PW_JWT 누락')
