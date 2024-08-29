@@ -158,18 +158,29 @@ export const SignUpForm = () => {
         setIsConfirmID(success)
 
         if (!success) {
-          resetField('id')
-          setFocus('id')
+          setIsConfirmIdLoading(false)
           toast.error('이미 존재하는 ID입니다.')
+
+          resetField('id')
+
+          setTimeout(() => {
+            setFocus('id')
+          }, 100)
         }
 
         break
       case 'email':
         setIsConfirmEmail(success)
+
         if (!success) {
-          resetField('email')
-          setFocus('email')
+          setIsConfirmEmailLoading(false)
           toast.error('이미 존재하는 email입니다.')
+
+          resetField('email')
+
+          setTimeout(() => {
+            setFocus('email')
+          }, 100)
         }
         break
       default:
