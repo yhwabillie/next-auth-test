@@ -8,7 +8,7 @@ import { SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
 import { toast } from 'sonner'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
 import { confirmDuplicateData } from '@/app/actions/signUp/confirmData'
-import { useAgreementStore } from '@/lib/zustandStore'
+import { useAgreementStore, useBodyScrollStore, useSubmitLoadingModalStore } from '@/lib/zustandStore'
 import Image from 'next/image'
 import axios from 'axios'
 import { Button } from './modules/Button'
@@ -21,10 +21,16 @@ interface AgreementItemType {
 }
 
 export const SignUpForm = () => {
+  const { disableScroll, enableScroll } = useBodyScrollStore()
+  const { setState } = useSubmitLoadingModalStore()
   const [profileImage, setProfileImage] = useState('')
   const [isConfirmID, setIsConfirmID] = useState(false)
   const [isConfirmEmail, setIsConfirmEmail] = useState(false)
   const [isLoading, setIsLoading] = useState(false) // 로딩 상태 관리
+
+  const [isConfirmEmailLoading, setIsConfirmEmailLoading] = useState(false)
+  const [isConfirmIdLoading, setIsConfirmIdLoading] = useState(false)
+
   const router = useRouter()
   const {
     register,
@@ -112,6 +118,8 @@ export const SignUpForm = () => {
     formData.append('profile_img', data.profile_img[0])
 
     setIsLoading(true) // 폼 제출 시 로딩 상태로 전환
+    setState(true) //로딩 모달 show
+    disableScroll() //body overflow hidden
 
     toast.promise(
       axios({
@@ -134,7 +142,9 @@ export const SignUpForm = () => {
           return `${err}`
         },
         finally: () => {
-          setIsLoading(false) // 폼 제출 완료 후 로딩 상태 해제
+          setIsLoading(false)
+          setState(false)
+          enableScroll()
         },
       },
     )
@@ -146,18 +156,20 @@ export const SignUpForm = () => {
     switch (field_name) {
       case 'id':
         setIsConfirmID(success)
+
         if (!success) {
           resetField('id')
           setFocus('id')
-          toast('이미 존재하는 ID입니다.')
+          toast.error('이미 존재하는 ID입니다.')
         }
+
         break
       case 'email':
         setIsConfirmEmail(success)
         if (!success) {
           resetField('email')
           setFocus('email')
-          toast('이미 존재하는 email입니다.')
+          toast.error('이미 존재하는 email입니다.')
         }
         break
       default:
@@ -166,11 +178,26 @@ export const SignUpForm = () => {
   }
 
   const confirmDuplicate = async (field_name: string, new_value: string) => {
+    if (field_name === 'id') {
+      setIsConfirmIdLoading(true)
+    } else if (field_name === 'email') {
+      setIsConfirmEmailLoading(true)
+    }
+
     try {
       const response = await confirmDuplicateData({ field_name, new_value })
 
-      if (!response) return
-      handleDuplicateResponse(response)
+      if (response) {
+        handleDuplicateResponse(response)
+
+        if (response.success) {
+          if (field_name === 'id') {
+            setIsConfirmIdLoading(false)
+          } else if (field_name === 'email') {
+            setIsConfirmEmailLoading(false)
+          }
+        }
+      }
     } catch (error) {
       console.error('Error confirming duplicate:', error)
     }
@@ -250,14 +277,21 @@ export const SignUpForm = () => {
           </div>
           <div className="mx-auto mb-6 w-fit">
             <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 정보를 입력해주세요</legend>
-            <HookFormInput register={register('name')} error={errors.name} id="name" label="사용자 이름" type="text" />
+            <HookFormInput register={register('name')} error={errors.name} id="name" label="사용자 이름" type="text" disabled={isLoading} />
             {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
           </div>
           <div className="mx-auto mb-6 w-fit">
             <div className="flex h-fit w-fit flex-col">
-              <HookFormInput register={register('id')} error={errors.id} id="id" label="아이디" type="text" disabled={isConfirmID} />
+              <HookFormInput
+                register={register('id')}
+                error={errors.id}
+                id="id"
+                label="아이디"
+                type="text"
+                disabled={isConfirmID || isConfirmIdLoading}
+              />
 
-              {isConfirmID ? (
+              {isConfirmID || isConfirmIdLoading ? (
                 <>
                   <button
                     onClick={() => {
@@ -268,11 +302,12 @@ export const SignUpForm = () => {
                       //Focus Error 대처
                       window.setTimeout(() => document.getElementById('id')?.focus(), 0)
                     }}
-                    className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
+                    className="mt-2 h-12 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
+                    disabled={isConfirmIdLoading}
                   >
-                    수정
+                    {isConfirmIdLoading ? '확인중..' : '수정'}
                   </button>
-                  <label className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 아이디입니다.</label>
+                  {isConfirmID && <label className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 아이디입니다.</label>}
                 </>
               ) : (
                 <input
@@ -283,18 +318,25 @@ export const SignUpForm = () => {
                   checked={isConfirmID}
                   disabled={!!errors.id || getValues('id') === '' || isConfirmID}
                   onClick={() => confirmDuplicate('id', getValues('id'))}
-                  className="mt-2 h-10 w-full cursor-pointer rounded-md bg-blue-400 pt-2 text-center text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
+                  className="mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
                 />
               )}
             </div>
 
-            {errors.id && !!watch('id') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.id.message}</p>}
+            {errors.id && !!watch('id') && <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.id.message}</p>}
           </div>
           <div className="mx-auto mb-6 w-fit">
             <div className="flex h-fit w-fit flex-col">
-              <HookFormInput register={register('email')} error={errors.email} id="email" label="이메일" type="email" disabled={isConfirmEmail} />
+              <HookFormInput
+                register={register('email')}
+                error={errors.email}
+                id="email"
+                label="이메일"
+                type="email"
+                disabled={isConfirmEmail || isConfirmEmailLoading}
+              />
 
-              {isConfirmEmail ? (
+              {isConfirmEmail || isConfirmEmailLoading ? (
                 <>
                   <button
                     onClick={() => {
@@ -305,11 +347,12 @@ export const SignUpForm = () => {
                       //Focus Error 대처
                       window.setTimeout(() => document.getElementById('email')?.focus(), 0)
                     }}
-                    className="mt-2 h-10 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500"
+                    disabled={isConfirmEmailLoading}
+                    className="mt-2 h-12 rounded-md bg-blue-400 text-white shadow-md hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
                   >
-                    수정
+                    {isConfirmEmailLoading ? '확인 중...' : '수정'}
                   </button>
-                  <p className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 이메일입니다.</p>
+                  {isConfirmEmail && <p className="mt-2 pl-2 text-left text-sm text-blue-400">사용 가능한 이메일입니다.</p>}
                 </>
               ) : (
                 <input
@@ -320,15 +363,22 @@ export const SignUpForm = () => {
                   checked={isConfirmEmail}
                   disabled={!!errors.email || getValues('email') === '' || isConfirmEmail}
                   onClick={() => confirmDuplicate('email', getValues('email'))}
-                  className="mt-2 h-10 w-full cursor-pointer rounded-md bg-blue-400 pt-2 text-center text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
+                  className={`mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50`}
                 />
               )}
 
-              {errors.email && !!watch('email') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.email.message}</p>}
+              {errors.email && !!watch('email') && <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.email.message}</p>}
             </div>
           </div>
           <div className="mx-auto mb-4 w-fit">
-            <HookFormInput register={register('password')} error={errors.password} id="password" label="비밀번호" type="password" />
+            <HookFormInput
+              register={register('password')}
+              error={errors.password}
+              id="password"
+              label="비밀번호"
+              type="password"
+              disabled={isLoading}
+            />
             <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password && !!watch('password') && `${errors.password.message}`}</p>
           </div>
           <div className="mx-auto mb-4 w-fit">
@@ -338,8 +388,9 @@ export const SignUpForm = () => {
               id="password_confirm"
               label="비밀번호 확인"
               type="password"
+              disabled={isLoading}
             />
-            <p className="mt-2 pl-2 text-left text-sm text-red-500">
+            <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">
               {errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm.message}`}
             </p>
           </div>

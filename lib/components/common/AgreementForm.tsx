@@ -7,8 +7,10 @@ import { useAgreementStore } from '@/lib/zustandStore'
 import { Button } from '@/lib/components/common/modules/Button'
 import { HookFormCheckBox } from '@/lib/components/common/modules/HookFormCheckBox'
 import clsx from 'clsx'
+import { ChangeEvent } from 'react'
 
 export const AgreementForm = () => {
+  const router = useRouter()
   const { register, watch, setValue, handleSubmit } = useForm<AgreementSchemaType>({
     mode: 'onChange',
     resolver: zodResolver(AgreementSchema),
@@ -19,12 +21,9 @@ export const AgreementForm = () => {
     },
   })
 
-  const router = useRouter()
   const { setAgreement } = useAgreementStore((state) => state)
 
-  const handleOnClickNext = (data: AgreementSchemaType) => {
-    setAgreement(data)
-  }
+  const handleOnClickNext = (data: AgreementSchemaType) => setAgreement(data)
 
   return (
     <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto mb-[90px] w-[400px] pr-8">
@@ -33,7 +32,7 @@ export const AgreementForm = () => {
           id="check_all"
           label="전체 동의하기"
           checked={watch('service_agreement') && watch('privacy_agreement') && watch('selectable_agreement')}
-          onChangeEvent={(event: React.ChangeEvent<HTMLInputElement>) => {
+          onChangeEvent={(event: ChangeEvent<HTMLInputElement>) => {
             const agreements = ['service_agreement', 'privacy_agreement', 'selectable_agreement']
             const isChecked = event.target.checked
 

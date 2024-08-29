@@ -78,3 +78,37 @@ export const useProductStore = create<ProductState>((set) => ({
   productState: false,
   setProductState: (data: boolean) => set({ productState: data }),
 }))
+
+//body 스크롤 여부
+interface BodyScrollStore {
+  isBodyOverflowHidden: boolean
+  disableScroll: () => void
+  enableScroll: () => void
+}
+
+export const useBodyScrollStore = create<BodyScrollStore>((set) => ({
+  isBodyOverflowHidden: false, // 초기 상태는 스크롤 활성화 (overflow: visible)
+
+  // 스크롤 비활성화 함수
+  disableScroll: () => {
+    document.body.style.overflow = 'hidden'
+    set({ isBodyOverflowHidden: true })
+  },
+
+  // 스크롤 활성화 함수
+  enableScroll: () => {
+    document.body.style.overflow = ''
+    set({ isBodyOverflowHidden: false })
+  },
+}))
+
+//submit loading
+interface SubmitLoadingModalState {
+  state: boolean
+  setState: (data: boolean) => void
+}
+
+export const useSubmitLoadingModalStore = create<SubmitLoadingModalState>((set) => ({
+  state: false,
+  setState: (data: boolean) => set({ state: data }),
+}))
