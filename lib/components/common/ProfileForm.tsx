@@ -1,7 +1,7 @@
 'use client'
 import { confirmCurrentPw, updateUserAgreement, updateUserName, updateUserProfile, updateUserPw } from '@/app/actions/profile/updateProfile'
 import Image from 'next/image'
-import { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { AgreementSchemaType, SignUpFormSchemaType, SignUpSchema } from '@/lib/zodSchema'
@@ -13,8 +13,11 @@ import { HookFormInput } from '@/lib/components/common/modules/HookFormInput'
 import { HookFormCheckBox } from '@/lib/components/common/modules/HookFormCheckBox'
 import { useRouter } from 'next/navigation'
 import { useModalStore } from '@/lib/zustandStore'
+import { TbRestore } from 'react-icons/tb'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko' // 한국어 로케일 불러오기
+import { SkeletonProfile } from './SkeletonProfile'
+import clsx from 'clsx'
 dayjs.locale('ko') // 한국어 로케일 설정
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
@@ -45,6 +48,11 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
   const router = useRouter()
   const { data: session, status, update } = useSession()
   const [profileImage, setProfileImage] = useState('')
+  const [profileLoading, setProfileLoading] = useState(false)
+  const [nameLoading, setNameLoading] = useState(false)
+  const [currentPwLoading, setCurrentPwLoading] = useState(false)
+  const [pwLoading, setPwLoading] = useState(false)
+  const [selectableLoading, setSelectableLoading] = useState(false)
   const [confirmedPW, setConfirmedPW] = useState(false)
   const {
     register,
@@ -93,6 +101,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       return
     }
 
+    setNameLoading(true)
+
     try {
       const response = await updateUserName(data.idx, getValues('name'))
       if (!response) {
@@ -107,22 +117,31 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       }
     } catch (error: any) {
       toast.error(error)
+    } finally {
+      setNameLoading(false)
     }
   }
 
   const handleUpdateUserAgreement = async () => {
-    const response = await updateUserAgreement({
-      agreementIdx: data.agreements[2].id,
-      userIdx: data.idx,
-      selectable_agreement: getValues('selectable_agreement')!,
-    })
-    if (response.success) {
-      router.refresh()
-      toast.success('이용정보 동의 업데이트가 완료되었습니다.')
-      if (!nameRef.current) return
-      nameRef.current.disabled = true
-    } else {
-      alert('Failed to update agreements')
+    setSelectableLoading(true)
+
+    try {
+      const response = await updateUserAgreement({
+        agreementIdx: data.agreements[2].id,
+        userIdx: data.idx,
+        selectable_agreement: getValues('selectable_agreement')!,
+      })
+
+      if (response.success) {
+        router.refresh()
+        toast.success('이용정보 동의 업데이트가 완료되었습니다.')
+        if (!nameRef.current) return
+        nameRef.current.disabled = true
+      }
+    } catch (error) {
+      toast.error('이용정보 동의 업데이트에 실패했습니다.')
+    } finally {
+      setSelectableLoading(false)
     }
   }
 
@@ -169,6 +188,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
     const formData = new FormData()
 
+    setProfileLoading(true)
+
     if (!currentProfileImage) {
       formData.append('profile_img', currentProfileImage)
     } else {
@@ -183,9 +204,18 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       }
 
       if (status === 'authenticated') {
-        update({ profile_img: response })
-        toast.success('프로필 이미지가 업데이트되었습니다.')
-        resetField('profile_img')
+        try {
+          const updatedSession = await update({ profile_img: response })
+
+          if (updatedSession) {
+            router.refresh()
+            resetField('profile_img')
+
+            toast.success('프로필 이미지가 업데이트되었습니다.')
+          }
+        } catch (error: any) {
+          toast.error(error)
+        }
       }
     } catch (error: any) {
       toast.error(error)
@@ -199,6 +229,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
   }
 
   const handleConfirmCurrentPw = async () => {
+    setCurrentPwLoading(true)
+
     try {
       const input_pw = getValues('input_password')
       const response = await confirmCurrentPw(data.idx, input_pw)
@@ -213,27 +245,42 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       }
     } catch (error: any) {
       toast.error(error)
+    } finally {
+      setCurrentPwLoading(false)
     }
   }
 
   const handleUpdatePw = async () => {
-    console.log(getValues('password'))
+    setPwLoading(true)
+
     try {
       const response = await updateUserPw(data.idx, getValues('password'))
 
       if (response) {
-        resetField('input_password')
+        resetField('password')
+        resetField('password_confirm')
+
+        // 비동기적으로 포커스 설정
+        setTimeout(() => setFocus('password'), 100)
+
         toast.warning('기존 비밀번호와 동일합니다, 다른 비밀번호로 입력해주세요.')
       } else {
         setConfirmedPW(false)
-        resetField('input_password')
+        resetField('password')
         signOut({ callbackUrl: '/signIn' })
         toast.success('비밀번호가 업데이트 되었습니다. 재로그인 하세요')
       }
     } catch (error: any) {
       toast.error(error)
+    } finally {
+      setPwLoading(false)
     }
   }
+
+  useEffect(() => {
+    setProfileLoading(false)
+    setProfileImage('')
+  }, [data.profile_img])
 
   return (
     <>
@@ -246,6 +293,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         <legend className="sr-only">프로필 폼</legend>
         <fieldset className="flex flex-col items-center justify-center gap-14">
           <div className="relative mx-auto w-fit">
+            {profileLoading && <SkeletonProfile />}
+
             <div className="relative h-[200px] w-[200px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg">
               <Image src={setPreviewImage()} alt="profile image" priority fill className="object-cover" sizes="200" />
             </div>
@@ -266,8 +315,27 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
             />
           </div>
           <div className="flex w-full flex-col gap-2">
-            <Button type="button" label="기본 프로필 사용" clickEvent={handleResetProfile} />
-            <Button type="button" label="프로필 이미지 업데이트" clickEvent={handleUpdateProfile} disalbe={profileImage === ''} />
+            {data.profile_img !== 'undefined' && !profileLoading && <Button type="button" label="기본 프로필 선택" clickEvent={handleResetProfile} />}
+
+            {profileImage !== '' && !profileLoading && (
+              <button
+                type="button"
+                className="leading-1 flex h-[50px] w-full min-w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-primary py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-secondary disabled:cursor-not-allowed disabled:bg-gray-400"
+                disabled={profileLoading}
+                onClick={() => {
+                  setProfileImage('')
+                }}
+              >
+                <TbRestore className="text-lg" />
+                <span>되돌리기</span>
+              </button>
+            )}
+            <Button
+              type="button"
+              label={`${profileLoading ? '업데이트 중...' : '프로필 이미지 업데이트'}`}
+              clickEvent={handleUpdateProfile}
+              disalbe={profileImage === '' || profileLoading}
+            />
           </div>
         </fieldset>
 
@@ -284,43 +352,46 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
           <div className="mb-10">
             <legend className="sr-only">사용자 이름</legend>
             <div className="mb-2">
-              <HookFormInput register={register('name')} id="name" error={errors.name} label="이름" type="text" />
+              <HookFormInput register={register('name')} id="name" error={errors.name} label="이름" type="text" disabled={nameLoading} />
             </div>
             <button
               type="button"
               ref={saveNameBtnRef}
               onClick={handleUpdateUserName}
-              disabled={errors.name !== undefined || watch('name') === ''}
+              disabled={errors.name !== undefined || watch('name') === '' || nameLoading}
               className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-400 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-400"
             >
-              업데이트
+              {nameLoading ? '업데이트 중...' : '업데이트'}
             </button>
             {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
           </div>
-          <div>
-            <legend className="sr-only">비밀번호 변경</legend>
-            <div className="mb-2">
-              <HookFormInput
-                register={register('input_password')}
-                id="input_password"
-                error={errors.input_password}
-                label="비밀번호"
-                type="password"
-                placeholder="현재 비밀번호를 입력하세요"
-              />
-              {errors.input_password && !!watch('input_password') && (
-                <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.input_password.message}</p>
-              )}
-            </div>
-            <Button
-              type="button"
-              disalbe={watch('input_password') === '' || watch('input_password') === undefined}
-              clickEvent={handleConfirmCurrentPw}
-              label="현재 비밀번호 확인"
-            />
-          </div>
 
-          {confirmedPW && (
+          {!confirmedPW ? (
+            <div>
+              <legend className="sr-only">비밀번호 변경</legend>
+              <div className="mb-2">
+                <HookFormInput
+                  register={register('input_password')}
+                  id="input_password"
+                  error={errors.input_password}
+                  label="비밀번호"
+                  type="password"
+                  placeholder="현재 비밀번호를 입력하세요"
+                  disabled={currentPwLoading}
+                />
+                {errors.input_password && !!watch('input_password') && (
+                  <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.input_password.message}</p>
+                )}
+              </div>
+              <Button
+                type="button"
+                disalbe={watch('input_password') === '' || watch('input_password') === undefined || currentPwLoading}
+                clickEvent={handleConfirmCurrentPw}
+                label={`${currentPwLoading ? '비밀번호 확인 중...' : '현재 비밀번호 확인'}`}
+                spinner={currentPwLoading}
+              />
+            </div>
+          ) : (
             <>
               <div className="mb-2 mt-6">
                 <HookFormInput
@@ -329,9 +400,12 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                   error={errors.password}
                   label="신규 비밀번호"
                   type="password"
+                  disabled={pwLoading}
                   autoFocus={true}
                 />
-                {errors.password && !!watch('password') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password.message}</p>}
+                {errors.password && !!watch('password') && (
+                  <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.password.message}</p>
+                )}
               </div>
               <div className="mb-10">
                 <div className="mb-2">
@@ -341,17 +415,18 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                     error={errors.password_confirm}
                     label="신규 비밀번호 확인"
                     type="password"
+                    disabled={pwLoading}
                   />
                   {errors.password_confirm && !!watch('password_confirm') && (
-                    <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password_confirm.message}</p>
+                    <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.password_confirm.message}</p>
                   )}
                 </div>
 
                 <Button
                   type="button"
-                  disalbe={Object.keys(errors).length > 0 || watch('password') === '' || watch('password_confirm') === ''}
+                  disalbe={Object.keys(errors).length > 0 || watch('password') === '' || watch('password_confirm') === '' || pwLoading}
                   clickEvent={handleUpdatePw}
-                  label="비밀번호 업데이트"
+                  label={`${pwLoading ? '업데이트 중...' : '비밀번호 업데이트'}`}
                 />
               </div>
             </>
@@ -359,31 +434,33 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
           <div className="mb-10 mt-10">
             <div className="mb-2">
-              <HookFormCheckBox
-                register={register('service_agreement')}
-                id="service_agreement"
-                label="서비스 이용 동의 (필수)"
-                checked={getValues('service_agreement')}
-                disabled={true}
-                readOnly={true}
-              />
+              <strong className="text-md font-medium tracking-tighter text-blue-600/70">[필수] 서비스 이용 동의 상태: </strong>
+              <span className="ml-2 inline-block font-semibold text-blue-600">동의</span>
             </div>
-            <p className="mb-4">동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
-            <Button type="button" clickEvent={() => openModal(ModalTypes.SERVICE)} label="전문보기" />
+            <p className="mb-4 text-gray-600">동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+
+            <button
+              type="button"
+              onClick={() => openModal(ModalTypes.SERVICE)}
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+            >
+              전문보기
+            </button>
           </div>
           <div className="mb-10">
             <div className="mb-2">
-              <HookFormCheckBox
-                register={register('privacy_agreement')}
-                id="privacy_agreement"
-                label="개인 정보 이용 동의 (필수)"
-                checked={getValues('privacy_agreement')}
-                disabled={true}
-                readOnly={true}
-              />
+              <strong className="text-md font-medium tracking-tighter text-blue-600/70">[필수] 개인 정보 이용 동의 상태: </strong>
+              <span className="ml-2 inline-block font-semibold text-blue-600">동의</span>
             </div>
-            <p className="mb-4">동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
-            <Button type="button" clickEvent={() => openModal(ModalTypes.PRIVACY)} label="전문보기" />
+            <p className="mb-4 text-gray-600">동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+
+            <button
+              type="button"
+              onClick={() => openModal(ModalTypes.PRIVACY)}
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+            >
+              전문보기
+            </button>
           </div>
           <div className="mb-2">
             <div className="mb-2">
@@ -399,13 +476,21 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               />
             </div>
 
-            <p className="mb-4">마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
-            <Button type="button" clickEvent={() => openModal(ModalTypes.SELECTABLE)} label="전문보기" />
+            <p className="mb-4 text-gray-600">마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+
+            <button
+              type="button"
+              onClick={() => openModal(ModalTypes.SELECTABLE)}
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+            >
+              전문보기
+            </button>
           </div>
           <Button
             type="button"
-            disalbe={data.agreements[2].agreed === getValues('selectable_agreement')}
+            disalbe={data.agreements[2].agreed === getValues('selectable_agreement') || selectableLoading}
             clickEvent={handleUpdateUserAgreement}
+            spinner={selectableLoading}
             label="정보 동의 업데이트"
           />
         </fieldset>
