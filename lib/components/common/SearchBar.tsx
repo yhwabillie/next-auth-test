@@ -3,8 +3,10 @@ import { ProductType } from '@/app/actions/products/actions'
 import { useProductsStore } from '@/lib/stores/productsStore'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IoSearch } from 'react-icons/io5'
+import { AiFillCloseCircle } from 'react-icons/ai'
+import { LoadingSpinner } from './modules/LoadingSpinner'
 
 interface SearchBarProps {
   isScrolled: boolean
@@ -14,32 +16,60 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
   const router = useRouter()
   const [isFocus, setIsFocus] = useState(false)
   const [inputValue, setInputValue] = useState('') // 검색어를 상태로 관리
-  const { setSearchQuery, selectSearchResult, autoCompleteSuggestions, loading } = useProductsStore()
+  const [activeIndex, setActiveIndex] = useState(-2) // 활성화된 아이템의 인덱스 (-1은 기본값으로 검색창에 있는 값을 의미)
+  const { setSearchQuery, selectSearchResult, autoCompleteSuggestions, loading, setAutoCompleteSuggestions } = useProductsStore()
+
+  const searchBarRef = useRef<HTMLFieldSetElement>(null)
+  const originalInputValue = useRef(inputValue) // 사용자가 입력한 원래 검색어를 저장
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
+    originalInputValue.current = event.target.value // 원래 검색어 업데이트
     setSearchQuery(event.target.value)
+
+    setIsFocus(true) // 키보드 움직임이 감지되면 패널을 보이게 함
   }
 
-  const handleSearch = () => {
-    const query = inputValue.trim()
+  const handleSearch = (searchTerm?: string) => {
+    const query = searchTerm || inputValue.trim()
 
     if (query) {
       router.push(`/search?query=${query}`)
       setIsFocus(false)
-      setInputValue('') // 검색어 초기화
+      setAutoCompleteSuggestions([]) // 자동완성 결과 초기화
     }
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    setIsFocus(true)
+    if (!isFocus || loading) return
 
-    if (event.key === 'Enter') {
-      // 상태가 업데이트된 이후에 검색을 실행하도록 비동기 처리
-      setTimeout(() => {
-        handleSearch()
-        setInputValue('') // 검색어 초기화
-      }, 0)
+    switch (event.key) {
+      case 'ArrowDown':
+        setActiveIndex((prevIndex) => Math.min(prevIndex + 1, autoCompleteSuggestions.length - 1))
+        event.preventDefault()
+        break
+
+      case 'ArrowUp':
+        setActiveIndex((prevIndex) => (prevIndex <= 0 ? -1 : prevIndex - 1))
+        event.preventDefault()
+        break
+
+      case 'Enter':
+        if (activeIndex === -1) {
+          handleSearch()
+        } else {
+          handleSearch(autoCompleteSuggestions[activeIndex]?.name)
+        }
+        setIsFocus(false)
+        break
+
+      case 'Escape':
+        setAutoCompleteSuggestions([])
+        setTimeout(() => setIsFocus(false), 0)
+        break
+
+      default:
+        break
     }
   }
 
@@ -48,15 +78,35 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
     setSearchQuery(suggestion.name)
     setIsFocus(false)
     router.push(`/search?query=${suggestion.name}`)
-
-    setInputValue('') // 검색어 초기화
   }
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+      setIsFocus(false)
+    }
+  }
+
+  useEffect(() => {
+    setActiveIndex(-2)
+    setInputValue('')
+    setAutoCompleteSuggestions([])
+
+    if (isFocus) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isFocus])
+
   return (
-    <fieldset className="relative z-20">
+    <fieldset ref={searchBarRef} className="relative z-20">
       <div
         className={clsx(
-          'border-primary bg-primary relative mx-auto flex h-[38px] w-full items-center justify-between rounded-[19px] border-[1px] py-3 pl-6 pr-3 shadow-md md:w-[400px]',
+          'relative mx-auto flex h-[38px] w-full items-center justify-between rounded-[19px] border-[1px] border-primary bg-primary py-3 pl-6 pr-3 shadow-md md:w-[400px]',
           {
             '!border-white': isFocus,
             'bg-white': isScrolled,
@@ -66,17 +116,28 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
         <input
           value={inputValue}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocus(true)}
+          onClick={() => setIsFocus(true)}
           onChange={handleInputChange}
           type="search"
           title="검색어"
-          placeholder="제품, 카테고리 검색"
-          className={clsx('bg-primary w-[calc(100%-32px)] focus:outline-0', {
-            'placeholder:text-primary/50 text-primary bg-white': isScrolled,
+          placeholder="제품 이름, 카테고리 검색"
+          className={clsx('w-[calc(100%-32px)] bg-primary focus:outline-0', {
+            'bg-white text-primary placeholder:text-primary/50': isScrolled,
             'text-white placeholder:text-white': !isScrolled,
           })}
         />
-        <button aria-label="search button" type="button" className=" pl-3" onClick={handleSearch}>
+        {inputValue !== '' && (
+          <button
+            aria-label="delete search word button"
+            type="button"
+            onClick={() => {
+              setAutoCompleteSuggestions([]) // 검색어 초기화 시 자동완성 결과도 초기화
+            }}
+          >
+            <AiFillCloseCircle className="text-xl text-white" />
+          </button>
+        )}
+        <button aria-label="search button" type="button" className=" pl-3" onClick={() => handleSearch(inputValue)}>
           <IoSearch
             className={clsx('text-xl ', {
               'text-primary': isScrolled,
@@ -86,35 +147,42 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
         </button>
 
         {isFocus && (
-          <div className="absolute left-0 top-[40px] flex w-full flex-col justify-between rounded-2xl bg-gray-700 px-4 pb-2 pt-4 text-sm shadow-md">
-            <div className="min-h-[120px]">
-              {loading && <p className="text-white">Loading...</p>}
+          <div className="absolute left-0 top-[38px] flex w-full flex-col justify-between rounded-2xl bg-[#212325] py-4 text-sm shadow-md">
+            <div
+              className={clsx('flex items-center justify-center', {
+                'h-auto': autoCompleteSuggestions.length > 0 && !loading,
+                'min-h-[138px]': !(autoCompleteSuggestions.length > 0 && !loading),
+              })}
+            >
+              {loading && (
+                <div className="mx-auto w-fit pb-10">
+                  <LoadingSpinner />
+                </div>
+              )}
               {/* 자동완성 결과 */}
               {autoCompleteSuggestions.length > 0 && !loading && (
-                <ul className="pb-4">
+                <ul className="flex w-full flex-col self-start">
                   {autoCompleteSuggestions.map((suggestion, index) => (
                     <li
                       key={suggestion.idx}
                       onMouseDown={() => handleSuggestionClick(suggestion)} // 클릭 시 focus 유지
-                      className="autocomplete-item cursor-pointer p-1 text-white"
+                      className={clsx(
+                        'autocomplete-item flex cursor-pointer items-start justify-start gap-2 px-3 py-2 text-white hover:bg-gray-500',
+                        {
+                          'bg-gray-600': index === activeIndex, // 활성화된 항목에 스타일 적용
+                        },
+                      )}
                     >
-                      {suggestion.name}
+                      <IoSearch className="!text-xl" />
+                      <span className="inline-block w-[calc(100%-20px)]">{suggestion.name}</span>
                     </li>
                   ))}
                 </ul>
               )}
 
               {autoCompleteSuggestions.length === 0 && !loading && (
-                <p className="text-center font-semibold text-white">
-                  '제품이름' 혹은 '카테고리'를 검색하여 <br /> 자동완성기능을 이용해보세요
-                </p>
+                <p className="mb-5 text-center text-[14px] text-[#9da5b6]">제품 이름 혹은 카테고리를 검색하세요</p>
               )}
-            </div>
-
-            <div className="flex items-center justify-end border-t border-white/50 px-2 pt-2">
-              <button type="button" className="text-xs font-semibold text-white" onClick={() => setIsFocus(false)}>
-                닫기
-              </button>
             </div>
           </div>
         )}

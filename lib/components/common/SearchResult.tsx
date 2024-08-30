@@ -23,12 +23,6 @@ export const SearchResult = () => {
     (product) => product.name.toLowerCase().includes(query.toLowerCase()) || product.category.toLowerCase().includes(query.toLowerCase()),
   )
 
-  // 스켈레톤 애니메이션 설정
-  const skeletonVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: [0.5, 1, 0.5], transition: { duration: 1.5, repeat: Infinity } },
-  }
-
   const handleImageLoad = (index: number) => {
     setLoadedImages({ [index]: true }) // Zustand의 상태 업데이트
   }
@@ -44,7 +38,6 @@ export const SearchResult = () => {
     setSearchQuery(query)
 
     resetLoadedImages()
-    setSearchQuery('')
 
     const initialLoadedImages: Record<number, boolean> = {}
     results.forEach((_, index) => {
@@ -79,7 +72,7 @@ export const SearchResult = () => {
       <header className="mx-8 box-border rounded-lg bg-white px-8 py-4 drop-shadow-md md:mx-4">
         <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-700">🔎 검색 결과</h2>
         <p className="text-lg tracking-tight text-gray-600">
-          <span className="text-primary-dark mr-1 inline-block font-semibold">"{query}"</span>에 대한 검색 결과
+          <span className="text-primary-dark mr-1 inline-block font-semibold text-blue-600">"{query}"</span>에 대한 검색 결과
         </p>
       </header>
 

@@ -15,6 +15,7 @@ interface ProductsStore {
   //autoComplete
   searchQuery: string
   autoCompleteSuggestions: ProductType[]
+  setAutoCompleteSuggestions: (suggestions: ProductType[]) => void
   setSearchQuery: (query: string) => void
   fetchAutoCompleteSuggestions: (query: string) => void
   selectSearchResult: (selectedProduct: ProductType) => void
@@ -78,6 +79,7 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
   //auto complete
   searchQuery: '',
   autoCompleteSuggestions: [],
+  setAutoCompleteSuggestions: (suggestions) => set({ autoCompleteSuggestions: suggestions }),
   setSearchQuery: (query: string) => {
     set({ searchQuery: query })
     get().fetchAutoCompleteSuggestions(query) // 자동완성 결과 가져오기
@@ -311,8 +313,8 @@ export const useProductsStore = create<ProductsStore>((set, get) => ({
       const updatedFilteredData = get().filteredData.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
       const updatedSearchData = get().allData.map((item) => (item.idx === productIdx ? { ...item, isInCart: !item.isInCart } : item))
 
-      console.log('update', updatedData)
-      console.log('ufilter', updatedFilteredData)
+      // console.log('update', updatedData)
+      // console.log('ufilter', updatedFilteredData)
 
       set({ data: updatedData, filteredData: updatedFilteredData, allData: updatedSearchData })
 
