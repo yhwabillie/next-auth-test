@@ -74,17 +74,15 @@ export const VisualBanner = () => {
 
   const imageVariants = {
     // hidden: { scale: 1.2, transformOrigin: 'center center' },
-    hidden: { transform: 'scale(1)' },
-
-    visible: {
-      transform: 'scale(1.2)',
-      // transformOrigin: 'center center',
-      transition: {
-        type: 'tween',
-        ease: 'easeInOut',
-        duration: 0.5,
-      },
-    },
+    // visible: {
+    //   transform: 'scale(1.2)',
+    //   transformOrigin: 'center center',
+    //   transition: {
+    //     type: 'tween',
+    //     ease: 'easeInOut',
+    //     duration: 0.5,
+    //   },
+    // },
   }
 
   const panels = [
