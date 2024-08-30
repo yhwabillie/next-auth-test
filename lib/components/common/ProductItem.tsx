@@ -1,11 +1,11 @@
+import { motion } from 'framer-motion'
 import { ProductType } from '@/app/actions/products/actions'
 import { calculateDiscountedPrice } from '@/lib/utils'
 import { FaHeartCirclePlus } from 'react-icons/fa6'
 import { LuHeartOff } from 'react-icons/lu'
 import { TbShoppingBagMinus, TbShoppingBagPlus } from 'react-icons/tb'
 import Image from 'next/image'
-import React, { useState } from 'react'
-import clsx from 'clsx'
+import React from 'react'
 
 interface ProductItemProps {
   product: ProductType
@@ -15,12 +15,6 @@ interface ProductItemProps {
 }
 
 export const ProductItem = React.memo(({ product, index, handleClickAddProduct, handleClickAddWish }: ProductItemProps) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  const handleImageLoad = () => {
-    setIsLoaded(true)
-  }
-
   return (
     <li className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
       {/* 카테고리, 제목 */}
@@ -69,34 +63,20 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
         </ul>
       </div>
 
-      {/* 스켈레톤 */}
-      {!isLoaded && (
-        <div className="absolute left-0 top-0 z-10 box-border flex aspect-[2/3] h-full w-full flex-col justify-between overflow-hidden p-5 !shadow-md !shadow-gray-400">
-          <div className="space-y-2">
-            <div className="relative z-[1] mb-2 h-4 w-1/3 rounded bg-gray-400"></div>
-            <div className="relative z-[1] h-6 w-3/4 rounded bg-gray-300"></div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div className="space-y-2">
-              <div className="relative z-[1] mb-2 h-8 w-1/2 rounded bg-gray-400"></div>
-              <div className="relative z-[1] h-6 w-1/3 rounded bg-gray-300"></div>
-            </div>
-            <ul className="flex flex-col gap-3">
-              <li>
-                <div className="relative z-[1] h-10 w-10 rounded-full bg-gray-400"></div>
-              </li>
-              <li>
-                <div className="relative z-[1] h-10 w-10 rounded-full bg-gray-300"></div>
-              </li>
-            </ul>
-          </div>
-          <figure className="absolute left-0 top-0 z-0 h-full w-full rounded-lg bg-gray-200"></figure>
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-500 via-transparent to-gray-400"></div>
-        </div>
-      )}
-
       {/* 제품 배경 이미지 */}
-      <figure className={clsx('absolute inset-0 transition-opacity duration-500', { 'opacity-100': isLoaded, 'opacity-0': !isLoaded })}>
+      <motion.figure
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1 },
+        }}
+        initial="hidden"
+        animate="visible"
+        transition={{
+          ease: 'easeInOut',
+          duration: 0.4,
+        }}
+        className="absolute inset-0 transition-opacity duration-500"
+      >
         <Image
           src={product.imageUrl}
           alt={product.name}
@@ -105,9 +85,8 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
           priority={index === 0}
           loading={index === 0 ? 'eager' : 'lazy'}
-          onLoad={handleImageLoad}
         />
-      </figure>
+      </motion.figure>
 
       {/* 그라데이션 배경 */}
       <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/50 transition-all duration-300"></div>
