@@ -131,6 +131,7 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
             aria-label="delete search word button"
             type="button"
             onClick={() => {
+              setInputValue('')
               setAutoCompleteSuggestions([]) // 검색어 초기화 시 자동완성 결과도 초기화
             }}
           >
