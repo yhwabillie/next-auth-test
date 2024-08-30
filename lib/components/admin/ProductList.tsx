@@ -37,6 +37,24 @@ export const ProductList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
+  // 현재 페이지가 바뀔 때 체크박스 상태를 리셋
+  useEffect(() => {
+    setCheckedItems({})
+    if (checkAllRef.current) {
+      checkAllRef.current.checked = false
+    }
+    setIsAllChecked(false)
+  }, [currentPage])
+
+  // 카테고리가 바뀔 때 체크박스 상태를 리셋
+  useEffect(() => {
+    setCheckedItems({})
+    if (checkAllRef.current) {
+      checkAllRef.current.checked = false
+    }
+    setIsAllChecked(false)
+  }, [selectedCategory])
+
   /**
    * - checkedItems 객체 내의 값들이 모두 true인지 확인하여 모든 아이템이 체크되었는지 확인
    * - 모든 아이템이 체크되었으면 checkAllRef를 업데이트
