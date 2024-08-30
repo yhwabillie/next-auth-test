@@ -73,10 +73,12 @@ export const VisualBanner = () => {
   }
 
   const imageVariants = {
-    hidden: { scale: 1.2, transformOrigin: 'center center' },
+    // hidden: { scale: 1.2, transformOrigin: 'center center' },
+    hidden: { transform: 'scale(1)' },
+
     visible: {
-      scale: 1,
-      transformOrigin: 'center center',
+      transform: 'scale(1.2)',
+      // transformOrigin: 'center center',
       transition: {
         type: 'tween',
         ease: 'easeInOut',
@@ -216,40 +218,30 @@ export const VisualBanner = () => {
                 </motion.p>
               </motion.div>
 
-              {/* 이미지 로드 전 또는 로드 실패 시 플레이스홀더 표시 */}
-              {!imageLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-accent">
-                  {!imageError ? (
-                    <LoadingSpinner /> // 로딩 중일 때 스피너
-                  ) : (
-                    <p className="text-sm text-gray-500">Image not available</p> // 로드 실패 시 대체 텍스트
-                  )}
-                </div>
-              )}
-
-              <motion.picture
+              <motion.div
                 variants={imageVariants}
                 initial="hidden"
                 animate={isActive ? 'visible' : 'hidden'}
-                className={`absolute inset-0 transition-opacity duration-500`}
+                className="absolute inset-0"
+                transition={{
+                  duration: 0.5,
+                }}
               >
-                <source media="(max-width: 767px)" srcSet={item.mobile_image} />
-                <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
-                <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
-                <Image
-                  src={item.desktop_image}
-                  alt={item.title}
-                  width={960}
-                  height={328}
-                  className="h-full w-full object-cover"
-                  onLoad={() => setImageLoaded(true)}
-                  onError={() => {
-                    setImageError(true)
-                    setImageLoaded(true)
-                  }}
-                  priority={index === 0}
-                />
-              </motion.picture>
+                <picture className="absolute inset-0">
+                  <source media="(max-width: 767px)" srcSet={item.mobile_image} />
+                  <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
+                  <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
+                  <Image
+                    src={item.desktop_image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
+                    className="object-cover"
+                    priority={index === 0}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                </picture>
+              </motion.div>
             </div>
           )
         })}
