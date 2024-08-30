@@ -89,22 +89,30 @@ export const VisualBanner = () => {
     {
       title: '스포츠/레저 클리어런스',
       description: '인기 요가복 최대 70% 할인! 한정수량 빠르게 겟하세요.',
-      image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-1.webp`,
+      mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-1.webp`,
+      tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-1.webp`,
+      desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-1.webp`,
     },
     {
       title: '추석 맞이 가족 나들이 특가',
       description: '가족과 함께하는 황금연휴! 여행 패키지 반값 세일!',
-      image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-2.webp`,
+      mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-2.webp`,
+      tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-2.webp`,
+      desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-2.webp`,
     },
     {
       title: '연휴 여행 준비 끝!',
       description: '추석 연휴, 놓치면 후회할 여행 특가상품 모음전!',
-      image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-3.webp`,
+      mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-3.webp`,
+      tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-3.webp`,
+      desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-3.webp`,
     },
     {
       title: '추석 선물 대전',
       description: '가족, 친구, 소중한 이들을 위한 특별한 추석 선물 추천!',
-      image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
+      mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-4.webp`,
+      tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-4.webp`,
+      desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
     },
   ]
 
@@ -219,14 +227,17 @@ export const VisualBanner = () => {
                 </div>
               )}
 
-              <motion.figure
+              <motion.picture
                 variants={imageVariants}
                 initial="hidden"
                 animate={isActive ? 'visible' : 'hidden'}
                 className={`absolute inset-0 transition-opacity duration-500`}
               >
+                <source media="(max-width: 767px)" srcSet={item.mobile_image} />
+                <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
+                <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
                 <Image
-                  src={item.image}
+                  src={item.desktop_image}
                   alt={item.title}
                   width={960}
                   height={328}
@@ -238,7 +249,7 @@ export const VisualBanner = () => {
                   }}
                   priority={index === 0}
                 />
-              </motion.figure>
+              </motion.picture>
             </div>
           )
         })}
