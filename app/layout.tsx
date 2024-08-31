@@ -5,6 +5,7 @@ import { Toaster } from 'sonner'
 import './globals.css'
 import { FramerMotionProvider } from '@/lib/components/common/FramerMotionProvider'
 import { ModalProvider } from '@/lib/components/common/provider/ModalProvider'
+import { PreloadResources } from './preload-resources'
 
 export const metadata: Metadata = {
   title: 'Next Auth Test',
@@ -17,13 +18,16 @@ interface RootLayoutType {
 
 export default async function RootLayout({ children }: Readonly<RootLayoutType>) {
   return (
-    <html lang="ko">
-      <AuthProvider>
-        <Toaster position="top-center" theme="light" richColors closeButton />
-        <Header />
-        <FramerMotionProvider>{children}</FramerMotionProvider>
-        <ModalProvider />
-      </AuthProvider>
-    </html>
+    <>
+      <PreloadResources />
+      <html lang="ko">
+        <AuthProvider>
+          <Toaster position="top-center" theme="light" richColors closeButton />
+          <Header />
+          <FramerMotionProvider>{children}</FramerMotionProvider>
+          <ModalProvider />
+        </AuthProvider>
+      </html>
+    </>
   )
 }
