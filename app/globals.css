@@ -2,6 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 700;
+  font-display: swap;
+  src:
+    local('Pretendard Bold'),
+    url(/fonts/Pretendard-Bold.subset.woff2) format('woff2'),
+    url(/fonts/Pretendard-Bold.subset.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-display: swap;
+  src:
+    local('Pretendard SemiBold'),
+    url(/fonts/Pretendard-SemiBold.subset.woff2) format('woff2'),
+    url(/fonts/Pretendard-SemiBold.subset.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-display: swap;
+  src:
+    local('Pretendard Medium'),
+    url(/fonts/Pretendard-Medium.subset.woff2) format('woff2'),
+    url(/fonts/Pretendard-Medium.subset.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local('Pretendard Regular'),
+    url(/fonts/Pretendard-Regular.subset.woff2) format('woff2'),
+    url(/fonts/Pretendard-Regular.subset.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Matemasie';
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local('Matemasie Regular'),
+    url(/fonts/Matemasie-Regular.ttf) format('truetype'); /* MIME type은 truetype으로 변경 */
+}
+
+html,
+body {
+  font-family: 'Pretendard';
+  font-weight: 400;
+}
+
 input[type='checkbox'] {
   -webkit-appearance: none;
   -moz-appearance: none;

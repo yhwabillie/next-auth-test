@@ -11,6 +11,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        matemasie: ['Matemasie', 'sans-serif'],
+      },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0)' },
@@ -30,21 +33,6 @@ module.exports = {
         accent: {
           DEFAULT: '#333333', // 짙은회색
         },
-        // background: {
-        //   light: '#F9FAFB', // 밝은 회색
-        //   DEFAULT: '#F3F4F6', // 기본 배경색
-        //   dark: '#E5E7EB', // 어두운 회색
-        // },
-        // info: {
-        //   light: '#D1FAE5', // 밝은 민트색
-        //   DEFAULT: '#10B981', // 민트색
-        //   dark: '#047857', // 어두운 민트색
-        // },
-        // danger: {
-        //   light: '#FECACA', // 밝은 붉은색
-        //   DEFAULT: '#DC2626', // 붉은색
-        //   dark: '#B91C1C', // 어두운 붉은색
-        // },
       },
     },
   },

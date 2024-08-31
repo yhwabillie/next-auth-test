@@ -6,19 +6,8 @@ import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdo
 import { UserNavItem } from '../modules/UserNavItem'
 import { SearchBar } from '../SearchBar'
 import { BsShop } from 'react-icons/bs'
-import localFont from 'next/font/local'
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
-
-const Matemasie_Regular = localFont({
-  src: [
-    {
-      path: '../../../../public/fonts/Matemasie-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-})
 
 export enum TooltipTypes {
   NONE = 'NONE',
@@ -75,7 +64,7 @@ export const Header = () => {
                       'text-white': isScrolled,
                     })}
                   />
-                  <span className={`${Matemasie_Regular.className} mt-[-5px] hidden lg:block`}>Shopping</span>
+                  <span className={`font-matemasie mt-[-5px] hidden lg:block`}>Shopping</span>
                 </Link>
               </h1>
             </li>
