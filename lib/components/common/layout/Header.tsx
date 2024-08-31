@@ -51,7 +51,7 @@ export const Header = () => {
         'bg-primary/80 shadow-inner': isScrolled,
       })}
     >
-      <div className="mx-auto flex h-full w-full items-center justify-between px-5 xl:w-[1200px]">
+      <div className="mx-auto flex h-full w-full items-center justify-between px-2 md:px-5 xl:w-[1200px]">
         <ul className="flex flex-row gap-3">
           <li>
             <h1>
@@ -76,7 +76,14 @@ export const Header = () => {
         <SearchBar isScrolled={isScrolled} />
 
         <div className="relative lg:hidden">
-          <HamburgerMenu sessionUser={session?.user} isIndivisual={isIndivisual} isAdmin={isAdmin} isAuth={isAuth} isGuest={isGuest} />
+          <HamburgerMenu
+            sessionUser={session?.user}
+            isIndivisual={isIndivisual}
+            isAdmin={isAdmin}
+            isAuth={isAuth}
+            isGuest={isGuest}
+            isScrolled={isScrolled}
+          />
         </div>
 
         <nav className="hidden w-fit items-center justify-between lg:flex">
