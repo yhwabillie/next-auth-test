@@ -250,15 +250,28 @@ export const VisualBanner = () => {
                 <source media="(max-width: 767px)" srcSet={item.mobile_image} />
                 <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
                 <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
-                <Image
-                  src={item.desktop_image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
-                  className="object-cover"
-                  priority={index === 0}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                />
+
+                {isVisible && isActive ? (
+                  <Image
+                    src={item.desktop_image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
+                    className="object-cover"
+                    priority={index === 0} // 첫번째 이미지에 우선순위 설정
+                    loading="eager" // isActive일 때 즉시 로드
+                  />
+                ) : (
+                  <Image
+                    src={item.desktop_image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
+                    className="object-cover"
+                    priority={index === 0} // 첫번째 이미지에 우선순위 설정
+                    loading="eager" // isActive일 때 즉시 로드
+                  />
+                )}
               </motion.picture>
             </div>
           )
