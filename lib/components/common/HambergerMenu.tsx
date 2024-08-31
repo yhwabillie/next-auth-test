@@ -27,6 +27,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
   return (
     <>
       <button
+        aria-label="sidemenu button"
         className="relative z-50 flex h-6 w-6 cursor-pointer flex-col items-center justify-center space-y-1"
         onClick={() => {
           setIsOpen(!isOpen)
