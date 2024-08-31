@@ -8,10 +8,5 @@ export function PreloadResources() {
     fetchPriority: 'high',
   })
 
-  ReactDOM.preload('styles/globals.css', {
-    as: 'style',
-    fetchPriority: 'high',
-  })
-
   return null
 }
