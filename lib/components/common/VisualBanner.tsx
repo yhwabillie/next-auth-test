@@ -15,8 +15,6 @@ export const VisualBanner = () => {
   const [isAnimating, setIsAnimating] = useState(false) // 애니메이션 상태 관리
   const [isAutoPlaying, setIsAutoPlaying] = useState(false) // 초기값을 false로 설정
   const [currentIndex, setCurrentIndex] = useState(0) // 현재 활성화된 패널 인덱스
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
 
   const totalPanels = 4 // 전체 패널 갯수
 
@@ -74,26 +72,16 @@ export const VisualBanner = () => {
 
   const imageVariants = {
     hidden: {
-      opacity: 0,
+      filter: 'blur(3px)',
     },
     visible: {
-      opacity: 1,
+      filter: 'blur(0px)',
     },
     transition: {
       type: 'tween',
       ease: 'easeInOut',
       duration: 0.5,
     },
-    // hidden: { scale: 1.2, transformOrigin: 'center center' },
-    // visible: {
-    //   transform: 'scale(1.2)',
-    //   transformOrigin: 'center center',
-    //   transition: {
-    //     type: 'tween',
-    //     ease: 'easeInOut',
-    //     duration: 0.5,
-    //   },
-    // },
   }
 
   const panels = [
@@ -126,20 +114,6 @@ export const VisualBanner = () => {
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
     },
   ]
-
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const updateVisibility = () => {
-      const screenWidth = window.innerWidth
-      setIsVisible(screenWidth < 1280)
-    }
-
-    updateVisibility()
-    window.addEventListener('resize', updateVisibility)
-
-    return () => window.removeEventListener('resize', updateVisibility)
-  }, [])
 
   return (
     <div className="sticky top-0 mx-auto block w-full min-w-[460px] max-w-full md:relative">
@@ -241,38 +215,23 @@ export const VisualBanner = () => {
                 </motion.p>
               </motion.div>
 
-              <motion.picture
-                variants={isVisible ? imageVariants : {}}
-                initial="hidden"
-                animate={isActive ? 'visible' : 'hidden'}
-                className="absolute inset-0"
-              >
-                <source media="(max-width: 767px)" srcSet={item.mobile_image} />
+              <picture>
+                {/* <source media="(max-width: 767px)" srcSet={item.mobile_image} />
                 <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
-                <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
+                <source media="(min-width: 1280px)" srcSet={item.desktop_image} /> */}
 
-                {isVisible && isActive ? (
+                <motion.div variants={imageVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0">
                   <Image
-                    src={item.desktop_image}
+                    src={item.mobile_image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
+                    sizes="(max-width: 767px) 100vw"
                     className="object-cover"
                     priority={index === 0} // 첫번째 이미지에 우선순위 설정
-                    loading="eager" // isActive일 때 즉시 로드
+                    loading={index === 0 ? 'eager' : 'lazy'} // isActive일 때 즉시 로드
                   />
-                ) : (
-                  <Image
-                    src={item.desktop_image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
-                    className="object-cover"
-                    priority={index === 0} // 첫번째 이미지에 우선순위 설정
-                    loading="eager" // isActive일 때 즉시 로드
-                  />
-                )}
-              </motion.picture>
+                </motion.div>
+              </picture>
             </div>
           )
         })}
