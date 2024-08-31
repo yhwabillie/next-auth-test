@@ -225,10 +225,10 @@ export const VisualBanner = () => {
                     src={item.desktop_image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 767px) 100vw"
+                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 100vw"
                     className="object-cover"
-                    priority={index === 0} // 첫번째 이미지에 우선순위 설정
-                    loading={index === 0 ? 'eager' : 'lazy'} // isActive일 때 즉시 로드
+                    priority={isActive}
+                    loading={isActive ? 'eager' : 'lazy'}
                   />
                 </motion.div>
               </picture>
