@@ -36,24 +36,27 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
         }}
       >
         <div
-          className={clsx('h-1 w-6 transform rounded-md bg-primary shadow-md transition duration-300 ease-in-out', {
+          className={clsx('h-1 w-6 transform rounded-md shadow-md transition duration-300 ease-in-out', {
             'translate-y-[5px] rotate-45 !bg-gray-700': isOpen,
-            '!bg-white': isScrolled,
+            'bg-white': isScrolled,
+            'bg-primary': !isScrolled,
           })}
         />
 
         <div
-          className={clsx('h-1 w-6 rounded-md bg-primary shadow-md transition duration-300 ease-in-out', {
+          className={clsx('h-1 w-6 rounded-md shadow-md transition duration-300 ease-in-out', {
             'opacity-0': isOpen,
             'opacity-100': !isOpen,
-            '!bg-white': isScrolled,
+            'bg-white': isScrolled,
+            'bg-primary': !isScrolled,
           })}
         />
 
         <div
-          className={clsx('h-1 w-6 transform rounded-md bg-primary shadow-md transition duration-300 ease-in-out', {
+          className={clsx('h-1 w-6 transform rounded-md shadow-md transition duration-300 ease-in-out', {
             '-translate-y-[10px] -rotate-45 !bg-gray-700': isOpen,
-            '!bg-white': isScrolled,
+            'bg-white': isScrolled,
+            'bg-primary': !isScrolled,
           })}
         />
       </button>
