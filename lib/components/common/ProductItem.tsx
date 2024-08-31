@@ -19,9 +19,9 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
     <li className="group relative box-border flex aspect-[2/3] flex-col justify-between overflow-hidden p-5">
       {/* 카테고리, 제목 */}
       <div>
-        <p className="relative z-[1] mb-2 text-sm font-semibold text-white/80 transition-all duration-300">{product.category}</p>
+        <p className="relative z-[1] mb-2 text-xs font-semibold text-white/80 transition-all duration-300 sm:text-sm">{product.category}</p>
         <p className="relative z-[1] flex flex-nowrap overflow-hidden">
-          <span className="inline-block whitespace-nowrap text-lg tracking-tight text-white group-hover:animate-marquee">
+          <span className="inline-block whitespace-nowrap text-sm tracking-tight text-white group-hover:animate-marquee sm:text-lg">
             {product.name}&nbsp;&nbsp;&nbsp;&nbsp;
             {product.name}&nbsp;&nbsp;&nbsp;&nbsp;
           </span>
@@ -32,13 +32,13 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
         <div className="relative z-[1]">
           {product.discount_rate !== 0 ? (
             <>
-              <p className="text-4xl font-bold tracking-tight text-white drop-shadow-md">{`${product.discount_rate * 100}%`}</p>
-              <p className="text-lg font-normal tracking-tight text-white drop-shadow-md">
+              <p className="text-2xl font-bold tracking-tight text-white drop-shadow-md sm:text-4xl">{`${product.discount_rate * 100}%`}</p>
+              <p className="text-md font-normal tracking-tight text-white drop-shadow-md sm:text-lg">
                 {calculateDiscountedPrice(product.original_price, product.discount_rate)}
               </p>
             </>
           ) : (
-            <p className="text-lg font-normal tracking-tight text-white drop-shadow-md">{`${product.original_price.toLocaleString('ko-KR')}원`}</p>
+            <p className="text-md font-normal tracking-tight text-white drop-shadow-md sm:text-lg">{`${product.original_price.toLocaleString('ko-KR')}원`}</p>
           )}
         </div>
         <ul className="relative z-[1] flex h-fit w-fit flex-col gap-3">
