@@ -216,13 +216,13 @@ export const VisualBanner = () => {
               </motion.div>
 
               <picture>
-                {/* <source media="(max-width: 767px)" srcSet={item.mobile_image} />
+                <source media="(max-width: 767px)" srcSet={item.mobile_image} />
                 <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
-                <source media="(min-width: 1280px)" srcSet={item.desktop_image} /> */}
+                <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
 
                 <motion.div variants={imageVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0">
                   <Image
-                    src={item.mobile_image}
+                    src={item.desktop_image}
                     alt={item.title}
                     fill
                     sizes="(max-width: 767px) 100vw"
