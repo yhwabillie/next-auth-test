@@ -89,7 +89,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
                   <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                     <FaShoppingCart className="text-lg" />
@@ -106,7 +106,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
                   <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                     <FaUserCog className="text-lg" />
@@ -123,7 +123,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                       setIsOpen(false)
                     }, 0)
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
                   <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                     <LuLogOut className="text-lg" />
@@ -159,9 +159,14 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
-                  <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
+                  <span className="relative box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
+                    {sessionUser && sessionUser.cartlist_length! > 0 && (
+                      <span className="absolute right-[-10px] top-[-6px] box-border block h-6 w-6 rounded-[50%] bg-red-400 text-center text-xs font-semibold leading-[24px] text-white shadow-inner">
+                        {sessionUser?.cartlist_length}
+                      </span>
+                    )}
                     <FaShoppingCart className="text-lg" />
                   </span>
                   <span className="inline-block w-[calc(100%-(24px+0.5rem))] font-semibold">마이쇼핑</span>
@@ -176,7 +181,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
                   <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                     <FaUserCog className="text-lg" />
@@ -193,7 +198,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                       setIsOpen(false)
                     }, 0)
                   }}
-                  className="flex w-full items-center gap-2"
+                  className="flex w-full items-center gap-3"
                 >
                   <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                     <LuLogOut className="text-lg" />
@@ -217,7 +222,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                   const currentRight = sideRef.current.style.right
                   sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                 }}
-                className="flex w-full items-center gap-2"
+                className="flex w-full items-center gap-3"
               >
                 <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                   <FaUserCog className="text-lg" />
@@ -234,7 +239,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                   const currentRight = sideRef.current.style.right
                   sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
                 }}
-                className="flex w-full items-center gap-2"
+                className="flex w-full items-center gap-3"
               >
                 <span className="box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg ">
                   <FaUserCog className="text-lg" />
