@@ -227,8 +227,9 @@ export const VisualBanner = () => {
                     fill
                     sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 100vw"
                     className="object-cover"
-                    priority={isActive}
-                    loading={isActive ? 'eager' : 'lazy'}
+                    // priority={isActive}
+                    // loading={isActive ? 'eager' : 'lazy'}
+                    loading="lazy"
                     quality={75}
                   />
                 </motion.div>
