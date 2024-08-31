@@ -91,6 +91,7 @@ export const VisualBanner = () => {
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-1.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-1.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-1.webp`,
+      banner_alt: '요가하는 사람의 모습 배너 이미지',
     },
     {
       title: '추석 맞이 가족 나들이 특가',
@@ -98,6 +99,7 @@ export const VisualBanner = () => {
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-2.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-2.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-2.webp`,
+      banner_alt: '관광지 바다 관경 배너 이미지',
     },
     {
       title: '연휴 여행 준비 끝!',
@@ -105,6 +107,7 @@ export const VisualBanner = () => {
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-3.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-3.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-3.webp`,
+      banner_alt: '방울 토마토가 여러개 열려있는 모습 배너 이미지',
     },
     {
       title: '추석 선물 대전',
@@ -112,6 +115,7 @@ export const VisualBanner = () => {
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-4.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-4.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
+      banner_alt: '애플 스토어 로고 배너 이미지',
     },
   ]
 
@@ -223,14 +227,13 @@ export const VisualBanner = () => {
                 <motion.div variants={imageVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0">
                   <Image
                     src={item.desktop_image}
-                    alt={item.title}
+                    alt={item.banner_alt}
                     fill
-                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 100vw"
+                    sizes="(max-width: 480px) 100vw, (max-width: 767px) 80vw, (max-width: 1024px) 60vw, (max-width: 1279px) 50vw, 33vw"
                     className="object-cover"
-                    // priority={isActive}
-                    // loading={isActive ? 'eager' : 'lazy'}
-                    loading="lazy"
-                    quality={75}
+                    priority={index === 0}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    quality={70}
                   />
                 </motion.div>
               </picture>

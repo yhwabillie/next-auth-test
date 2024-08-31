@@ -1,5 +1,4 @@
 'use client '
-
 import ReactDOM from 'react-dom'
 
 export function PreloadResources() {
@@ -9,8 +8,8 @@ export function PreloadResources() {
     fetchPriority: 'high',
   })
 
-  ReactDOM.preload('https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/banners/banner-1.webp', {
-    as: 'image',
+  ReactDOM.preload('styles/globals.css', {
+    as: 'style',
     fetchPriority: 'high',
   })
 
