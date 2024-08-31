@@ -6,8 +6,12 @@ import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdo
 import { UserNavItem } from '../modules/UserNavItem'
 import { SearchBar } from '../SearchBar'
 import { BsShop } from 'react-icons/bs'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { HiMenuAlt1 } from 'react-icons/hi'
+import { GoSignIn } from 'react-icons/go'
+import { FaUserPen } from 'react-icons/fa6'
 import clsx from 'clsx'
+import { HamburgerMenu } from '../HambergerMenu'
 
 export enum TooltipTypes {
   NONE = 'NONE',
@@ -43,37 +47,39 @@ export const Header = () => {
 
   return (
     <header
-      className={clsx('sticky top-0 z-40 box-border h-[60px] min-w-[460px] backdrop-blur-md transition-colors duration-300', {
+      className={clsx('sticky top-0 z-40 box-border h-[60px] min-w-[calc(360px-20px)] backdrop-blur-md transition-colors duration-300', {
         'bg-primary/80 shadow-inner': isScrolled,
       })}
     >
       <div className="mx-auto flex h-full w-full items-center justify-between px-5 xl:w-[1200px]">
-        <nav className="flex flex-row gap-3">
-          <ul className="flex flex-row gap-3 lg:w-[165px]">
-            <li>
-              <h1>
-                <Link
-                  aria-label="home"
-                  href="/"
-                  className={clsx('flex items-center gap-2 text-accent transition-colors duration-300', {
+        <ul className="flex flex-row gap-3">
+          <li>
+            <h1>
+              <Link
+                aria-label="home"
+                href="/"
+                className={clsx('flex items-center gap-2 text-accent transition-colors duration-300', {
+                  'text-white': isScrolled,
+                })}
+              >
+                <BsShop
+                  className={clsx('text-2xl text-primary', {
                     'text-white': isScrolled,
                   })}
-                >
-                  <BsShop
-                    className={clsx('text-2xl text-primary', {
-                      'text-white': isScrolled,
-                    })}
-                  />
-                  <span className={`font-matemasie mt-[-5px] hidden lg:block`}>Shopping</span>
-                </Link>
-              </h1>
-            </li>
-          </ul>
-        </nav>
+                />
+                <span className={`font-matemasie mt-[-5px] hidden lg:block`}>Shopping</span>
+              </Link>
+            </h1>
+          </li>
+        </ul>
 
         <SearchBar isScrolled={isScrolled} />
 
-        <nav className="flex w-fit items-center justify-between">
+        <div className="relative lg:hidden">
+          <HamburgerMenu sessionUser={session?.user} isIndivisual={isIndivisual} isAdmin={isAdmin} isAuth={isAuth} isGuest={isGuest} />
+        </div>
+
+        <nav className="hidden w-fit items-center justify-between lg:flex">
           <div className="ml-auto flex items-center gap-3">
             {isIndivisual && (
               <UserNavItem sessionUser={session.user} label="마이쇼핑" path="/my-shopping" type={TooltipTypes.MY_SHOP} isScrolled={isScrolled}>

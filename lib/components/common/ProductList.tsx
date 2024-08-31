@@ -111,13 +111,13 @@ export const ProductList = () => {
   )
 
   return (
-    <div className="relative z-10 mx-auto mt-4 box-border min-w-[460px] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-lg md:static md:z-0 md:mt-0 md:w-auto md:bg-transparent">
+    <div className="relative z-10 mx-auto mt-4 box-border min-w-[calc(360px-20px)] rounded-t-[2rem] bg-white pb-4 pt-4 drop-shadow-2xl md:static md:z-0 md:mt-0 md:w-auto md:bg-transparent">
       {/* 카테고리 필터 */}
       <Category setCategoryFilter={setCategoryFilter} selectedCategory={selectedCategory} />
 
       {/* 상품 리스트 */}
       <section className="container box-border w-full bg-white sm:mx-auto md:mt-4 md:bg-transparent">
-        <ul className="m-4 grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
+        <ul className="mx-4 my-4 box-border grid grid-cols-2 sm:grid-cols-3 md:m-0 md:grid-cols-4 xl:grid-cols-5">
           {filteredData.map((product, index) => (
             <ProductItem
               key={product.idx}

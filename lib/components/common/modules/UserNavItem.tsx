@@ -10,8 +10,8 @@ interface UserNavItemProps {
   children: React.ReactNode
   label: string
   path: string
-  type: TooltipTypes
-  isScrolled: boolean
+  type?: TooltipTypes
+  isScrolled?: boolean
 }
 
 export const UserNavItem = ({ sessionUser, children, label, path, type, isScrolled }: UserNavItemProps) => {
@@ -24,8 +24,16 @@ export const UserNavItem = ({ sessionUser, children, label, path, type, isScroll
       <Link
         aria-label={label}
         href={path}
-        onMouseEnter={() => showTooltip(type)}
-        onMouseLeave={() => closeTooltip()}
+        onMouseEnter={() => {
+          if (type) {
+            showTooltip(type)
+          }
+        }}
+        onMouseLeave={() => {
+          if (type) {
+            closeTooltip()
+          }
+        }}
         className={clsx(
           'box-border flex h-[40px] w-[40px] items-center justify-center rounded-md bg-accent text-center text-sm text-white shadow-lg transition-colors duration-300',
           {

@@ -32,7 +32,7 @@ export const Category = ({ setCategoryFilter, selectedCategory }: CategoryProps)
   return (
     <>
       <h3 className="sr-only">상품 카테고리</h3>
-      <ul className="mx-auto box-border grid grid-cols-6 gap-3 px-8 pt-10 md:w-fit md:grid-cols-8 md:rounded-lg md:bg-white md:p-5 lg:grid-cols-10 xl:grid-cols-12">
+      <ul className="mx-auto box-border grid grid-cols-6 gap-3 px-8 pt-5 md:w-fit md:grid-cols-8 md:rounded-lg md:bg-white md:p-5 lg:grid-cols-10 xl:grid-cols-12">
         {categories.map((category, index) => (
           <li key={index} className="mx-auto w-fit">
             <button onClick={() => setCategoryFilter(category.name)}>

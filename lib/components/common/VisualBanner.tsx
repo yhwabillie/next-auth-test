@@ -2,10 +2,9 @@
 import { IndexPlayBtn } from './IndexPlayBtn'
 import { PagingBtn } from './PagingBtn'
 import { AutoPlay } from '@egjs/flicking-plugins'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { LoadingSpinner } from './modules/LoadingSpinner'
 import Flicking from '@egjs/react-flicking'
 import '@egjs/react-flicking/dist/flicking.css'
 
@@ -52,7 +51,6 @@ export const VisualBanner = () => {
         ease: 'easeInOut',
         duration: 0.3, // 자연스러운 전환을 위한 속도
       },
-      // delay: 1,
     },
   }
 
@@ -86,24 +84,24 @@ export const VisualBanner = () => {
 
   const panels = [
     {
-      title: '스포츠/레저 클리어런스',
-      description: '인기 요가복 최대 70% 할인! 한정수량 빠르게 겟하세요.',
+      title: '스포츠 / 레저 <br /> 클리어런스',
+      description: '인기 요가복 최대 70% 할인! <br /> 한정수량 빠르게 겟하세요.',
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-1.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-1.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-1.webp`,
       banner_alt: '요가하는 사람의 모습 배너 이미지',
     },
     {
-      title: '추석 맞이 가족 나들이 특가',
-      description: '가족과 함께하는 황금연휴! 여행 패키지 반값 세일!',
+      title: '추석 맞이 <br/> 가족 나들이 특가',
+      description: '가족과 함께하는 황금연휴! <br/> 여행 패키지 반값 세일!',
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-2.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-2.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-2.webp`,
       banner_alt: '관광지 바다 관경 배너 이미지',
     },
     {
-      title: '연휴 여행 준비 끝!',
-      description: '추석 연휴, 놓치면 후회할 여행 특가상품 모음전!',
+      title: '연휴 여행 <br/> 준비 끝!',
+      description: '추석 연휴, 놓치면 후회할 <br/> 여행 특가상품 모음전!',
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-3.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-3.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-3.webp`,
@@ -111,7 +109,7 @@ export const VisualBanner = () => {
     },
     {
       title: '추석 선물 대전',
-      description: '가족, 친구, 소중한 이들을 위한 특별한 추석 선물 추천!',
+      description: '가족, 친구, 소중한 이들을 위한 <br/> 특별한 추석 선물 추천!',
       mobile_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-mobile-4.webp`,
       tablet_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-tablet-4.webp`,
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
@@ -120,7 +118,7 @@ export const VisualBanner = () => {
   ]
 
   return (
-    <div className="sticky top-0 mx-auto block w-full min-w-[460px] max-w-full md:relative">
+    <div className="sticky top-0 mx-auto block w-full min-w-[calc(360px-20px)] max-w-full md:relative">
       {/* CSS 인라인화 */}
       <style jsx>{`
         .flicking-panel {
@@ -132,7 +130,6 @@ export const VisualBanner = () => {
           width: 66.666667%;
           max-width: 960px;
           overflow: hidden;
-          border-radius: 0.75rem;
           background-color: #6b7280; /* bg-gray-500 */
           padding: 3rem 15%;
           font-size: 1.5rem;
@@ -141,7 +138,7 @@ export const VisualBanner = () => {
           text-align: center;
         }
 
-        @media (min-width: 640px) {
+        @media (min-width: 360px) {
           .flicking-panel {
             padding-left: 10%;
             padding-right: 10%;
@@ -151,8 +148,8 @@ export const VisualBanner = () => {
         @media (min-width: 768px) {
           .flicking-panel {
             aspect-ratio: 3 / 2;
-            padding-left: 10%;
-            padding-right: 10%;
+            padding-left: 13%;
+            padding-right: 13%;
           }
         }
 
@@ -206,17 +203,21 @@ export const VisualBanner = () => {
           const isActive = currentIndex === index
 
           return (
-            <div key={index} className="flicking-panel">
+            <div key={index} className="flicking-panel rounded-2xl">
               {/* 그라데이션 배경 추가 */}
               <div className="absolute inset-0 z-[1] bg-gradient-to-t from-transparent via-black/50 to-black/50"></div>
 
               <motion.div variants={containerVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="relative z-[1]">
-                <motion.h2 variants={itemVariants} className="block text-2xl font-bold drop-shadow-md md:text-3xl">
-                  {item.title}
-                </motion.h2>
-                <motion.p variants={itemVariants} className="mt-2 text-sm drop-shadow-md md:text-lg">
-                  {item.description}
-                </motion.p>
+                <motion.h2
+                  variants={itemVariants}
+                  className="mb-2 block text-left font-bold drop-shadow-md sm:mb-5 sm:text-4xl sm:leading-[50px] md:mb-4"
+                  dangerouslySetInnerHTML={{ __html: item.title }}
+                />
+                <motion.p
+                  variants={itemVariants}
+                  className="text-left text-[14px] drop-shadow-md sm:text-[18px] md:text-lg"
+                  dangerouslySetInnerHTML={{ __html: item.description }}
+                />
               </motion.div>
 
               <picture>
@@ -232,8 +233,8 @@ export const VisualBanner = () => {
                     sizes="(max-width: 480px) 100vw, (max-width: 767px) 80vw, (max-width: 1024px) 60vw, (max-width: 1279px) 50vw, 33vw"
                     className="object-cover"
                     priority={index === 0}
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    quality={70}
+                    loading={'eager'}
+                    quality={80}
                   />
                 </motion.div>
               </picture>
