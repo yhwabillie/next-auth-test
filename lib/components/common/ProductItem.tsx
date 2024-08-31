@@ -64,29 +64,17 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
       </div>
 
       {/* 제품 배경 이미지 */}
-      <motion.figure
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1 },
-        }}
-        initial="hidden"
-        animate="visible"
-        transition={{
-          ease: 'easeInOut',
-          duration: 0.4,
-        }}
-        className="absolute inset-0 transition-opacity duration-500"
-      >
+      <picture className="absolute inset-0 transition-opacity duration-500">
         <Image
           src={product.imageUrl}
           alt={product.name}
           width={400}
           height={600}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
-          priority={index === 0}
-          loading={index === 0 ? 'eager' : 'lazy'}
+          // priority={index === 0}
+          // loading={index === 0 ? 'eager' : 'lazy'}
         />
-      </motion.figure>
+      </picture>
 
       {/* 그라데이션 배경 */}
       <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/60 via-transparent to-black/50 transition-all duration-300"></div>

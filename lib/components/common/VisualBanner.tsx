@@ -2,7 +2,7 @@
 import { IndexPlayBtn } from './IndexPlayBtn'
 import { PagingBtn } from './PagingBtn'
 import { AutoPlay } from '@egjs/flicking-plugins'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { LoadingSpinner } from './modules/LoadingSpinner'
@@ -73,6 +73,17 @@ export const VisualBanner = () => {
   }
 
   const imageVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+    },
+    transition: {
+      type: 'tween',
+      ease: 'easeInOut',
+      duration: 0.5,
+    },
     // hidden: { scale: 1.2, transformOrigin: 'center center' },
     // visible: {
     //   transform: 'scale(1.2)',
@@ -115,6 +126,20 @@ export const VisualBanner = () => {
       desktop_image: `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/banners/banner-4.webp`,
     },
   ]
+
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      const screenWidth = window.innerWidth
+      setIsVisible(screenWidth < 1280)
+    }
+
+    updateVisibility()
+    window.addEventListener('resize', updateVisibility)
+
+    return () => window.removeEventListener('resize', updateVisibility)
+  }, [])
 
   return (
     <div className="sticky top-0 mx-auto block w-full min-w-[460px] max-w-full md:relative">
@@ -216,30 +241,25 @@ export const VisualBanner = () => {
                 </motion.p>
               </motion.div>
 
-              <motion.div
-                variants={imageVariants}
+              <motion.picture
+                variants={isVisible ? imageVariants : {}}
                 initial="hidden"
                 animate={isActive ? 'visible' : 'hidden'}
                 className="absolute inset-0"
-                transition={{
-                  duration: 0.5,
-                }}
               >
-                <picture className="absolute inset-0">
-                  {/* <source media="(max-width: 767px)" srcSet={item.mobile_image} />
-                  <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
-                  <source media="(min-width: 1280px)" srcSet={item.desktop_image} /> */}
-                  <Image
-                    src={item.desktop_image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
-                    className="object-cover"
-                    priority={index === 0}
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                  />
-                </picture>
-              </motion.div>
+                <source media="(max-width: 767px)" srcSet={item.mobile_image} />
+                <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
+                <source media="(min-width: 1280px)" srcSet={item.desktop_image} />
+                <Image
+                  src={item.desktop_image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 767px) 100vw, (max-width: 1279px) 100vw, 100vw"
+                  className="object-cover"
+                  priority={index === 0}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
+              </motion.picture>
             </div>
           )
         })}
