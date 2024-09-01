@@ -35,7 +35,7 @@ export const AddNewAddressForm = () => {
           onSubmit={handleSubmit(createNewAddressData)}
           className="relative mx-[20px] my-[50px] h-fit w-[420px] rounded-2xl bg-white p-6 shadow-lg md:w-[600px] md:p-10"
         >
-          <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
+          <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 추가</h2>
           <fieldset className="h-auto min-h-[600px] overflow-y-auto">
             <label htmlFor="addressName" className="relative mb-3 block w-full drop-shadow-md">
               <span
