@@ -6,12 +6,9 @@ import { UserMenuDropdown } from '@/lib/components/common/modules/UserMenuDropdo
 import { UserNavItem } from '../modules/UserNavItem'
 import { SearchBar } from '../SearchBar'
 import { BsShop } from 'react-icons/bs'
-import { useEffect, useRef, useState } from 'react'
-import { HiMenuAlt1 } from 'react-icons/hi'
-import { GoSignIn } from 'react-icons/go'
-import { FaUserPen } from 'react-icons/fa6'
-import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 import { HamburgerMenu } from '../HambergerMenu'
+import clsx from 'clsx'
 
 export enum TooltipTypes {
   NONE = 'NONE',
@@ -47,11 +44,11 @@ export const Header = () => {
 
   return (
     <header
-      className={clsx('sticky top-0 z-40 box-border h-[60px] min-w-[calc(360px-20px)] backdrop-blur-md transition-colors duration-300', {
+      className={clsx('sticky left-0 top-0 z-40 flex h-[60px] w-full justify-center backdrop-blur-md transition-colors duration-300', {
         'bg-primary/80 shadow-inner': isScrolled,
       })}
     >
-      <div className="mx-auto flex h-full w-full items-center justify-between px-2 md:px-5 xl:w-[1200px]">
+      <div className="flex h-full w-[calc(100%-40px)] items-center justify-between gap-[20px]">
         <ul className="flex flex-row gap-3">
           <li>
             <h1>
@@ -67,7 +64,7 @@ export const Header = () => {
                     'text-white': isScrolled,
                   })}
                 />
-                <span className={`font-matemasie mt-[-5px] hidden lg:block`}>Shopping</span>
+                <span className={`mt-[-5px] hidden font-matemasie lg:block`}>Shopping</span>
               </Link>
             </h1>
           </li>

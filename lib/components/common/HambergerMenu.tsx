@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GoSignIn } from 'react-icons/go'
 import { FaUserPen } from 'react-icons/fa6'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ import { UserNavItem } from './modules/UserNavItem'
 import { FaUserCog } from 'react-icons/fa'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useBodyScrollStore } from '@/lib/zustandStore'
 
 interface HambergerMenuProps {
   sessionUser: any
@@ -23,6 +24,47 @@ interface HambergerMenuProps {
 export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGuest, isScrolled }: HambergerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const sideRef = useRef<HTMLDivElement>(null)
+  const { disableScroll, enableScroll } = useBodyScrollStore()
+
+  // 상태의 타입을 number로 명시적으로 지정
+  const [width, setWidth] = useState<number | undefined>(undefined)
+  const [changed, setChanged] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth
+      if (width !== newWidth) {
+        // console.log(`Width changed from ${width} to ${newWidth}`)
+        setWidth(newWidth) // 이제 여기서 타입 에러가 발생하지 않습니다.
+
+        if (width !== newWidth) {
+          setChanged(true)
+        } else {
+          setChanged(false)
+        }
+      }
+    }
+
+    // 이벤트 리스너 등록
+    window.addEventListener('resize', handleResize)
+    // 초기 너비 설정
+    handleResize()
+
+    if (changed) {
+      setIsOpen(false)
+      disableScroll()
+
+      if (!sideRef.current) return
+      sideRef.current.style.setProperty('right', '-100%')
+    } else {
+      setChanged(false)
+    }
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [width]) // 의존성 배열에 width 포함
 
   return (
     <>
@@ -31,6 +73,13 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
         className="relative z-50 flex h-6 w-6 cursor-pointer flex-col items-center justify-center space-y-1"
         onClick={() => {
           setIsOpen(!isOpen)
+
+          if (isOpen) {
+            enableScroll()
+          } else {
+            disableScroll()
+          }
+
           if (!sideRef.current) return
           const currentRight = sideRef.current.style.right
           sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
@@ -64,6 +113,25 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
         />
       </button>
 
+      <div
+        onClick={() => {
+          setIsOpen(!isOpen)
+
+          if (isOpen) {
+            enableScroll()
+          } else {
+            disableScroll()
+          }
+
+          if (!sideRef.current) return
+          const currentRight = sideRef.current.style.right
+          sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
+        }}
+        className={clsx('fixed left-0 top-0 z-30 h-screen w-screen bg-black bg-opacity-70 transition-all duration-300', {
+          block: isOpen,
+          hidden: !isOpen,
+        })}
+      />
       <div ref={sideRef} className="fixed right-[-100%] top-0 z-40 h-screen w-2/3 bg-gray-200 shadow-inner transition-all duration-300 sm:w-[35%]">
         {/* 관리자 */}
         {isAdmin && (
@@ -250,6 +318,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
           </ul>
         )}
       </div>
+
+      {/* <div className="fixed left-0 top-0 h-full w-full bg-black bg-opacity-70 backdrop-blur-sm">?</div> */}
     </>
   )
 }
