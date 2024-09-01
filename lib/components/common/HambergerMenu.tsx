@@ -52,7 +52,7 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
 
     if (changed) {
       setIsOpen(false)
-      disableScroll()
+      enableScroll()
 
       if (!sideRef.current) return
       sideRef.current.style.setProperty('right', '-100%')
