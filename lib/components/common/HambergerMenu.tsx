@@ -190,6 +190,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     setTimeout(() => {
                       setIsOpen(false)
                     }, 0)
+
+                    enableScroll()
                   }}
                   className="flex w-full items-center gap-3"
                 >
@@ -226,6 +228,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     if (!sideRef.current) return
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
+
+                    enableScroll()
                   }}
                   className="flex w-full items-center gap-3"
                 >
@@ -248,6 +252,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     if (!sideRef.current) return
                     const currentRight = sideRef.current.style.right
                     sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
+
+                    enableScroll()
                   }}
                   className="flex w-full items-center gap-3"
                 >
@@ -265,6 +271,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                     setTimeout(() => {
                       setIsOpen(false)
                     }, 0)
+
+                    enableScroll()
                   }}
                   className="flex w-full items-center gap-3"
                 >
@@ -289,6 +297,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                   if (!sideRef.current) return
                   const currentRight = sideRef.current.style.right
                   sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
+
+                  enableScroll()
                 }}
                 className="flex w-full items-center gap-3"
               >
@@ -306,6 +316,8 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
                   if (!sideRef.current) return
                   const currentRight = sideRef.current.style.right
                   sideRef.current.style.setProperty('right', currentRight === '0%' ? '-100%' : '0%', 'important')
+
+                  enableScroll()
                 }}
                 className="flex w-full items-center gap-3"
               >
@@ -318,8 +330,6 @@ export const HamburgerMenu = ({ sessionUser, isIndivisual, isAdmin, isAuth, isGu
           </ul>
         )}
       </div>
-
-      {/* <div className="fixed left-0 top-0 h-full w-full bg-black bg-opacity-70 backdrop-blur-sm">?</div> */}
     </>
   )
 }
