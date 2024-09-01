@@ -21,20 +21,20 @@ export default async function middleware(req: NextRequest) {
       req.nextUrl.pathname.startsWith(`/request-reset`) ||
       req.nextUrl.pathname.startsWith(`/reset-password`)
     ) {
-      return NextResponse.redirect(new URL('/', req.url))
+      return NextResponse.redirect(new URL('/not-authorized', req.url))
     }
 
     //일반 회원
     if (isIndivisual) {
       if (req.nextUrl.pathname.startsWith(`/add-product`)) {
-        return NextResponse.redirect(new URL('/', req.url))
+        return NextResponse.redirect(new URL('/not-authorized', req.url))
       }
     }
 
     //관리자 회원
     if (isAdmin) {
       if (req.nextUrl.pathname.startsWith(`/my-shopping`)) {
-        return NextResponse.redirect(new URL('/', req.url))
+        return NextResponse.redirect(new URL('/not-authorized', req.url))
       }
     }
   }
