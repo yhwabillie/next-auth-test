@@ -4,26 +4,47 @@ import { jwtVerify } from 'jose'
 
 const SECRET_KEY = process.env.RESET_PW_JWT
 
+if (!SECRET_KEY) {
+  throw new Error('Missing JWT_SECRET environment variable')
+}
+
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req })
   const isAuthenticated = !!token
-
-  if (!SECRET_KEY) {
-    throw new Error('Missing JWT_SECRET environment variable')
-  }
+  const isIndivisual = token?.user?.user_type === 'indivisual'
+  const isAdmin = token?.user?.user_type === 'admin'
 
   if (isAuthenticated) {
-    if (req.nextUrl.pathname.startsWith(`/signIn`) || req.nextUrl.pathname.startsWith(`/signUp`) || req.nextUrl.pathname.startsWith(`/forgotPw`)) {
+    if (
+      req.nextUrl.pathname.startsWith(`/signIn`) ||
+      req.nextUrl.pathname.startsWith(`/signUp`) ||
+      req.nextUrl.pathname.startsWith(`/request-reset`) ||
+      req.nextUrl.pathname.startsWith(`/reset-password`)
+    ) {
       return NextResponse.redirect(new URL('/', req.url))
+    }
+
+    //일반 회원
+    if (isIndivisual) {
+      if (req.nextUrl.pathname.startsWith(`/add-product`)) {
+        return NextResponse.redirect(new URL('/', req.url))
+      }
+    }
+
+    //관리자 회원
+    if (isAdmin) {
+      if (req.nextUrl.pathname.startsWith(`/my-shopping`)) {
+        return NextResponse.redirect(new URL('/', req.url))
+      }
     }
   }
 
   if (!isAuthenticated) {
-    if (req.nextUrl.pathname.startsWith(`/profile`)) {
-      return NextResponse.redirect(new URL('/signIn', req.url))
-    }
-
-    if (req.nextUrl.pathname.startsWith(`/my-shopping`)) {
+    if (
+      req.nextUrl.pathname.startsWith(`/profile`) ||
+      req.nextUrl.pathname.startsWith(`/my-shopping`) ||
+      req.nextUrl.pathname.startsWith(`/add-product`)
+    ) {
       return NextResponse.redirect(new URL('/signIn', req.url))
     }
   }
@@ -50,5 +71,13 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/reset-password/:path*', '/profile/:path*', '/my-shopping/:path*', '/signIn/:path*', '/signUp/:path*', '/forgotPw/:path*'],
+  matcher: [
+    '/reset-password/:path*',
+    '/profile/:path*',
+    '/my-shopping/:path*',
+    '/add-product/:path*',
+    '/signIn/:path*',
+    '/signUp/:path*',
+    '/request-reset/:path*',
+  ],
 }
