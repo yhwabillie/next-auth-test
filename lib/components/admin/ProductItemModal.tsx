@@ -33,13 +33,13 @@ export const ProductItemModal: React.FC<ModalProps> = ({ isOpen, onClose, produc
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-11/12 rounded bg-white p-6 shadow-lg md:w-1/2 lg:w-1/3">
-        <h2 className="mb-4 text-xl font-bold">Edit Product</h2>
+        <h2 className="mb-4 text-xl font-bold">제품 정보 수정</h2>
         <div className="mb-4">
           <label className="mb-1 block">Product Name:</label>
           <input type="text" name="name" value={editedProduct.name} onChange={handleChange} className="w-full rounded border px-3 py-2" />
         </div>
         <div className="mb-4">
-          <label className="mb-1 block">Price:</label>
+          <label className="mb-1 block">가격:</label>
           <input
             type="number"
             name="original_price"
@@ -49,7 +49,7 @@ export const ProductItemModal: React.FC<ModalProps> = ({ isOpen, onClose, produc
           />
         </div>
         <div className="mb-4">
-          <label className="mb-1 block">Discount Rate:</label>
+          <label className="mb-1 block">할인율:</label>
           <input
             type="number"
             name="discount_rate"
@@ -59,15 +59,15 @@ export const ProductItemModal: React.FC<ModalProps> = ({ isOpen, onClose, produc
           />
         </div>
         <div className="mb-4">
-          <label className="mb-1 block">Image URL:</label>
+          <label className="mb-1 block">제품 이미지 URL:</label>
           <input type="text" name="imageUrl" value={editedProduct.imageUrl} onChange={handleChange} className="w-full rounded border px-3 py-2" />
         </div>
         <div className="flex justify-end">
           <button onClick={onClose} className="mr-2 rounded bg-gray-500 px-4 py-2 text-white">
-            Cancel
+            취소
           </button>
           <button onClick={handleSave} className="rounded bg-blue-500 px-4 py-2 text-white">
-            Save
+            저장
           </button>
         </div>
       </div>
