@@ -19,8 +19,8 @@ export const WishListTab = ({ userIdx }: WishListTabProps) => {
         <EmptyTab sub_title="위시리스트가 비었습니다" title="🤩 사고싶은 제품을 추가해주세요." type="link" label="위시리스트 채우러가기" />
       ) : (
         <>
-          <h5 className="mb-2 block px-2 text-xl font-semibold text-black">위시리스트 상품</h5>
-          <ul className="px-2">
+          <h5 className="mb-2 block text-xl font-semibold text-black md:px-2">위시리스트 상품</h5>
+          <ul className="md:px-2">
             {data.map(({ product }) => (
               <WishlistItem
                 key={product.idx}

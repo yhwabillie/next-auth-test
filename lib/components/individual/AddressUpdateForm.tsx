@@ -51,10 +51,10 @@ export const AddressUpdateForm = () => {
       <div className="mb-auto mt-auto">
         <form
           onSubmit={handleSubmit(createAddress)}
-          className="relative mx-[20px] my-[50px] h-fit w-[420px] rounded-2xl bg-white p-6 shadow-lg md:w-[600px] md:p-10"
+          className="relative my-6 h-fit w-[320px] rounded-2xl bg-white p-4 shadow-lg md:mx-[20px] md:my-[50px] md:w-[600px] md:p-10"
         >
-          <h2 className="mb-5 block text-center text-2xl font-semibold tracking-tighter">배송지 정보 수정</h2>
-          {!isChanged && <p className="mb-4 text-sm text-blue-600">변경사항이 없습니다.</p>}
+          <h2 className="mb-5 block text-center text-lg font-semibold tracking-tighter md:text-2xl">배송지 정보 수정</h2>
+          {!isChanged && <p className="mb-2 text-sm text-blue-600">변경사항이 없습니다.</p>}
 
           <fieldset className="h-auto min-h-[600px] overflow-y-auto">
             <label htmlFor="addressName" className="relative mb-3 block w-full drop-shadow-md">

@@ -506,7 +506,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
           <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
             <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">서비스 이용 동의 (필수) 전문</h2>
-            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 text-sm shadow-md md:text-[16px]">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
               elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
@@ -534,7 +534,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
           <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
             <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">개인 정보 이용 동의 (필수) 전문</h2>
-            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 text-sm shadow-md md:text-[16px]">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
               elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius
@@ -562,7 +562,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
           <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
             <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">마케팅 이용 동의 (선택) 전문</h2>
-            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
+            <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 text-sm shadow-md md:text-[16px]">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
               elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam accusamus commodi impedit deserunt optio, incidunt eius

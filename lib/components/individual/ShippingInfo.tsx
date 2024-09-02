@@ -15,8 +15,8 @@ interface ShippingInfoProps {
 
 export const ShippingInfo = ({ addresses, isAddressEmpty, setActiveTab, setAddressActiveTabId, addressActiveTabId, register }: ShippingInfoProps) => {
   return (
-    <fieldset className="mx-4">
-      <h6 className="mb-2 block text-lg font-semibold">배송지 정보</h6>
+    <fieldset className="md:mx-4">
+      <h6 className="mb-2 block w-fit text-[16px] font-semibold tracking-tighter md:text-lg">배송지 정보</h6>
 
       {isAddressEmpty ? (
         <EmptyTab
@@ -54,21 +54,21 @@ export const ShippingInfo = ({ addresses, isAddressEmpty, setActiveTab, setAddre
               addressActiveTabId === item.idx && (
                 <dl key={index} className="flex flex-col gap-3 border-l-4 border-gray-200 pl-4">
                   <div className="flex items-center gap-2">
-                    <dt className="w-[150px] font-medium md:w-[200px]">받는이</dt>
-                    <dd className="text-gray-700">{item.recipientName}</dd>
+                    <dt className="w-[100px] text-sm font-medium md:w-[150px] md:text-[16px]">받는이</dt>
+                    <dd className="text-sm text-gray-700 md:text-[16px]">{item.recipientName}</dd>
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[150px] font-medium md:w-[200px]">연락처</dt>
-                    <dd>{formatPhoneNumber(item.phoneNumber)}</dd>
+                    <dt className="w-[100px] text-sm font-medium md:w-[150px] md:text-[16px]">연락처</dt>
+                    <dd className="text-sm text-gray-700 md:text-[16px]">{formatPhoneNumber(item.phoneNumber)}</dd>
                     <input {...register('phoneNumber')} className="h-0 w-0" type="number" value={item.phoneNumber} />
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[150px] font-medium md:w-[200px]">배송지</dt>
-                    <dd className="w-[calc(100%-150px)] break-all text-gray-700 md:w-[calc(100%-200px)]">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</dd>
+                    <dt className="w-[100px] text-sm font-medium md:w-[150px] md:text-[16px]">배송지</dt>
+                    <dd className="w-[calc(100%-100px)] text-sm text-gray-700 md:w-[calc(100%-150px)] md:text-[16px]">{`(${item.postcode}) ${item.addressLine1} ${item.addressLine2}`}</dd>
                   </div>
                   <div className="flex items-center gap-2">
-                    <dt className="w-[150px] font-medium md:w-[200px]">배송 요청사항</dt>
-                    <dd className="text-gray-700">{item.deliveryNote}</dd>
+                    <dt className="w-[100px] text-sm font-medium md:w-[150px] md:text-[16px]">배송 요청사항</dt>
+                    <dd className="text-sm text-gray-700 md:text-[16px]">{item.deliveryNote}</dd>
                   </div>
                 </dl>
               ),

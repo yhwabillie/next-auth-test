@@ -30,12 +30,12 @@ export const AddressItem = React.memo(
   }: AddressItemProps) => {
     return (
       <li className="relative rounded-lg bg-blue-200/70 p-5 drop-shadow-sm">
-        <strong className="mb-1 block">{`${addressName} (${recipientName})`}</strong>
-        <p className="mb-2 font-medium text-gray-500">{formatPhoneNumber(phoneNumber)}</p>
-        <p className="mb-4 tracking-tighter">{`(${postcode}) ${addressLine1} ${addressLine2}`}</p>
-        <div className="relative mb-4 w-fit">
+        <strong className="mb-1 block text-sm tracking-tighter md:text-[16px]">{`${addressName} (${recipientName})`}</strong>
+        <p className="mb-2 text-sm font-medium tracking-tighter text-gray-500 md:text-[16px]">{formatPhoneNumber(phoneNumber)}</p>
+        <p className="mb-4 text-sm tracking-tighter md:text-[16px]">{`(${postcode}) ${addressLine1} ${addressLine2}`}</p>
+        <div className="relative mb-4 w-full md:w-fit">
           <IoIosArrowDown className="absolute right-2 top-[50%] z-0 translate-y-[-50%] text-xl" />
-          <select disabled className="w-[300px] rounded-md border border-gray-400 px-4 py-3 text-sm disabled:bg-gray-100">
+          <select disabled className="w-full rounded-md border border-gray-400 px-4 py-3 text-sm disabled:bg-gray-100 md:w-[300px]">
             <option className="text-gray-500">{deliveryNote}</option>
           </select>
         </div>

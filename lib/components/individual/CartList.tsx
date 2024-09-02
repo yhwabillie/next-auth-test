@@ -21,11 +21,12 @@ export const CartList = ({
   deleteCartItem,
 }: CartlistProps) => {
   return (
-    <fieldset className="mx-4 mb-16">
-      <h5 className="mb-2 block text-lg font-semibold">장바구니</h5>
-      <ul className="flex flex-col gap-5">
-        {cartItems.map(({ product, quantity }) => (
+    <fieldset className="mb-8 md:mx-4 md:mb-16">
+      <h6 className="mb-2 block w-fit text-[16px] font-semibold md:text-lg">장바구니</h6>
+      <ul className="flex flex-col gap-3">
+        {cartItems.map(({ product, quantity }, index) => (
           <CartItem
+            index={index}
             key={product.idx}
             {...product}
             quantity={quantity}

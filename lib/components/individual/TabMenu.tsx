@@ -23,7 +23,7 @@ export const TabMenu: React.FC<TabMenuProps> = ({ tabArr }: TabMenuProps) => {
 
   return (
     <>
-      <ul className="mb-10 flex flex-row gap-2 rounded-lg border-2 border-gray-200 bg-gray-200">
+      <ul className="mb-4 flex flex-row gap-2 rounded-lg border-2 border-gray-200 bg-gray-200 md:mb-10">
         {tabArr.map((item, index) => (
           <li
             key={index}

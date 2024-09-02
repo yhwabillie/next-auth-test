@@ -57,7 +57,9 @@ export const CartListTab = ({ session, userIdx }: CartListTabProps) => {
   return (
     <>
       <form onSubmit={handleSubmit(handleSubmitOrder)}>
-        <h5 className="mb-5 block rounded-lg bg-blue-50 px-4 py-3 text-xl font-semibold text-black">💸 상품 결제하기</h5>
+        <h5 className="mb-5 block rounded-lg bg-blue-50 px-4 py-3 text-[16px] font-semibold tracking-tighter text-black md:text-xl">
+          💸 상품 결제하기
+        </h5>
 
         <CartList
           cartItems={data.cartList}
@@ -88,11 +90,19 @@ export const CartListTab = ({ session, userIdx }: CartListTabProps) => {
           calculateDiscountedPrice={calculateDiscountedPrice}
         />
 
-        <div className="text-md mb-2 rounded-lg bg-gray-200 py-5 text-center">주문 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
+        <div className="mb-2 rounded-lg bg-gray-200 py-4 text-center text-[12px] text-sm tracking-tighter text-gray-600">
+          주문 내용을 모두 확인하였으며, 결제에 동의합니다.
+        </div>
         <button
           disabled={totalQuantity === 0 || isAddressEmpty}
-          className="w-full rounded-lg bg-red-500 py-5 text-center text-lg font-bold text-white drop-shadow-md hover:bg-red-600 disabled:bg-gray-400"
-        >{`${totalPriceWithShippingCost.toLocaleString('ko-KR')}원 결제하기`}</button>
+          className="w-full rounded-lg bg-red-500 py-4 text-center text-[16px] font-semibold tracking-tighter text-white drop-shadow-md hover:bg-red-600 disabled:bg-gray-400 md:text-lg"
+        >
+          {isAddressEmpty
+            ? '배송지를 입력하세요'
+            : totalQuantity === 0
+              ? '결제할 상품을 선택하세요'
+              : `${totalPriceWithShippingCost.toLocaleString('ko-KR')}원 결제하기`}
+        </button>
       </form>
     </>
   )
