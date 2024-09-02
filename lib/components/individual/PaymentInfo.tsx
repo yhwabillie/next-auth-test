@@ -43,9 +43,9 @@ export const PaymentInfo = ({ register, checkedItemsInfo, totalQuantity, totalPr
                 <span>{`${totalQuantity}개`}</span>
               </li>
               {checkedItemsInfo.map(({ product, quantity }) => (
-                <li key={product.idx} className="mb-2 flex items-center justify-between gap-x-5 px-2 text-gray-600/50">
-                  <p className="flex items-center gap-4">
-                    <span className="md:text-md block w-[100px] break-all text-sm font-medium md:w-[300px]">{product.name}</span>
+                <li key={product.idx} className="mb-2 flex items-start justify-between gap-x-5 px-2 text-gray-600/50">
+                  <p className="flex items-start gap-4">
+                    <span className="md:text-md block w-[100px] break-all text-sm font-medium sm:w-[200px] md:w-[400px]">{product.name}</span>
                     <span className="md:text-md text-sm font-medium">{quantity}개</span>
                   </p>
                   <span className="md:text-md text-sm">{`${calculateDiscountedPrice(product.original_price, product.discount_rate, quantity)}`}</span>
