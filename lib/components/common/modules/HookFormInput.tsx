@@ -21,7 +21,7 @@ export const HookFormInput = ({ register, id, label, type, value, placeholder, d
   const [isFocus, setIsFocus] = useState(false)
 
   return (
-    <label htmlFor={id} className="relative block w-[400px]">
+    <label htmlFor={id} className="relative block">
       <span
         className={clsx('absolute left-4 top-2 block font-medium transition-all duration-150 ease-in-out', {
           '!text-sm !text-red-400': error,

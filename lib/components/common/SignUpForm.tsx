@@ -244,10 +244,14 @@ export const SignUpForm = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <form onSubmit={handleSubmit(handleSubmitForm)} encType="multipart/form-data" className="flex flex-col items-center justify-center gap-10">
+      <form
+        onSubmit={handleSubmit(handleSubmitForm)}
+        encType="multipart/form-data"
+        className="mx-auto flex w-[300px] flex-col items-center justify-center gap-10 md:w-[500px]"
+      >
         <legend className="sr-only">회원가입 폼</legend>
         <div className="relative mx-auto w-fit">
-          <div className="relative h-[200px] w-[200px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg">
+          <div className="relative h-[150px] w-[150px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg md:h-[200px] md:w-[200px]">
             <Image
               src={profileImage === '' ? '/images/default_profile.jpeg' : profileImage}
               alt="profile image"
@@ -259,7 +263,7 @@ export const SignUpForm = () => {
           </div>
           <label
             htmlFor="profile_img"
-            className="absolute bottom-0 right-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500"
+            className="absolute bottom-0 right-0 flex h-12 w-12 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500 md:h-14 md:w-14"
           >
             <span className="sr-only">프로필 이미지 업로드 버튼</span>
             <HiOutlinePencilSquare className="text-2xl text-gray-700" />
@@ -274,9 +278,9 @@ export const SignUpForm = () => {
           />
         </div>
 
-        <fieldset className="w-full md:w-[400px]">
+        <fieldset>
           <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 타입을 선택해주세요</legend>
-          <div className="mb-20 flex flex-row justify-center gap-3">
+          <div className="mb-10 flex flex-row justify-center gap-3">
             <HookFormRadioItem
               register={register('user_type')}
               id="indivisual"
@@ -286,13 +290,13 @@ export const SignUpForm = () => {
             />
             <HookFormRadioItem register={register('user_type')} id="admin" value="admin" name="user_type" checked={watch('user_type') === 'admin'} />
           </div>
-          <div className="mx-auto mb-6 w-fit">
+          <div className="mx-auto mb-6 w-[300px] md:w-[500px]">
             <legend className="mb-2 text-center text-lg font-medium tracking-tighter text-blue-400">사용자 정보를 입력해주세요</legend>
             <HookFormInput register={register('name')} error={errors.name} id="name" label="사용자 이름" type="text" disabled={isLoading} />
             {errors.name && !!watch('name') && <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.name.message}</p>}
           </div>
-          <div className="mx-auto mb-6 w-fit">
-            <div className="flex h-fit w-fit flex-col">
+          <div className="mx-auto mb-6 w-[300px] md:w-[500px]">
+            <div className="flex h-fit w-full flex-col">
               <HookFormInput
                 register={register('id')}
                 error={errors.id}
@@ -334,10 +338,10 @@ export const SignUpForm = () => {
               )}
             </div>
 
-            {errors.id && !!watch('id') && <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.id.message}</p>}
+            {errors.id && !!watch('id') && <p className="mt-2 w-[300px] pl-2 text-left text-sm text-red-500 md:w-[500px]">{errors.id.message}</p>}
           </div>
-          <div className="mx-auto mb-6 w-fit">
-            <div className="flex h-fit w-fit flex-col">
+          <div className="mx-auto mb-6 w-[300px] md:w-[500px]">
+            <div className="flex h-fit w-full flex-col">
               <HookFormInput
                 register={register('email')}
                 error={errors.email}
@@ -378,10 +382,12 @@ export const SignUpForm = () => {
                 />
               )}
 
-              {errors.email && !!watch('email') && <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">{errors.email.message}</p>}
+              {errors.email && !!watch('email') && (
+                <p className="mt-2 w-[300px] pl-2 text-left text-sm text-red-500 md:w-[500px]">{errors.email.message}</p>
+              )}
             </div>
           </div>
-          <div className="mx-auto mb-4 w-fit">
+          <div className="mx-auto mb-4 w-[300px] md:w-[500px]">
             <HookFormInput
               register={register('password')}
               error={errors.password}
@@ -392,7 +398,7 @@ export const SignUpForm = () => {
             />
             <p className="mt-2 pl-2 text-left text-sm text-red-500">{errors.password && !!watch('password') && `${errors.password.message}`}</p>
           </div>
-          <div className="mx-auto mb-4 w-fit">
+          <div className="mx-auto mb-4 w-[300px] md:w-[500px]">
             <HookFormInput
               register={register('password_confirm')}
               error={errors.password_confirm}
@@ -401,13 +407,13 @@ export const SignUpForm = () => {
               type="password"
               disabled={isLoading}
             />
-            <p className="mt-2 w-[400px] pl-2 text-left text-sm text-red-500">
+            <p className="mt-2 w-[300px] pl-2 text-left text-sm text-red-500">
               {errors.password_confirm && !!watch('password_confirm') && `${errors.password_confirm.message}`}
             </p>
           </div>
         </fieldset>
 
-        <div className="flex w-[194px] justify-center gap-3">
+        <div className="flex w-[145px] justify-center gap-3 md:w-[245px]">
           <Button label="이전" clickEvent={() => router.back()} type="button" disalbe={isLoading} />
           <Button label={isLoading ? '제출 중...' : '제출하기'} disalbe={!(Object.keys(errors).length === 0 && isConfirmEmail && isConfirmID)} />
         </div>

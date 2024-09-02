@@ -4,13 +4,13 @@ import Link from 'next/link'
 
 export default async function Page() {
   return (
-    <section aria-labelledby="page-heading" className="py-40">
+    <section aria-labelledby="page-heading" className="mx-auto w-full py-40">
       <h2 id="page-heading" className="sr-only">
         로그인 본문
       </h2>
       <header>
-        <h3 className="text-center text-3xl font-bold text-blue-400">🔐 로그인</h3>
-        <p className="text-md pb-10 pt-3 text-center tracking-tighter text-gray-800">
+        <h3 className="text-center text-2xl font-bold text-blue-400 md:text-3xl">🔐 로그인</h3>
+        <p className="pb-10 pt-3 text-center text-sm tracking-tighter text-gray-800 md:text-[16px] md:leading-6">
           권한이 필요없는 화면입니다. <br /> 누구나 이 화면에 접근할 수 있습니다.
         </p>
       </header>

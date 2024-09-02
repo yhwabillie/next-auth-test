@@ -29,9 +29,9 @@ export default async function Page() {
       <h2 id="page-heading" className="sr-only">
         회원정보 관리 본문
       </h2>
-      <header>
-        <h3 className="mb-4 block text-center text-2xl font-semibold text-gray-700">📌 회원정보 관리</h3>
-        <p className="text-center">회원정보를 업데이트하고 관리합니다.</p>
+      <header className="mb-1">
+        <h3 className="mb-2 block text-center text-2xl font-semibold tracking-tighter text-gray-700">회원정보 관리</h3>
+        <p className="text-center text-sm tracking-tighter text-gray-700 md:text-[16px] md:leading-6">회원정보를 업데이트하고 관리합니다.</p>
       </header>
       <main>
         <ProfileForm data={userData as IProfileFetchData} />

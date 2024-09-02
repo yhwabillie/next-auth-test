@@ -26,8 +26,8 @@ export const AgreementForm = () => {
   const handleOnClickNext = (data: AgreementSchemaType) => setAgreement(data)
 
   return (
-    <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto mb-[90px] w-[400px] pr-8">
-      <fieldset className="mb-10">
+    <form onSubmit={handleSubmit(handleOnClickNext)} className="mx-auto mb-[90px] w-[300px] pr-6 md:w-[600px]">
+      <fieldset className="mb-10 md:pl-6">
         <HookFormCheckBox
           id="check_all"
           label="전체 동의하기"
@@ -39,13 +39,13 @@ export const AgreementForm = () => {
             agreements.forEach((agreement: any) => setValue(agreement, isChecked))
           }}
         />
-        <p className="break-all pl-8 font-normal tracking-tighter text-gray-600/70">
+        <p className="break-all pl-8 text-sm font-normal tracking-tighter text-gray-600/70 md:text-[16px] md:leading-6">
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque nihil aspernLorem ipsum dolor sit amet consectetur, adipisicing elit.
           Itaque nihil aspern
         </p>
       </fieldset>
 
-      <fieldset>
+      <fieldset className="md:pl-6">
         <div className="mb-5">
           <HookFormCheckBox
             id="service_agreement"
@@ -60,7 +60,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 text-sm font-normal tracking-tighter text-gray-600/70 shadow-md md:text-[16px] md:leading-6',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -88,7 +88,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area text-md h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 text-sm font-normal tracking-tighter text-gray-600/70 shadow-md md:text-[16px] md:leading-6',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -116,7 +116,7 @@ export const AgreementForm = () => {
           <div className="mt-2 pl-8">
             <p
               className={clsx(
-                'scroll-area h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 font-normal tracking-tighter text-gray-600/70 shadow-md',
+                'scroll-area h-[150px] overflow-y-scroll break-all rounded-lg border bg-white py-3 pl-3 pr-1 text-sm font-normal tracking-tighter text-gray-600/70 shadow-md md:text-[16px] md:leading-6',
                 {
                   'border-gray-600/70': !!!watch('service_agreement'),
                   'border-blue-600/70': !!watch('service_agreement'),
@@ -133,7 +133,7 @@ export const AgreementForm = () => {
       </fieldset>
 
       <div className="fixed bottom-0 left-[50%] w-full translate-x-[-50%] bg-gray-100 py-5">
-        <div className="mx-auto box-border w-[400px] md:w-[500px]">
+        <div className="mx-4 box-border md:mx-auto md:w-[calc(600px-3rem)]">
           <Button
             label="다음"
             disalbe={!(watch('service_agreement') && watch('privacy_agreement'))}

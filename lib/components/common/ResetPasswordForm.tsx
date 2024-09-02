@@ -78,9 +78,9 @@ export const ResetPasswordForm = () => {
   }, [reset_token])
 
   return (
-    <div className="w-min-full mx-auto w-fit rounded-lg border border-blue-400/50 p-8 shadow-xl">
+    <div className="mx-auto w-[300px] rounded-lg border border-blue-400/50 bg-white p-6 shadow-xl md:w-[500px] md:p-8">
       <legend className="sr-only">비밀번호 재설정 폼</legend>
-      <div className="mx-auto mb-5 flex w-fit flex-col justify-center">
+      <div className="mx-auto mb-5 flex w-full flex-col justify-center">
         <HookFormInput
           register={register('password')}
           error={errors.password}
@@ -91,7 +91,7 @@ export const ResetPasswordForm = () => {
         />
         {errors.password && !!watch('password') && <p className="mt-2 pl-2 text-sm text-red-500">{errors.password.message}</p>}
       </div>
-      <div className="mx-auto mb-5 flex w-fit flex-col justify-center text-left">
+      <div className="mx-auto mb-5 flex w-full flex-col justify-center text-left">
         <HookFormInput
           register={register('password_confirm')}
           error={errors.password_confirm}

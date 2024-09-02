@@ -17,7 +17,6 @@ import { TbRestore } from 'react-icons/tb'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko' // 한국어 로케일 불러오기
 import { SkeletonProfile } from './SkeletonProfile'
-import clsx from 'clsx'
 dayjs.locale('ko') // 한국어 로케일 설정
 
 interface IProfileFormData extends SignUpFormSchemaType, AgreementSchemaType {
@@ -284,9 +283,9 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-center gap-2 text-center">
-        <h3 className="text-xl font-medium text-blue-400">{`${data.name}님은`}</h3>
-        <p>{`${data.user_type === 'indivisual' ? '일반' : '관리자'} 사용자 입니다`}</p>
+      <div className="mb-4 flex items-center justify-center gap-1 text-center">
+        <h3 className="font-medium tracking-tighter text-blue-400 md:text-lg">{`${data.name}님은`}</h3>
+        <p className="font-medium tracking-tighter text-blue-400 md:text-lg">{`${data.user_type === 'indivisual' ? '일반' : '관리자'}사용자입니다.`}</p>
       </div>
 
       <form className="flex flex-col items-center justify-center gap-16">
@@ -295,12 +294,12 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
           <div className="relative mx-auto w-fit">
             {profileLoading && <SkeletonProfile />}
 
-            <div className="relative h-[200px] w-[200px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg">
+            <div className="relative h-[150px] w-[150px] overflow-hidden rounded-[50%] border border-gray-300 shadow-lg md:h-[200px] md:w-[200px]">
               <Image src={setPreviewImage()} alt="profile image" priority fill className="object-cover" sizes="200" />
             </div>
             <label
               htmlFor="profile_img"
-              className="absolute bottom-0 right-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500"
+              className="absolute bottom-0 right-0 flex h-12 w-12 cursor-pointer items-center justify-center rounded-[50%] border border-gray-300/50 bg-white shadow-lg hover:border-gray-500 md:h-14 md:w-14"
             >
               <span className="sr-only">프로필 이미지 변경</span>
               <HiOutlinePencilSquare className="text-2xl text-gray-700" />
@@ -314,7 +313,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               onChange={handleChangeProfileImage}
             />
           </div>
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-[300px] flex-col gap-2">
             {data.profile_img !== 'undefined' && !profileLoading && <Button type="button" label="기본 프로필 선택" clickEvent={handleResetProfile} />}
 
             {profileImage !== '' && !profileLoading && (
@@ -327,7 +326,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
                 }}
               >
                 <TbRestore className="text-lg" />
-                <span>되돌리기</span>
+                <span className="text-sm md:text-[16px]">되돌리기</span>
               </button>
             )}
             <Button
@@ -339,7 +338,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
           </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset className="w-[300px] md:w-[500px]">
           <legend className="sr-only">사용자 상세 정보</legend>
           <div className="mb-4">
             <legend className="sr-only">사용자 아이디</legend>
@@ -359,7 +358,7 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               ref={saveNameBtnRef}
               onClick={handleUpdateUserName}
               disabled={errors.name !== undefined || watch('name') === '' || nameLoading}
-              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-400 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-400"
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-400 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-400 md:text-[16px]"
             >
               {nameLoading ? '업데이트 중...' : '업데이트'}
             </button>
@@ -434,15 +433,17 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
           <div className="mb-10 mt-10">
             <div className="mb-2">
-              <strong className="text-md font-medium tracking-tighter text-blue-600/70">[필수] 서비스 이용 동의 상태: </strong>
+              <strong className="text-sm font-medium tracking-tighter text-blue-600/70 md:text-[16px]">[필수] 서비스 이용 동의 상태: </strong>
               <span className="ml-2 inline-block font-semibold text-blue-600">동의</span>
             </div>
-            <p className="mb-4 text-gray-600">동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+            <p className="mb-4 text-sm tracking-tighter text-gray-600 md:text-[16px]">
+              동의 일시: {dayjs(data.agreements[0].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}
+            </p>
 
             <button
               type="button"
               onClick={() => openModal(ModalTypes.SERVICE)}
-              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800 md:text-[16px]"
             >
               전문보기
             </button>
@@ -452,12 +453,14 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               <strong className="text-md font-medium tracking-tighter text-blue-600/70">[필수] 개인 정보 이용 동의 상태: </strong>
               <span className="ml-2 inline-block font-semibold text-blue-600">동의</span>
             </div>
-            <p className="mb-4 text-gray-600">동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+            <p className="mb-4 text-sm tracking-tighter text-gray-600 md:text-[16px]">
+              동의 일시: {dayjs(data.agreements[1].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}
+            </p>
 
             <button
               type="button"
               onClick={() => openModal(ModalTypes.PRIVACY)}
-              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800 md:text-[16px]"
             >
               전문보기
             </button>
@@ -476,12 +479,14 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
               />
             </div>
 
-            <p className="mb-4 text-gray-600">마지막 업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}</p>
+            <p className="mb-4 text-sm tracking-tighter text-gray-600 md:text-[16px]">
+              업데이트 일시: {dayjs(data.agreements[2].updatedAt).format('YYYY년 MM월 DD일 A hh:mm:ss')}
+            </p>
 
             <button
               type="button"
               onClick={() => openModal(ModalTypes.SELECTABLE)}
-              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800"
+              className="leading-1 h-[50px] w-full min-w-full cursor-pointer rounded-md bg-blue-700 py-3 text-sm text-white shadow-lg transition-all duration-150 ease-in-out hover:bg-blue-800 md:text-[16px]"
             >
               전문보기
             </button>
@@ -499,8 +504,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
       {/* Modal */}
       {activeModal === ModalTypes.SERVICE && (
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
-          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
-            <h2 className="text-center text-2xl font-semibold tracking-tighter">서비스 이용 동의 (필수) 전문</h2>
+          <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
+            <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">서비스 이용 동의 (필수) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
@@ -527,8 +532,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
       {activeModal === ModalTypes.PRIVACY && (
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
-          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
-            <h2 className="text-center text-2xl font-semibold tracking-tighter">개인 정보 이용 동의 (필수) 전문</h2>
+          <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
+            <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">개인 정보 이용 동의 (필수) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
@@ -555,8 +560,8 @@ export const ProfileForm = ({ data }: { data: IProfileFetchData }) => {
 
       {activeModal === ModalTypes.SELECTABLE && (
         <div className="fixed left-0 top-0 z-[40] flex h-full w-full justify-center overflow-y-auto overflow-x-hidden bg-black/70 py-10 backdrop-blur-sm">
-          <section className="mx-10 box-border flex min-h-full w-full flex-col justify-between rounded-2xl bg-white p-10 shadow-lg md:mx-0 md:max-w-[600px]">
-            <h2 className="text-center text-2xl font-semibold tracking-tighter">마케팅 이용 동의 (선택) 전문</h2>
+          <section className="mx-6 box-border flex w-full flex-col justify-between rounded-2xl bg-white p-6 shadow-lg md:max-w-[600px] md:p-10">
+            <h2 className="text-center text-xl font-semibold tracking-tighter md:text-2xl">마케팅 이용 동의 (선택) 전문</h2>
             <div className="scroll-area my-4 h-[350px] flex-1 overflow-y-scroll break-all rounded-lg border border-gray-400/50 py-2 pl-2 shadow-md">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio ipsa ab harum enim beatae! Eius voluptates magni dolorum cum. Magnam
               accusamus commodi impedit deserunt optio, incidunt eius consequuntur omnis illum. Lorem ipsum dolor, sit amet consectetur adipisicing
