@@ -333,7 +333,7 @@ export const SignUpForm = () => {
                   checked={isConfirmID}
                   disabled={!!errors.id || getValues('id') === '' || isConfirmID}
                   onClick={() => confirmDuplicate('id', getValues('id'))}
-                  className="mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50"
+                  className="mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center text-sm leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50 md:text-[16px]"
                 />
               )}
             </div>
@@ -378,7 +378,7 @@ export const SignUpForm = () => {
                   checked={isConfirmEmail}
                   disabled={!!errors.email || getValues('email') === '' || isConfirmEmail}
                   onClick={() => confirmDuplicate('email', getValues('email'))}
-                  className={`mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50`}
+                  className={`mt-2 h-12 w-full cursor-pointer rounded-md bg-blue-400 text-center text-sm leading-[48px] text-white shadow-md before:content-['중복검사'] hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-600/50 md:text-[16px]`}
                 />
               )}
 
