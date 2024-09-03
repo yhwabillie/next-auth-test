@@ -71,8 +71,8 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
           width={400}
           height={600}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
-          priority={index === 0}
-          loading={index === 0 ? 'eager' : 'lazy'}
+          priority={true}
+          loading={'eager'}
           quality={75}
         />
       </picture>
