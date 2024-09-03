@@ -232,8 +232,8 @@ export const VisualBanner = () => {
                     fill
                     sizes="(max-width: 480px) 100vw, (max-width: 767px) 80vw, (max-width: 1024px) 60vw, (max-width: 1279px) 50vw, 33vw"
                     className="object-cover"
-                    priority={index === 0}
-                    loading={index === 0 ? 'eager' : 'lazy'}
+                    priority={true}
+                    loading={'eager'}
                     quality={75}
                     fetchPriority="high"
                   />
