@@ -73,7 +73,7 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
           priority={true}
           loading={'eager'}
-          quality={72}
+          quality={75}
           fetchPriority="high"
         />
       </picture>
