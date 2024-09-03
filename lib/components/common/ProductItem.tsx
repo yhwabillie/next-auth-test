@@ -74,6 +74,7 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
           priority={true}
           loading={'eager'}
           quality={75}
+          fetchPriority="high"
         />
       </picture>
 
