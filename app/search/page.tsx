@@ -4,10 +4,8 @@ import { Suspense } from 'react'
 
 export default async function Page() {
   return (
-    <div>
-      <Suspense>
-        <SearchResult />
-      </Suspense>
-    </div>
+    <Suspense>
+      <SearchResult />
+    </Suspense>
   )
 }

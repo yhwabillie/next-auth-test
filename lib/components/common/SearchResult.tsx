@@ -68,96 +68,94 @@ export const SearchResult = () => {
   }
 
   return (
-    <section className="container mx-auto mt-10 min-w-[460px]">
-      <header className="mx-8 box-border rounded-lg bg-white px-8 py-4 drop-shadow-md md:mx-4">
-        <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-700">🔎 검색 결과</h2>
-        <p className="text-lg tracking-tight text-gray-600">
-          <span className="text-primary-dark mr-1 inline-block font-semibold text-blue-600">"{query}"</span>에 대한 검색 결과
+    <section>
+      <header className="mx-4 my-4 rounded-lg bg-white p-4 shadow-md sm:container sm:mx-auto">
+        <h3 className="mb-1 block w-fit text-lg font-semibold tracking-tighter">🔎 검색 결과</h3>
+        <p>
+          <span className="text-[16px] font-bold tracking-tighter text-primary">"{query}"</span>
+          <span className="tracking-tighter text-gray-700"> 에 대한 검색 결과</span>
         </p>
       </header>
 
       {results.length > 0 ? (
-        <>
-          {/* 상품 리스트 */}
-          <div className="box-border px-8 lg:container md:mt-4 md:bg-transparent md:px-4 lg:mx-auto">
-            <ul className="mb-20 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:gap-x-2 lg:grid-cols-4 xl:grid-cols-5">
-              {results.map((product, index) => (
-                <motion.li
-                  key={`${product.idx}-${index}`}
-                  variants={{
-                    hidden: {
-                      opacity: 0,
-                    },
-                    visible: {
-                      opacity: 1,
-                    },
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{
-                    delay: index * 0.08,
-                    ease: 'easeInOut',
-                    duration: 0.2,
-                  }}
-                  className="group rounded-xl bg-white p-3 transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
+        <ul className="mx-4 mb-4 grid grid-cols-2 gap-x-2 gap-y-4 sm:container sm:mx-auto sm:grid-cols-3 md:mx-auto md:gap-x-2 lg:grid-cols-4 xl:grid-cols-6">
+          {results.map((product, index) => (
+            <motion.li
+              key={`${product.idx}-${index}`}
+              variants={{
+                hidden: {
+                  opacity: 0,
+                },
+                visible: {
+                  opacity: 1,
+                },
+              }}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                delay: index * 0.08,
+                ease: 'easeInOut',
+                duration: 0.2,
+              }}
+              className="group rounded-xl bg-white p-3 drop-shadow-sm transition-all md:translate-y-0 md:hover:translate-y-[-10px]"
+            >
+              <figure className="mb-3 aspect-square w-full overflow-hidden rounded-xl border bg-gray-600 shadow-md">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={400}
+                  height={600}
+                  priority={index === 0}
+                  onLoad={() => handleImageLoad(index)}
+                  className="object-cover transition-all duration-300 group-hover:scale-110"
+                />
+              </figure>
+
+              <p className="text-sm font-semibold tracking-tight text-gray-700 md:text-[16px]">{product.name}</p>
+
+              <div className="mb-3">
+                {product.discount_rate > 0 && (
+                  <span className="mr-1 inline-block text-[16px] font-bold tracking-tight text-gray-700 md:text-lg">
+                    {calculateDiscountedPrice(product.original_price, product.discount_rate)}
+                  </span>
+                )}
+
+                {product.discount_rate > 0 && (
+                  <span className="mr-1 inline-block text-[16px] font-bold tracking-tight text-primary md:text-lg">{`${product.discount_rate * 100}%`}</span>
+                )}
+                <span
+                  className={clsx('text-[16px] font-bold tracking-tight text-gray-700 md:text-lg', {
+                    'text-sm font-normal !text-gray-400 line-through': product.discount_rate > 0,
+                  })}
+                >{`${product.original_price.toLocaleString('ko-KR')}원`}</span>
+              </div>
+
+              <div className="md:flex md:justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleClickAddWish(product)}
+                  className="mr-2 inline-block rounded-md bg-secondary p-2 text-sm text-white shadow-md transition-all duration-300"
                 >
-                  <figure className="mb-3 aspect-square w-full overflow-hidden rounded-xl border border-gray-300 shadow-md">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      width={400}
-                      height={600}
-                      priority={index === 0} // 첫 번째 이미지만 priority로 설정
-                      onLoad={() => handleImageLoad(index)} // 이미지 로드 완료 시 true로 설정
-                      className="object-cover transition-all duration-300 group-hover:scale-110"
-                    />
-                  </figure>
-
-                  <p className="md:text-md mb-2 font-semibold tracking-tight text-gray-700">{product.name}</p>
-
-                  <div className="mb-3">
-                    {product.discount_rate > 0 && (
-                      <span className="mr-1 inline-block text-lg font-bold tracking-tight text-gray-700">
-                        {calculateDiscountedPrice(product.original_price, product.discount_rate)}
-                      </span>
-                    )}
-
-                    {product.discount_rate > 0 && (
-                      <span className="text-primary-dark mr-1 inline-block text-lg font-bold tracking-tight">{`${product.discount_rate * 100}%`}</span>
-                    )}
-                    <span
-                      className={clsx('text-lg font-bold tracking-tight text-gray-700', {
-                        'text-sm font-normal !text-gray-400 line-through': product.discount_rate > 0,
-                      })}
-                    >{`${product.original_price.toLocaleString('ko-KR')}원`}</span>
-                  </div>
-
-                  <div className="md:flex md:justify-end">
-                    <button
-                      type="button"
-                      onClick={() => handleClickAddWish(product)}
-                      className="mr-2 inline-block rounded-md bg-secondary p-2 text-sm text-white shadow-md transition-all duration-300"
-                    >
-                      {product.isInWish ? <LuHeartOff className="text-2xl" /> : <FaHeartCirclePlus className="text-2xl drop-shadow-md" />}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleClickAddProduct(product)}
-                      className={clsx('inline-block rounded-md p-2 text-sm text-white duration-300', {
-                        'hover:bg-primary-tonDown bg-primary': !product.isInCart,
-                        'bg-gray-600 hover:bg-gray-700': product.isInCart,
-                      })}
-                    >
-                      {product.isInCart ? <TbShoppingBagMinus className="text-2xl" /> : <TbShoppingBagPlus className="text-2xl drop-shadow-md" />}
-                    </button>
-                  </div>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-        </>
+                  {product.isInWish ? <LuHeartOff className="text-2xl" /> : <FaHeartCirclePlus className="text-2xl drop-shadow-md" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleClickAddProduct(product)}
+                  className={clsx('inline-block rounded-md p-2 text-sm text-white duration-300', {
+                    'hover:bg-primary-tonDown bg-primary': !product.isInCart,
+                    'bg-gray-600 hover:bg-gray-700': product.isInCart,
+                  })}
+                >
+                  {product.isInCart ? <TbShoppingBagMinus className="text-2xl" /> : <TbShoppingBagPlus className="text-2xl drop-shadow-md" />}
+                </button>
+              </div>
+            </motion.li>
+          ))}
+        </ul>
       ) : (
-        <div className="mt-4 box-border px-8 lg:container md:bg-transparent md:px-4 lg:mx-auto">검색 결과가 없습니다.</div>
+        <div className="mx-4 rounded-lg bg-white p-4 text-center text-[16px] font-normal leading-[200px] tracking-tighter text-gray-600 shadow-md md:container md:mx-auto">
+          🕵️‍♂️ 검색 결과가 없습니다.
+        </div>
       )}
     </section>
   )
