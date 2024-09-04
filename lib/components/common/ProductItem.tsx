@@ -74,7 +74,14 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
           quality={75}
           fetchPriority="high"
           fill
-          sizes="(max-width: 639px) 296px, 400px"
+          sizes="
+          (min-width: 360px) 156.5px,
+          (max-width: 639px) 296px,
+          (max-width: 767px) 202.67px,
+          (max-width: 1023px) 192px,
+          (max-width: 1535px) 256px,
+          307.2px
+          "
         />
       </picture>
 
