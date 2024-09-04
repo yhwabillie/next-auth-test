@@ -230,7 +230,11 @@ export const VisualBanner = () => {
                     src={item.desktop_image}
                     alt={item.banner_alt}
                     fill
-                    sizes="(max-width: 480px) 100vw, (max-width: 767px) 80vw, (max-width: 1024px) 60vw, (max-width: 1279px) 50vw, 33vw"
+                    // sizes="
+                    // (min-width: 360px) 230px,
+                    // (max-width: 767px) 501.33px,
+                    // (max-width: 1279px) 842.66px,
+                    // 960px"
                     className="object-cover"
                     priority={true}
                     loading={'eager'}
