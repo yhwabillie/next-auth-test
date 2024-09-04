@@ -65,6 +65,10 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
 
       {/* 제품 배경 이미지 */}
       <picture className="absolute inset-0 transition-opacity duration-500">
+        <source
+          media="(max-width: 639px)"
+          srcSet="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/products/cosmetic/mobile/product_cosmetic_01.webp"
+        />
         <Image
           src={product.imageUrl}
           alt={product.name}
