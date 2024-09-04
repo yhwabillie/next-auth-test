@@ -67,13 +67,13 @@ export const ProductItem = React.memo(({ product, index, handleClickAddProduct, 
       <picture className="absolute inset-0 transition-opacity duration-500">
         <source
           media="(max-width: 639px)"
-          srcSet="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/products/cosmetic/mobile/product_cosmetic_01.webp"
+          srcSet={`https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/products/cosmetic/mobile/product_cosmetic_01.webp`}
         />
         <Image
           src={product.imageUrl}
           alt={product.name}
-          width={400}
-          height={600}
+          width={296}
+          height={444}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-110"
           priority={true}
           loading={'eager'}
