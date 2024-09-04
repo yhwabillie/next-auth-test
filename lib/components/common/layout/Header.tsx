@@ -55,7 +55,7 @@ export const Header = () => {
               <Link
                 aria-label="home"
                 href="/"
-                className={clsx('flex items-center gap-2 text-accent transition-colors duration-300', {
+                className={clsx('flex items-center gap-2 text-black transition-colors duration-300', {
                   'text-white': isScrolled,
                 })}
               >
@@ -64,7 +64,7 @@ export const Header = () => {
                     'text-white': isScrolled,
                   })}
                 />
-                <span className={`mt-[-5px] hidden pt-[8px] font-semibold lg:block`}>SHOPPING</span>
+                <span className={`mt-[-5px] hidden pt-[8px] lg:block`}>SHOPPING</span>
               </Link>
             </h1>
           </li>

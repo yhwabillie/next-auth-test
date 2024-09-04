@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
+/* @font-face {
   font-family: 'Pretendard';
   font-weight: 600;
   font-display: swap;
@@ -10,7 +10,7 @@
     local('Pretendard SemiBold'),
     url(/fonts/Pretendard-SemiBold.subset.woff2) format('woff2'),
     url(/fonts/Pretendard-SemiBold.subset.woff) format('woff');
-}
+} */
 
 @font-face {
   font-family: 'Pretendard';
