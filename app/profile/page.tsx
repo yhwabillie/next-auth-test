@@ -1,9 +1,13 @@
-'use server'
 import { IProfileFetchData, ProfileForm } from '@/lib/components/common/ProfileForm'
 import dotenv from 'dotenv'
 import { fetchProfileData } from '../actions/profile/fetchProfile'
 import { headers } from 'next/headers'
+import { Metadata } from 'next'
 dotenv.config()
+
+export const metadata: Metadata = {
+  title: '회원정보관리',
+}
 
 export default async function Page() {
   // headers를 사용하여 Server Actions에서 요청 객체를 전달할 수 있습니다.

@@ -1,11 +1,16 @@
 import authOptions from '@/lib/auth'
 import { SectionHeader } from '@/lib/components/individual/SectionHeader'
 import { UserShoppingTabs } from '@/lib/components/individual/UserShoppingTabs'
+import { Metadata } from 'next'
 import { getServerSession, Session } from 'next-auth'
 import { redirect } from 'next/navigation'
 
 // 페이지가 동적으로 생성되도록 설정
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: '마이쇼핑',
+}
 
 export default async function Page() {
   // getServerSession 자체 에러처리

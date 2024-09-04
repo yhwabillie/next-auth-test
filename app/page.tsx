@@ -1,4 +1,3 @@
-'use server'
 import { ProductList } from '@/lib/components/common/ProductList'
 import { VisualBanner } from '@/lib/components/common/VisualBanner'
 

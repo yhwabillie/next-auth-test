@@ -1,5 +1,9 @@
-'use server'
 import { AgreementForm } from '@/lib/components/common/AgreementForm'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '이용약관동의',
+}
 
 export default async function Page() {
   return (

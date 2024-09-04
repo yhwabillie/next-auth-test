@@ -1,5 +1,9 @@
-'use server'
 import { SignUpForm } from '@/lib/components/common/SignUpForm'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '회원정보입력',
+}
 
 export default async function Page() {
   return (

@@ -1,6 +1,10 @@
-'use server'
 import { ResetPasswordForm } from '@/lib/components/common/ResetPasswordForm'
+import { Metadata } from 'next'
 import { Suspense } from 'react'
+
+export const metadata: Metadata = {
+  title: '비밀번호 재설정',
+}
 
 export default async function Page() {
   return (

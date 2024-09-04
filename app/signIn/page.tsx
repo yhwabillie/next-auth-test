@@ -1,6 +1,10 @@
-'use server'
 import { SignInForm } from '@/lib/components/common/SignInForm'
+import { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: '로그인',
+}
 
 export default async function Page() {
   return (

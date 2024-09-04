@@ -1,5 +1,9 @@
-'use server'
 import { PasswordResetRequestForm } from '@/lib/components/common/PasswordResetRequestForm'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '비밀번호 재설정 요청',
+}
 
 export default async function Page() {
   return (

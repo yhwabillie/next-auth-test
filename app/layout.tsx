@@ -9,8 +9,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Shopping',
     template: '%s | Shopping',
+    default: 'Shopping',
   },
   description: '다양한 상품을 경쟁력 있는 가격에 제공하는 온라인 쇼핑몰, Shopping에서 특별한 쇼핑을 경험하세요',
   icons: {
