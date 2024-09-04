@@ -64,7 +64,7 @@ export const Header = () => {
                     'text-white': isScrolled,
                   })}
                 />
-                <span className={`mt-[-5px] hidden font-matemasie lg:block`}>Shopping</span>
+                <span className={`mt-[-5px] hidden pt-[8px] font-semibold lg:block`}>SHOPPING</span>
               </Link>
             </h1>
           </li>

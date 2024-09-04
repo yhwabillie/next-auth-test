@@ -25,7 +25,8 @@ export default async function RootLayout({ children }: Readonly<RootLayoutType>)
         <AuthProvider>
           <Toaster position="top-center" theme="light" richColors closeButton />
           <Header />
-          <FramerMotionProvider>{children}</FramerMotionProvider>
+          {/* <FramerMotionProvider>{children}</FramerMotionProvider> */}
+          {children}
           <ModalProvider />
         </AuthProvider>
       </html>

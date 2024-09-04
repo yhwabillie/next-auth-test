@@ -9,7 +9,7 @@ export default async function Page() {
         상품 리스트 본문
       </h2>
 
-      {/* <VisualBanner /> */}
+      <VisualBanner />
       <ProductList />
     </section>
   )
