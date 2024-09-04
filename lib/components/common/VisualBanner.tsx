@@ -234,7 +234,7 @@ export const VisualBanner = () => {
                     className="object-cover"
                     priority={true}
                     loading={'eager'}
-                    quality={70}
+                    quality={75}
                     fetchPriority="high"
                   />
                 </motion.div>
