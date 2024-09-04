@@ -3,6 +3,10 @@
 .env.local
 .env.production
 
+# Sitemap files
+/public/sitemap*.xml
+/public/robots.txt
+
 # next.js
 .next
 out
