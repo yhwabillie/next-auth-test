@@ -7,7 +7,7 @@
 프론트엔드 개발 경험을 바탕으로 RESTful API 설계와 데이터베이스 모델링을 직접 수행했습니다.  
 `백엔드 및 데이터베이스 영역에서의 협업 능력 향상을 목표`로 작업했습니다.
 
-## 👉 자세한 프로젝트 Notion 링크 : [[개인프로젝트] Shopping](https://fantasy-grey-9ba.notion.site/Shopping-33e5f0b6e22a4a949ae1292fadfb40ed)
+## <a href="https://fantasy-grey-9ba.notion.site/Shopping-33e5f0b6e22a4a949ae1292fadfb40ed" target="_blank">👉 Shopping 프로젝트 Notion 문서 링크</a>
 
 <br/><br/>
 
@@ -37,15 +37,15 @@
 
 ### 📝 SEO 최적화 작업 관련 작성 Notion 문서
 
-- [[SEO] 리소스 최적화](https://fantasy-grey-9ba.notion.site/SEO-80b9a3de657a42549c668a8510194400)
-- [[SEO] 메타 데이터 작성](https://fantasy-grey-9ba.notion.site/SEO-metadata-062514db4a894a11a671d478df4980d1)
-- [[SEO] 사이트맵 적용](https://fantasy-grey-9ba.notion.site/SEO-sitemap-96a03ef22dcc416f884d5d41bb576e83)
+- <a href="https://fantasy-grey-9ba.notion.site/SEO-80b9a3de657a42549c668a8510194400" target="_blank">[SEO] 리소스 최적화 Notion 문서 링크</a>
+- <a href="https://fantasy-grey-9ba.notion.site/SEO-metadata-062514db4a894a11a671d478df4980d1" target="_blank">[SEO] 메타 데이터 Notion 문서 링크</a>
+- <a href="https://fantasy-grey-9ba.notion.site/SEO-sitemap-96a03ef22dcc416f884d5d41bb576e83" target="_blank">[SEO] 사이트맵 적용 Notion 문서 링크</a>
 
 <br/><br/>
 
 ### 📈 최종 Performance 점수 (Desktop: 99점 / Mobile: 72점)
 
-- [PageSpeed Insights 최종 Performance 점수 (Mobile: 72점 / Desktop: 99점)](https://pagespeed.web.dev/analysis/https-next-auth-test-sage-vercel-app/cuaghjlweu?form_factor=desktop&category=performance&category=accessibility&category=best-practices&category=seo&hl=en-US&utm_source=lh-chrome-ext)
+- <a href="https://pagespeed.web.dev/analysis/https-next-auth-test-sage-vercel-app/cuaghjlweu?form_factor=desktop&category=performance&category=accessibility&category=best-practices&category=seo&hl=en-US&utm_source=lh-chrome-ext" target="_blank">[PageSpeed Insights 최종 Performance 점수 (Mobile: 72점 / Desktop: 99점)]</a>
 
 |                                                                   Desktop: `99점`                                                                   |                                                                   Mobile: `72점`                                                                   |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------: |
