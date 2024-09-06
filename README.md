@@ -7,8 +7,6 @@
 프론트엔드 개발 경험을 바탕으로 RESTful API 설계와 데이터베이스 모델링을 직접 수행했습니다.  
 `백엔드 및 데이터베이스 영역에서의 협업 능력 향상을 목표`로 작업했습니다.
 
-<a href="https://www.example.com" target="_blank">Visit Example.com</a>
-
 ## <a href="https://fantasy-grey-9ba.notion.site/Shopping-33e5f0b6e22a4a949ae1292fadfb40ed" target="_blank">👉 Shopping 프로젝트 Notion 문서 링크</a>
 
 <br/><br/>
