@@ -225,7 +225,12 @@ export const VisualBanner = () => {
                 <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
                 <source media="(min-width: 1280px)" srcSet={item.desktop_image} /> */}
 
-                <motion.div variants={imageVariants} initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0">
+                <motion.div
+                  variants={imageVariants}
+                  initial="hidden"
+                  animate={isActive ? 'visible' : 'hidden'}
+                  className="absolute inset-0 will-change-auto"
+                >
                   <Image
                     src={item.desktop_image}
                     alt={item.banner_alt}

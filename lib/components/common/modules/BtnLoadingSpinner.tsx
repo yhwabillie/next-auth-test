@@ -40,9 +40,13 @@ export const BtnLoadingSpinner = () => {
           80%,
           100% {
             box-shadow: 0 2.5em 0 -1.3em;
+            -webkit-box-shadow: 0 2.5em 0 -1.3em;
+            -moz-box-shadow: 0 2.5em 0 -1.3em;
           }
           40% {
             box-shadow: 0 2.5em 0 0;
+            -webkit-box-shadow: 0 2.5em 0 0;
+            -moz-box-shadow: 0 2.5em 0 0;
           }
         }
       `}</style>
