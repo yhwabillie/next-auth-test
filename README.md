@@ -9,6 +9,10 @@
 
 ## <a href="https://fantasy-grey-9ba.notion.site/Shopping-33e5f0b6e22a4a949ae1292fadfb40ed" target="_blank">👉 Shopping 프로젝트 Notion 문서 링크</a>
 
+## 😀 일반 TEST 계정 : test123 / qwer1234#@
+
+## 👷 관리자 TEST 계정 : admin123 / qwer1234#@
+
 <br/><br/>
 
 # 🛠️ 개발 환경 & 기술 스택
