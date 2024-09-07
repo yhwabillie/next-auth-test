@@ -68,20 +68,6 @@ export const VisualBanner = () => {
     },
   }
 
-  const imageVariants = {
-    hidden: {
-      filter: 'blur(3px)',
-    },
-    visible: {
-      filter: 'blur(0px)',
-    },
-    transition: {
-      type: 'tween',
-      ease: 'easeInOut',
-      duration: 0.5,
-    },
-  }
-
   const panels = [
     {
       title: '스포츠 / 레저 <br /> 클리어런스',
@@ -221,16 +207,7 @@ export const VisualBanner = () => {
               </motion.div>
 
               <picture>
-                {/* <source media="(max-width: 767px)" srcSet={item.mobile_image} />
-                <source media="(max-width: 1279px)" srcSet={item.tablet_image} />
-                <source media="(min-width: 1280px)" srcSet={item.desktop_image} /> */}
-
-                <motion.div
-                  variants={imageVariants}
-                  initial="hidden"
-                  animate={isActive ? 'visible' : 'hidden'}
-                  className="absolute inset-0 will-change-auto"
-                >
+                <motion.div initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0 will-change-auto">
                   <Image
                     src={item.desktop_image}
                     alt={item.banner_alt}
