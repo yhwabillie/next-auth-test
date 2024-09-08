@@ -206,21 +206,19 @@ export const VisualBanner = () => {
                 />
               </motion.div>
 
-              <picture>
-                <motion.div initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0 will-change-auto">
-                  <Image
-                    src={item.desktop_image}
-                    alt={item.banner_alt}
-                    fill
-                    sizes="(min-width: 1520px) 960px, (min-width: 380px) calc(63.13vw + 13px), calc(21.67vw + 162px)"
-                    className="object-cover"
-                    priority={true}
-                    loading={'eager'}
-                    quality={75}
-                    fetchPriority="high"
-                  />
-                </motion.div>
-              </picture>
+              <motion.div initial="hidden" animate={isActive ? 'visible' : 'hidden'} className="absolute inset-0 will-change-auto">
+                <Image
+                  src={item.desktop_image}
+                  alt={item.banner_alt}
+                  fill
+                  sizes="(min-width: 320px) 100vw, (max-width: 767px) 501px, (max-width: 1279px) 843px, (min-width: 1280px) 960px"
+                  className="object-cover"
+                  priority={true}
+                  loading={'eager'}
+                  quality={75}
+                  fetchPriority="high"
+                />
+              </motion.div>
             </div>
           )
         })}
