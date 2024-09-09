@@ -1,8 +1,8 @@
+@import url(https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/fonts/SpoqaHanSansNeo-Regular.woff2);
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url(https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/fonts/SpoqaHanSansNeo-Regular.woff2);
 
 html,
 body {

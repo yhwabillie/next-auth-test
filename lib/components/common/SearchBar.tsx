@@ -119,6 +119,7 @@ export const SearchBar = ({ isScrolled }: SearchBarProps) => {
           onClick={() => setIsFocus(true)}
           onChange={handleInputChange}
           type="search"
+          name="search"
           title="검색어"
           placeholder="제품 이름, 카테고리 검색"
           className={clsx('sm:text-md w-[120px] bg-primary placeholder:text-[14px] focus:outline-0 sm:w-[300px]', {
