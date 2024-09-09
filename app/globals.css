@@ -2,26 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @font-face {
-  font-family: 'Pretendard';
-  font-weight: 600;
-  font-display: swap;
-  src:
-    local('Pretendard SemiBold'),
-    url(/fonts/Pretendard-SemiBold.subset.woff2) format('woff2'),
-    url(/fonts/Pretendard-SemiBold.subset.woff) format('woff');
-} */
-
-/* @font-face {
-  font-family: 'Pretendard';
-  font-weight: 400;
-  font-display: swap;
-  src:
-    local('Pretendard Regular'),
-    url(/fonts/Pretendard-Regular.subset.woff2) format('woff2'),
-    url(/fonts/Pretendard-Regular.subset.woff) format('woff');
-} */
-
 @import url(https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/fonts/SpoqaHanSansNeo-Regular.woff2);
 
 html,

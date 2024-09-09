@@ -37,7 +37,8 @@
 
 ## 1.  SEO 지표 리포트 점수 개선 (Mobile: 🔺약 118%, Desktop: 🔺50%)
 
-이미지가 가장 많이 몰려있는 메인 페이지를 기준으로 점수를 측정
+- 이미지가 가장 많이 몰려있는 메인 페이지를 기준으로 점수를 측정
+- 최초 `Desktop 66점`, `Mobile 33점` 에서 시작하여 개선
 
 ### 📝 SEO 최적화 작업 관련 작성 Notion 문서
 
@@ -47,11 +48,11 @@
 
 <br/><br/>
 
-### 📈 최종 Performance 점수 (Desktop: 99점 / Mobile: 72점)
+### 📈 최종 Performance 점수 (Desktop: 100점 / Mobile: 72점)
 
-- <a href="https://pagespeed.web.dev/analysis/https-next-auth-test-sage-vercel-app/cuaghjlweu?form_factor=desktop&category=performance&category=accessibility&category=best-practices&category=seo&hl=en-US&utm_source=lh-chrome-ext" target="_blank">[PageSpeed Insights 최종 Performance 점수 (Mobile: 72점 / Desktop: 99점)]</a>
+- <a href="https://pagespeed.web.dev/analysis/https-next-auth-test-sage-vercel-app/0flr4ryo1n?form_factor=desktop&category=performance&category=accessibility&category=best-practices&category=seo&hl=en-US&utm_source=lh-chrome-ext" target="_blank">[PageSpeed Insights 최종 Performance 점수 (Desktop: 100점 / Mobile: 76점)]</a>
 
-|                                                                   Desktop: `99점`                                                                   |                                                                   Mobile: `72점`                                                                   |
+|                                                                  Desktop: `100점`                                                                   |                                                                   Mobile: `76점`                                                                   |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-final-result-desktop.png" width="400"> | <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-final-result-mobile.png" width="400"> |
 
