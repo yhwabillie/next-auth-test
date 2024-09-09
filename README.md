@@ -52,9 +52,9 @@
 
 - <a href="https://pagespeed.web.dev/analysis/https-next-auth-test-sage-vercel-app/0flr4ryo1n?form_factor=desktop&category=performance&category=accessibility&category=best-practices&category=seo&hl=en-US&utm_source=lh-chrome-ext" target="_blank">[PageSpeed Insights 최종 Performance 점수 (Desktop: 100점 / Mobile: 76점)]</a>
 
-|                                                                  Desktop: `100점`                                                                   |                                                                   Mobile: `76점`                                                                   |
-| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-final-result-desktop.png" width="400"> | <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-final-result-mobile.png" width="400"> |
+|                                                               Desktop: `100점`                                                                |                                                                Mobile: `76점`                                                                |
+| :-------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-result-desktop.png" width="400"> | <img src="https://fluplmlpoyjvgxkldyfh.supabase.co/storage/v1/object/public/next-auth-test/images/github/seo-result-mobile.png" width="400"> |
 
 <br/><br/>
 
