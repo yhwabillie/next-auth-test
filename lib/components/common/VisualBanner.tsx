@@ -12,7 +12,7 @@ export const VisualBanner = () => {
   const flickingRef = useRef<Flicking | null>(null)
   const autoPlayRef = useRef<AutoPlay | null>(null)
   const [isAnimating, setIsAnimating] = useState(false) // 애니메이션 상태 관리
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false) // 초기값을 false로 설정
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true) // 초기값을 true로 설정
   const [currentIndex, setCurrentIndex] = useState(0) // 현재 활성화된 패널 인덱스
 
   const totalPanels = 4 // 전체 패널 갯수
